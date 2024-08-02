@@ -122,6 +122,8 @@ def _parse_define(define: xml.etree.ElementTree.Element) -> str:
     value = define.attrib.get('value', None)
     if value is None:
         return name
+    # some of the defines are between `'` characters, remove them.
+    value = value.replace("'", "")
 
     return f'{name}={value}'
 
@@ -221,6 +223,7 @@ def parse_sources(
     root: xml.etree.ElementTree.Element,
     component_id: str,
     device_core: str | None = None,
+    exclude: Container[str] | None = None,
 ) -> list[pathlib.Path]:
     """Parse source files for a component.
 
@@ -235,6 +238,7 @@ def parse_sources(
         root: root of element tree.
         component_id: id of component to return.
         device_core: name of core to filter sources for.
+        exclude: container of component ids excluded from the project.
 
     Returns:
         list of source files for the component.
@@ -243,7 +247,7 @@ def parse_sources(
     for source_type in ('src', 'src_c', 'src_cpp', 'asm_include'):
         source_files.extend(
             _parse_sources(
-                root, component_id, source_type, device_core=device_core
+                root, component_id, source_type, device_core=device_core, exclude=exclude
             )
         )
     return source_files
@@ -279,6 +283,7 @@ def _parse_sources(
     component_id: str,
     source_type: str,
     device_core: str | None = None,
+    exclude: Container[str] | None = None,
 ) -> list[pathlib.Path]:
     """Parse <source> manifest stanza.
 
@@ -295,7 +300,7 @@ def _parse_sources(
         component_id: id of component to return.
         source_type: type of source to search for.
         device_core: name of core to filter sources for.
-
+        exclude: container of component ids excluded from the project.
     Returns:
         list of source files for the component.
     """
@@ -309,14 +314,24 @@ def _parse_sources(
         if not _element_is_compatible_with_device_core(source, device_core):
             continue
 
+        condition = source.attrib.get('condition', None)
+        if condition is not None:
+            if exclude is not None and condition not in exclude:
+                continue
+        toolchain = source.attrib.get('toolchain', None)
+        # "mcuxpresso" toolchain contains additional files
+        # that are not needed for compilation.
+        if toolchain is not None and "mcuxpresso" in toolchain:
+            continue
         relative_path = pathlib.Path(source.attrib['relative_path'])
         if base_path is not None:
             relative_path = base_path / relative_path
 
-        sources.extend(
-            relative_path / files.attrib['mask']
-            for files in source.findall('./files')
-        )
+        for file in source.findall('./files'):
+            filename = pathlib.Path(file.attrib['mask'])
+            # Skip linker scripts, pigweed uses its own linker script.
+            if filename.suffix != ".ldt":
+                sources.append(relative_path / filename)
     return sources
 
 
@@ -532,7 +547,7 @@ def create_project(
         ),
         sum(
             (
-                parse_sources(root, component_id, device_core=device_core)
+                parse_sources(root, component_id, device_core=device_core, exclude=exclude)
                 for component_id in project_list
             ),
             [],
