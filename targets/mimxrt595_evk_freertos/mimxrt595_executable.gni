@@ -34,7 +34,7 @@ template("mimxrt595_executable") {
     if (!defined(deps)) {
       deps = []
     }
-    deps += [ "//targets/mimxrt595_evk_freertos:boot" ]
+    deps += [ "$dir_pigweed/targets/mimxrt595_evk_freertos:boot" ]
     if (pw_malloc_BACKEND != "") {
       if (!defined(configs)) {
         configs = []

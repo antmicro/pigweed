@@ -38,7 +38,7 @@ if (pw_third_party_mcuxpresso_SDK != "") {
 
 pw_test("stream_test") {
   enable_if =
-      pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk_freertos:sdk" &&
+      pw_third_party_mcuxpresso_SDK == "$dir_pigweed/targets/mimxrt595_evk_freertos:sdk" &&
       (pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_debug" ||
        pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_size_optimized" ||
        pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_speed_optimized")
@@ -46,7 +46,7 @@ pw_test("stream_test") {
 
   deps = [
     ":pw_stream_shmem_mcuxpresso",
-    "//targets/mimxrt595_evk_freertos:sdk",
+    "$dir_pigweed/targets/mimxrt595_evk_freertos:sdk",
   ]
 }
 

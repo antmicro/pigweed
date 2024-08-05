@@ -61,14 +61,14 @@ if (pw_third_party_mcuxpresso_SDK != "") {
 
 pw_test("initiator_test") {
   enable_if =
-      pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk_freertos:sdk" &&
+      pw_third_party_mcuxpresso_SDK == "$dir_pigweed/targets/mimxrt595_evk_freertos:sdk" &&
       (pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_debug" ||
        pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_size_optimized" ||
        pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_speed_optimized")
   sources = [ "initiator_test.cc" ]
   deps = [
     ":pw_i2c_mcuxpresso",
-    "//targets/mimxrt595_evk_freertos:sdk",
+    "$dir_pigweed/targets/mimxrt595_evk_freertos:sdk",
   ]
 }
 
