@@ -103,7 +103,7 @@ if (pw_third_party_mcuxpresso_SDK != "") {
   }
 }
 
-if (pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk:sample_sdk") {
+if (pw_third_party_mcuxpresso_SDK == get_label_info(":sample_sdk", "label_no_toolchain")) {
   pw_mcuxpresso_sdk("sample_sdk") {
     manifest = pw_target_mimxrt595_evk_MANIFEST
     include = [
