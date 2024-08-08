@@ -22,10 +22,11 @@ pw::Status UartStreamExample() {
   // DOCSTAG: [pw_stream_uart_mcuxpresso-UartStreamExample]
   constexpr uint32_t kFlexcomm = 0;
   constexpr uint32_t kBaudRate = 115200;
+  constexpr bool kEnableHardwareFlowControl = false;
   std::array<std::byte, 20> kBuffer = {};
 
   auto stream = pw::stream::UartStreamMcuxpresso{
-      USART0, kBaudRate, kUSART_ParityDisabled, kUSART_OneStopBit, kBuffer};
+      USART0, kBaudRate, kUSART_ParityDisabled, kUSART_OneStopBit, kBuffer, kEnableHardwareFlowControl};
 
   PW_TRY(stream.Init(CLOCK_GetFlexcommClkFreq(kFlexcomm)));
 

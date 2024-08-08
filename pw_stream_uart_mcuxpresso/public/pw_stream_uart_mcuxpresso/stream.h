@@ -28,6 +28,7 @@ class UartStreamMcuxpresso : public NonSeekableReaderWriter {
                        usart_parity_mode_t parity,
                        usart_stop_bit_count_t stopbits,
                        ByteSpan buffer,
+                       bool enableHardwareFlowControl,
                        pw::clock_tree::ClockTree& clock_tree,
                        pw::clock_tree::Element& clock_tree_element)
       : base_(base),
@@ -37,14 +38,16 @@ class UartStreamMcuxpresso : public NonSeekableReaderWriter {
                 .parity = parity,
                 .stopbits = stopbits,
                 .buffer = reinterpret_cast<uint8_t*>(buffer.data()),
-                .buffer_size = buffer.size()},
+                .buffer_size = buffer.size(),
+                .enableHardwareFlowControl = enableHardwareFlowControl},
         element_controller_(&clock_tree, &clock_tree_element) {}
 
   UartStreamMcuxpresso(USART_Type* base,
                        uint32_t baudrate,
                        usart_parity_mode_t parity,
                        usart_stop_bit_count_t stopbits,
-                       ByteSpan buffer)
+                       ByteSpan buffer,
+                       bool enableHardwareFlowControl)
       : base_(base),
         config_{.base = base_,
                 .srcclk = 0,
@@ -52,7 +55,8 @@ class UartStreamMcuxpresso : public NonSeekableReaderWriter {
                 .parity = parity,
                 .stopbits = stopbits,
                 .buffer = reinterpret_cast<uint8_t*>(buffer.data()),
-                .buffer_size = buffer.size()} {}
+                .buffer_size = buffer.size(),
+                .enableHardwareFlowControl = enableHardwareFlowControl} {}
 
   ~UartStreamMcuxpresso();
 
