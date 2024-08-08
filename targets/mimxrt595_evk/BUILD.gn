@@ -30,7 +30,7 @@ declare_args() {
   # When compiling with an MCUXpresso SDK, this variable is set to the path of
   # the manifest file within the SDK installation. When set, a pw_source_set
   # for a sample project SDK is created at
-  # "//targets/mimxrt595_evk/sample_sdk".
+  # "//targets/mimxrt595_evk/sdk".
   pw_target_mimxrt595_evk_MANIFEST = ""
 
   # This list should contain the necessary defines for setting linker script
@@ -103,8 +103,8 @@ if (pw_third_party_mcuxpresso_SDK != "") {
   }
 }
 
-if (pw_third_party_mcuxpresso_SDK == get_label_info(":sample_sdk", "label_no_toolchain")) {
-  pw_mcuxpresso_sdk("sample_sdk") {
+if (pw_third_party_mcuxpresso_SDK == get_label_info(":sdk", "label_no_toolchain")) {
+  pw_mcuxpresso_sdk("sdk") {
     manifest = pw_target_mimxrt595_evk_MANIFEST
     include = [
       "component.serial_manager_uart.MIMXRT595S",
