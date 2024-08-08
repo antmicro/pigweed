@@ -21,6 +21,9 @@
 #include "pw_boot_cortex_m/boot.h"
 #include "pw_preprocessor/compiler.h"
 #include "pw_sys_io_mcuxpresso/init.h"
+#include "FreeRTOS.h"
+#include "pw_system/init.h"
+#include "task.h"
 
 #if PW_MALLOC_ACTIVE
 #include "pw_malloc/malloc.h"
@@ -43,7 +46,13 @@ void pw_boot_PreMainInit() {
   BOARD_InitPeripherals();
 
   pw_sys_io_mcuxpresso_Init();
+  pw::system::Init();
+  vTaskStartScheduler();
 }
+
+// This `main()` stub prevents another main function from being linked since
+// this target deliberately doesn't run `main()`.
+extern "C" int main() { return 0; }
 
 PW_NO_RETURN void pw_boot_PostMain() {
   // In case main() returns, just sit here until the device is reset.
