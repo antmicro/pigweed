@@ -82,6 +82,16 @@ if (current_toolchain != default_toolchain) {
     defines = pw_target_mimxrt595_evk_freertos_LINK_CONFIG_DEFINES
     linker_script = "mimxrt595_flash.ld"
   }
+
+  pw_source_set("unit_test_app") {
+    sources = [ "unit_test_app.cc" ]
+    deps = [
+      "$dir_pw_status",
+      "$dir_pw_system",
+      "$dir_pw_unit_test",
+      "$dir_pw_unit_test:logging_event_handler",
+    ]
+  }
 }
 
 if (pw_third_party_mcuxpresso_SDK != "") {
@@ -97,6 +107,7 @@ if (pw_third_party_mcuxpresso_SDK != "") {
       "$dir_pw_sys_io_mcuxpresso",
       "$dir_pw_third_party/freertos",
       "$dir_pw_third_party/freertos:support",
+      "$dir_pw_trace_tokenized:fake_trace_time",
       pw_third_party_mcuxpresso_SDK,
     ]
     if (pw_malloc_BACKEND != "") {
@@ -126,6 +137,7 @@ if (pw_third_party_mcuxpresso_SDK == get_label_info(":sdk", "label_no_toolchain"
       "platform.drivers.mu.MIMXRT595S",
       "platform.drivers.pint.MIMXRT595S",
       "platform.drivers.power.MIMXRT595S",
+      "platform.drivers.common.MIMXRT595S",
       "utility.debug_console.MIMXRT595S",
     ]
     exclude = [

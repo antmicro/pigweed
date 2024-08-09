@@ -26,9 +26,6 @@ _target_config = {
   forward_variables_from(pw_targets_FREERTOS_BACKEND_GROUP, "*")
   pw_third_party_freertos_DISABLE_TASKS_STATICS = true
 
-  # Use the logging main.
-  pw_unit_test_MAIN = "$dir_pw_unit_test:logging_main"
-
   # Configuration options for Pigweed executable targets.
   pw_build_EXECUTABLE_TARGET_TYPE = "mimxrt595_executable"
 
@@ -36,14 +33,22 @@ _target_config = {
       get_path_info("mimxrt595_executable.gni", "abspath")
 
   # Facade backends
-  pw_assert_BACKEND = dir_pw_assert_basic
+  pw_assert_BACKEND = "$dir_pw_assert_basic"
   pw_boot_BACKEND = "$dir_pw_boot_cortex_m:armv8m"
   pw_interrupt_CONTEXT_BACKEND = "$dir_pw_interrupt_cortex_m:context_armv8m"
-  pw_log_BACKEND = dir_pw_log_basic
+  pw_log_BACKEND = "$dir_pw_log_basic"
   pw_malloc_BACKEND = "$dir_pw_malloc:bucket_block_allocator"
   pw_sys_io_BACKEND = "$dir_pw_sys_io_mcuxpresso"
 
-  pw_rpc_system_server_BACKEND = "$dir_pw_hdlc:hdlc_sys_io_system_server"
+  pw_system_RPC_SERVER_BACKEND = "$dir_pw_system:hdlc_rpc_server"
+  pw_unit_test_MAIN = "$dir_pigweed/targets/mimxrt595_evk_freertos:unit_test_app"
+
+  pw_system_TARGET_HOOKS_BACKEND = "$dir_pw_system:freertos_target_hooks"
+  pw_system_IO_BACKEND = "$dir_pw_system:sys_io_target_io"
+  pw_system_DEVICE_HANDLER = "$dir_pw_system:unknown_device_handler"
+  pw_trace_BACKEND = "$dir_pw_trace_tokenized:pw_trace_tokenized"
+  pw_async_TASK_BACKEND="$dir_pw_async_basic:task"
+  pw_async_FAKE_DISPATCHER_BACKEND="$dir_pw_async_basic:fake_dispatcher"
 
   # Override the default pw_boot_cortex_m linker script and set the memory
   # regions for the target.

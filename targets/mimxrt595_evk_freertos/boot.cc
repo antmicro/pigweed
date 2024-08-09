@@ -41,12 +41,13 @@ void pw_boot_PreStaticConstructorInit() {
 }
 
 void pw_boot_PreMainInit() {
+  pw::system::Init();
+
   BOARD_InitPins();
   BOARD_InitBootClocks();
   BOARD_InitPeripherals();
-
   pw_sys_io_mcuxpresso_Init();
-  pw::system::Init();
+
   vTaskStartScheduler();
 }
 
