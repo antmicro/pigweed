@@ -24,7 +24,6 @@ import("$dir_pw_toolchain/arm_gcc/toolchains.gni")
 _target_config = {
   # This target uses FreeRTOS.
   forward_variables_from(pw_targets_FREERTOS_BACKEND_GROUP, "*")
-  pw_thread_THREAD_ITERATION_BACKEND = ""
   pw_third_party_freertos_DISABLE_TASKS_STATICS = true
 
   # Use the logging main.
