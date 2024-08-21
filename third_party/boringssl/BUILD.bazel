@@ -19,6 +19,8 @@ load(
     "pw_cc_test",
 )
 
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "sysdeps",
     hdrs = ["sysdeps/sys/socket.h"],
@@ -27,7 +29,6 @@ cc_library(
     target_compatible_with = incompatible_with_mcu(),
     deps = [
         "//pw_assert",
-        "@boringssl//:ssl",
     ],
 )
 

@@ -62,7 +62,7 @@ cc_library(
         "//pw_bluetooth_sapphire/host/gap:definitions",
         "//pw_bluetooth_sapphire/host/hci",
         "//pw_bluetooth_sapphire/host/l2cap",
-        "@boringssl//:bssl",
+        "@boringssl",
         "@pigweed//pw_string",
         "@pigweed//third_party/fuchsia:fit",
     ],
