@@ -49,7 +49,7 @@ platform(
         "//pw_build/constraints/board:mimxrt595_evk",
         "//pw_malloc_freertos:backend",
         "@freertos//:disable_task_statics",
-        "@platforms//os:none",
+        "@platforms//os:linux",
     ],
 )
 pw_linker_script(
