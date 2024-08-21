@@ -188,6 +188,60 @@ SECTIONS
     __exidx_end = .;
   } >FLASH
 
+  ._bt_settings_area :
+  {
+    . = ALIGN(4);
+    _bt_settings_start = .;
+    KEEP(*(SORT(._bt_settings.static.*)))
+    _bt_settings_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
+  ._settings_handler_static :
+  {
+    . = ALIGN(4);
+    _settings_handler_static_list_start = .;
+    KEEP(*(SORT(._settings_handler_static.static.*)))
+    _settings_handler_static_list_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
+  ._bt_conn_cb :
+  {
+    . = ALIGN(4);
+    _bt_conn_cb_list_start = .;
+    KEEP(*(SORT(._bt_conn_cb.static.*)))
+    _bt_conn_cb_list_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
+  ._bt_gatt_service_static :
+  {
+    . = ALIGN(4);
+    _bt_gatt_service_static_list_start = .;
+    KEEP(*(SORT(._bt_gatt_service_static.static.*)))
+    _bt_gatt_service_static_list_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
+  ._bt_l2cap_fixed_chan :
+  {
+    . = ALIGN(4);
+    _bt_l2cap_fixed_chan_list_start = .;
+    KEEP(*(SORT(._bt_l2cap_fixed_chan.static.*)))
+    _bt_l2cap_fixed_chan_list_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
+  ._bt_l2cap_br_fixed_chan :
+  {
+    . = ALIGN(4);
+    _bt_l2cap_br_fixed_chan_list_start = .;
+    KEEP(*(SORT(._bt_l2cap_br_fixed_chan.static.*)))
+    _bt_l2cap_br_fixed_chan_list_end = .;
+    . = ALIGN(4);
+  } > FLASH
+
   /* Explicitly initialized global and static data. (.data)*/
   .static_init_ram : ALIGN(4)
   {
@@ -232,6 +286,13 @@ SECTIONS
     . = . + PW_BOOT_HEAP_SIZE;
     . = ALIGN(4);
     pw_boot_heap_high_addr = .;
+  } >RAM
+
+  .net_buf (NOLOAD) : ALIGN(4)
+  {
+     _net_buf_pool_list = .;
+     KEEP(*(SORT(._net_buf_pool*)))
+     . = ALIGN(4);
   } >RAM
 
   /* Link-time check for stack overlaps.
