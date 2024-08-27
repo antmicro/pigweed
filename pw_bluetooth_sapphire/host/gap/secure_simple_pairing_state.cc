@@ -35,7 +35,7 @@ const char* const kInspectSecurityPropertiesPropertyName =
 }  // namespace
 
 SecureSimplePairingState::SecureSimplePairingState(
-    Peer::WeakPtr peer,
+    Peer::WeakPtrType peer,
     WeakPtr<hci::BrEdrConnection> link,
     bool outgoing_connection,
     fit::closure auth_cb,

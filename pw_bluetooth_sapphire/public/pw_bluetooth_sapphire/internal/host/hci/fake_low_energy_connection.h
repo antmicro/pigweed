@@ -23,7 +23,7 @@ class FakeLowEnergyConnection final : public LowEnergyConnection {
                           const DeviceAddress& local_address,
                           const DeviceAddress& peer_address,
                           pw::bluetooth::emboss::ConnectionRole role,
-                          const Transport::WeakPtr& hci);
+                          const Transport::WeakPtrType& hci);
 
   // Triggers the encryption change callback.
   void TriggerEncryptionChangeCallback(hci::Result<bool> result);

@@ -75,7 +75,7 @@ class LowEnergyAddressManager final : public hci::LocalAddressDelegate {
 
   LowEnergyAddressManager(const DeviceAddress& public_address,
                           StateQueryDelegate delegate,
-                          hci::CommandChannel::WeakPtr cmd_channel,
+                          hci::CommandChannel::WeakPtrType cmd_channel,
                           pw::async::Dispatcher& dispatcher);
   ~LowEnergyAddressManager();
 
@@ -132,7 +132,7 @@ class LowEnergyAddressManager final : public hci::LocalAddressDelegate {
   pw::async::Dispatcher& dispatcher_;
 
   StateQueryDelegate delegate_;
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
   bool privacy_enabled_;
 
   // The public device address (i.e. BD_ADDR) that is assigned to the

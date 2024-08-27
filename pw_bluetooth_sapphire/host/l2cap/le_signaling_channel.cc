@@ -22,7 +22,7 @@
 namespace bt::l2cap::internal {
 
 LESignalingChannel::LESignalingChannel(
-    Channel::WeakPtr chan,
+    Channel::WeakPtrType chan,
     pw::bluetooth::emboss::ConnectionRole role,
     pw::async::Dispatcher& dispatcher)
     : SignalingChannel(std::move(chan), role, dispatcher) {

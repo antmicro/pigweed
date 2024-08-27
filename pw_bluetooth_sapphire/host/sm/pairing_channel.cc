@@ -22,7 +22,7 @@
 
 namespace bt::sm {
 
-PairingChannel::PairingChannel(l2cap::Channel::WeakPtr chan,
+PairingChannel::PairingChannel(l2cap::Channel::WeakPtrType chan,
                                fit::closure timer_resetter)
     : chan_(std::move(chan)),
       reset_timer_(std::move(timer_resetter)),
@@ -58,10 +58,10 @@ PairingChannel::PairingChannel(l2cap::Channel::WeakPtr chan,
             chan_->max_rx_sdu_size() >= kNoSecureConnectionsMtu);
 }
 
-PairingChannel::PairingChannel(l2cap::Channel::WeakPtr chan)
+PairingChannel::PairingChannel(l2cap::Channel::WeakPtrType chan)
     : PairingChannel(std::move(chan), []() {}) {}
 
-void PairingChannel::SetChannelHandler(Handler::WeakPtr new_handler) {
+void PairingChannel::SetChannelHandler(Handler::WeakPtrType new_handler) {
   BT_ASSERT(new_handler.is_alive());
   bt_log(TRACE, "sm", "changing pairing channel handler");
   handler_ = std::move(new_handler);

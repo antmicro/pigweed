@@ -89,7 +89,7 @@ class NoOpPairingDelegate final : public PairingDelegate {
   NoOpPairingDelegate(sm::IOCapability io_capability)
       : io_capability_(io_capability), weak_self_(this) {}
 
-  PairingDelegate::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  PairingDelegate::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   // PairingDelegate overrides that do nothing.
   ~NoOpPairingDelegate() override = default;
@@ -1586,7 +1586,7 @@ TEST_P(HandlesEvent, InResponderWaitIoCapRequestState) {
 TEST_P(HandlesEvent,
        InErrorStateAfterIoCapRequestRejectedWithoutPairingDelegate) {
   // Clear the default pairing delegate set by the fixture.
-  pairing_state().SetPairingDelegate(PairingDelegate::WeakPtr());
+  pairing_state().SetPairingDelegate(PairingDelegate::WeakPtrType());
 
   // Advance state machine.
   pairing_state().OnIoCapabilityResponse(kTestPeerIoCap);

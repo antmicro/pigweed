@@ -23,7 +23,7 @@ namespace bt::l2cap::internal {
 // Implements the L2CAP LE signaling fixed channel.
 class LESignalingChannel final : public SignalingChannel {
  public:
-  LESignalingChannel(Channel::WeakPtr chan,
+  LESignalingChannel(Channel::WeakPtrType chan,
                      pw::bluetooth::emboss::ConnectionRole role,
                      pw::async::Dispatcher& dispatcher);
   ~LESignalingChannel() override = default;

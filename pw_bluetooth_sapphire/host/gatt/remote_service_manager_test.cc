@@ -78,7 +78,7 @@ class RemoteServiceManagerTest : public pw::async::test::FakeDispatcherFixture {
   }
 
   // Initializes a RemoteService based on |data|.
-  RemoteService::WeakPtr SetUpFakeService(const ServiceData& data) {
+  RemoteService::WeakPtrType SetUpFakeService(const ServiceData& data) {
     std::vector<ServiceData> fake_services{{data}};
     fake_client()->set_services(std::move(fake_services));
 
@@ -106,7 +106,7 @@ class RemoteServiceManagerTest : public pw::async::test::FakeDispatcherFixture {
 
   // Discover the characteristics of |service| based on the given |fake_data|.
   void SetupCharacteristics(
-      RemoteService::WeakPtr service,
+      RemoteService::WeakPtrType service,
       std::vector<CharacteristicData> fake_chrs,
       std::vector<DescriptorData> fake_descrs = std::vector<DescriptorData>()) {
     BT_DEBUG_ASSERT(service.is_alive());
@@ -118,7 +118,7 @@ class RemoteServiceManagerTest : public pw::async::test::FakeDispatcherFixture {
     RunUntilIdle();
   }
 
-  RemoteService::WeakPtr SetupServiceWithChrcs(
+  RemoteService::WeakPtrType SetupServiceWithChrcs(
       const ServiceData& data,
       std::vector<CharacteristicData> fake_chrs,
       std::vector<DescriptorData> fake_descrs = std::vector<DescriptorData>()) {
@@ -128,7 +128,7 @@ class RemoteServiceManagerTest : public pw::async::test::FakeDispatcherFixture {
   }
 
   // Create a fake service with one notifiable characteristic.
-  RemoteService::WeakPtr SetupNotifiableService() {
+  RemoteService::WeakPtrType SetupNotifiableService() {
     ServiceData data(ServiceKind::PRIMARY, 1, 4, kTestServiceUuid1);
     auto service = SetUpFakeService(data);
 
@@ -147,7 +147,7 @@ class RemoteServiceManagerTest : public pw::async::test::FakeDispatcherFixture {
   }
 
   void EnableNotifications(
-      RemoteService::WeakPtr service,
+      RemoteService::WeakPtrType service,
       CharacteristicHandle chr_id,
       att::Result<>* out_status,
       IdType* out_id,
@@ -4280,7 +4280,7 @@ TEST_F(RemoteServiceManagerTest,
 
 TEST_F(RemoteServiceManagerTest, DisableNotificationInHandlerCallback) {
   const CharacteristicHandle kChrcValueHandle(3);
-  RemoteService::WeakPtr svc = SetupNotifiableService();
+  RemoteService::WeakPtrType svc = SetupNotifiableService();
   std::optional<IdType> handler_id;
   RemoteCharacteristic::NotifyStatusCallback status_cb =
       [&](att::Result<> status, IdType cb_handler_id) {
@@ -4352,7 +4352,7 @@ TEST_F(RemoteServiceManagerServiceChangedTest,
   ASSERT_EQ(1u, svc_watcher_data()[0].added.size());
   EXPECT_EQ(kSvc1StartHandle, svc_watcher_data()[0].added[0]->handle());
 
-  RemoteService::WeakPtr service = svc_watcher_data()[0].added[0];
+  RemoteService::WeakPtrType service = svc_watcher_data()[0].added[0];
   service->DiscoverCharacteristics([](auto, const auto&) {});
   RunUntilIdle();
 

@@ -27,7 +27,7 @@ class BrEdrConnection : public AclConnection, public WeakSelf<BrEdrConnection> {
                   const DeviceAddress& local_address,
                   const DeviceAddress& peer_address,
                   pw::bluetooth::emboss::ConnectionRole role,
-                  const Transport::WeakPtr& hci);
+                  const Transport::WeakPtrType& hci);
 
   bool StartEncryption() override;
 

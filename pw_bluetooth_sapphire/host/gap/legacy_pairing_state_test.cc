@@ -67,7 +67,7 @@ class NoOpPairingDelegate final : public PairingDelegate {
   explicit NoOpPairingDelegate(sm::IOCapability io_capability)
       : io_capability_(io_capability), weak_self_(this) {}
 
-  PairingDelegate::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  PairingDelegate::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   // PairingDelegate overrides that do nothing.
   ~NoOpPairingDelegate() override = default;
@@ -131,8 +131,8 @@ class LegacyPairingStateTest : public TestBase {
 
   // Incomplete connection used to create LegacyPairingState in
   // *BeforeAclConnectionCompletes tests
-  FakeBrEdrConnection::WeakPtr incomplete_connection() const {
-    return FakeBrEdrConnection::WeakPtr();
+  FakeBrEdrConnection::WeakPtrType incomplete_connection() const {
+    return FakeBrEdrConnection::WeakPtrType();
   }
 
   FakeBrEdrConnection* connection() const { return connection_.get(); }

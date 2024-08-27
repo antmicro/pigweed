@@ -21,7 +21,7 @@ namespace bt::hci {
 ScoConnection::ScoConnection(hci_spec::ConnectionHandle handle,
                              const DeviceAddress& local_address,
                              const DeviceAddress& peer_address,
-                             const hci::Transport::WeakPtr& hci)
+                             const hci::Transport::WeakPtrType& hci)
     : Connection(handle,
                  local_address,
                  peer_address,
@@ -35,7 +35,7 @@ ScoConnection::ScoConnection(hci_spec::ConnectionHandle handle,
 }
 
 void ScoConnection::OnDisconnectionComplete(
-    hci_spec::ConnectionHandle handle, const hci::Transport::WeakPtr& hci) {
+    hci_spec::ConnectionHandle handle, const hci::Transport::WeakPtrType& hci) {
   // ScoDataChannel only exists if HCI SCO is supported by the controller.
   if (hci->sco_data_channel()) {
     // The packet count must be cleared after sco::ScoConnection unregisters the

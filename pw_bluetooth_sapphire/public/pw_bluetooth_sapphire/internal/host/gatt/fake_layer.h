@@ -50,7 +50,7 @@ class FakeLayer final : public GATT {
   //
   // NOTE: the remote service watcher can also get triggered by calling
   // InitializeClient().
-  std::pair<RemoteService::WeakPtr, FakeClient::WeakPtr> AddPeerService(
+  std::pair<RemoteService::WeakPtrType, FakeClient::WeakPtrType> AddPeerService(
       PeerId peer_id, const ServiceData& info, bool notify = false);
 
   // Removes the service with start handle of |handle| and notifies service
@@ -139,11 +139,11 @@ class FakeLayer final : public GATT {
   void ListServices(PeerId peer_id,
                     std::vector<UUID> uuids,
                     ServiceListCallback callback) override;
-  RemoteService::WeakPtr FindService(PeerId peer_id,
+  RemoteService::WeakPtrType FindService(PeerId peer_id,
                                      IdType service_id) override;
 
-  using WeakPtr = WeakSelf<FakeLayer>::WeakPtr;
-  FakeLayer::WeakPtr GetFakePtr() { return weak_fake_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<FakeLayer>::WeakPtrType;
+  FakeLayer::WeakPtrType GetFakePtr() { return weak_fake_.GetWeakPtr(); }
 
  private:
   IdType next_local_service_id_ =

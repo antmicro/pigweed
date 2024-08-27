@@ -37,15 +37,15 @@ static const hci_spec::LEPreferredConnectionParameters
 }  // namespace
 
 std::unique_ptr<LowEnergyConnection> LowEnergyConnection::Create(
-    Peer::WeakPtr peer,
+    Peer::WeakPtrType peer,
     std::unique_ptr<hci::LowEnergyConnection> link,
     LowEnergyConnectionOptions connection_options,
     PeerDisconnectCallback peer_disconnect_cb,
     ErrorCallback error_cb,
-    WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+    WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
     l2cap::ChannelManager* l2cap,
-    gatt::GATT::WeakPtr gatt,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    gatt::GATT::WeakPtrType gatt,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     pw::async::Dispatcher& dispatcher) {
   // Catch any errors/disconnects during connection initialization so that they
   // are reported by returning a nullptr. This is less error-prone than calling
@@ -85,16 +85,16 @@ std::unique_ptr<LowEnergyConnection> LowEnergyConnection::Create(
 }
 
 LowEnergyConnection::LowEnergyConnection(
-    Peer::WeakPtr peer,
+    Peer::WeakPtrType peer,
     std::unique_ptr<hci::LowEnergyConnection> link,
     LowEnergyConnectionOptions connection_options,
     PeerDisconnectCallback peer_disconnect_cb,
     ErrorCallback error_cb,
-    WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+    WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
     std::unique_ptr<iso::IsoStreamManager> iso_mgr,
     l2cap::ChannelManager* l2cap,
-    gatt::GATT::WeakPtr gatt,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    gatt::GATT::WeakPtrType gatt,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     pw::async::Dispatcher& dispatcher)
     : dispatcher_(dispatcher),
       peer_(std::move(peer)),
@@ -383,8 +383,8 @@ void LowEnergyConnection::StartConnectionPauseCentralTimeout() {
 }
 
 bool LowEnergyConnection::OnL2capFixedChannelsOpened(
-    l2cap::Channel::WeakPtr att,
-    l2cap::Channel::WeakPtr smp,
+    l2cap::Channel::WeakPtrType att,
+    l2cap::Channel::WeakPtrType smp,
     LowEnergyConnectionOptions connection_options) {
   bt_log(DEBUG,
          "gap-le",
@@ -672,7 +672,7 @@ void LowEnergyConnection::MaybeUpdateConnectionParameters() {
   }
 }
 
-bool LowEnergyConnection::InitializeGatt(l2cap::Channel::WeakPtr att_channel,
+bool LowEnergyConnection::InitializeGatt(l2cap::Channel::WeakPtrType att_channel,
                                          std::optional<UUID> service_uuid) {
   att_bearer_ = att::Bearer::Create(std::move(att_channel), dispatcher_);
   if (!att_bearer_) {
@@ -688,7 +688,7 @@ bool LowEnergyConnection::InitializeGatt(l2cap::Channel::WeakPtr att_channel,
   auto server_factory =
       [att_bearer = att_bearer_->GetWeakPtr()](
           PeerId peer_id,
-          gatt::LocalServiceManager::WeakPtr local_services) mutable {
+          gatt::LocalServiceManager::WeakPtrType local_services) mutable {
         return gatt::Server::Create(
             peer_id, std::move(local_services), std::move(att_bearer));
       };

@@ -43,7 +43,7 @@ using TestingBase = l2cap::testing::FakeChannelTest;
 constexpr hci_spec::ConnectionHandle kTestHandle1 = 1;
 constexpr hci_spec::ConnectionHandle kTestHandle2 = 2;
 
-void NopConnectCallback(l2cap::Channel::WeakPtr, const DataElement&) {}
+void NopConnectCallback(l2cap::Channel::WeakPtrType, const DataElement&) {}
 
 // Returns true if the |psm| is in the valid dynamic PSM range.
 bool isValidDynamicPsm(uint16_t psm) {
@@ -170,7 +170,7 @@ class ServerTest : public TestingBase {
   }
 
  private:
-  l2cap::testing::FakeChannel::WeakPtr channel_;
+  l2cap::testing::FakeChannel::WeakPtrType channel_;
   std::unique_ptr<l2cap::testing::FakeL2cap> l2cap_;
   std::unique_ptr<Server> server_;
 };
@@ -1696,11 +1696,11 @@ TEST_F(ServerTest, ConnectionCallbacks) {
       kTestHandle1, l2cap::kSDP, kSdpChannel, 0x0bad));
   RunUntilIdle();
 
-  std::vector<l2cap::Channel::WeakPtr> channels;
+  std::vector<l2cap::Channel::WeakPtrType> channels;
   hci_spec::ConnectionHandle latest_handle;
 
   // Register a service
-  AddA2DPSink([&channels, &latest_handle](l2cap::Channel::WeakPtr chan,
+  AddA2DPSink([&channels, &latest_handle](l2cap::Channel::WeakPtrType chan,
                                           const auto& protocol) {
     bt_log(TRACE, "test", "Got channel for the a2dp sink");
     latest_handle = chan->link_handle();

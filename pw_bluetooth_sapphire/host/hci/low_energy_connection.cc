@@ -28,7 +28,7 @@ LowEnergyConnection::LowEnergyConnection(
     const DeviceAddress& peer_address,
     const hci_spec::LEConnectionParameters& params,
     pw::bluetooth::emboss::ConnectionRole role,
-    const Transport::WeakPtr& hci)
+    const Transport::WeakPtrType& hci)
     : AclConnection(handle, local_address, peer_address, role, hci),
       WeakSelf(this),
       parameters_(params) {

@@ -131,7 +131,7 @@ class ControllerTest {
   void DeleteTransport() { transport_ = nullptr; }
 
   // Getters for internal fields frequently used by tests.
-  const typename ControllerTestDoubleType::WeakPtr& test_device() const {
+  const typename ControllerTestDoubleType::WeakPtrType& test_device() const {
     return test_device_;
   }
 
@@ -160,7 +160,7 @@ class ControllerTest {
 
   pw::async::Dispatcher& dispatcher_;
   pw::async::HeapDispatcher heap_dispatcher_{dispatcher_};
-  typename ControllerTestDoubleType::WeakPtr test_device_;
+  typename ControllerTestDoubleType::WeakPtrType test_device_;
   std::unique_ptr<hci::Transport> transport_;
   hci::ACLPacketHandler data_received_callback_;
 

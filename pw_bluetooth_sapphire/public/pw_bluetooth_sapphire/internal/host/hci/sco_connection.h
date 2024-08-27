@@ -21,13 +21,13 @@ class ScoConnection : public Connection, public WeakSelf<ScoConnection> {
   ScoConnection(hci_spec::ConnectionHandle handle,
                 const DeviceAddress& local_address,
                 const DeviceAddress& peer_address,
-                const hci::Transport::WeakPtr& hci);
+                const hci::Transport::WeakPtrType& hci);
 
  private:
   // This method must be static since it may be invoked after the connection
   // associated with it is destroyed.
   static void OnDisconnectionComplete(hci_spec::ConnectionHandle handle,
-                                      const hci::Transport::WeakPtr& hci);
+                                      const hci::Transport::WeakPtrType& hci);
 };
 
 }  // namespace bt::hci

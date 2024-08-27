@@ -44,8 +44,8 @@ class Phase1 final : public PairingPhase, public PairingChannelHandler {
   // of a `preq` parameter: Phase 1 builds & sends the Pairing Request as
   // initiator.
   static std::unique_ptr<Phase1> CreatePhase1Initiator(
-      PairingChannel::WeakPtr chan,
-      Listener::WeakPtr listener,
+      PairingChannel::WeakPtrType chan,
+      Listener::WeakPtrType listener,
       IOCapability io_capability,
       BondableMode bondable_mode,
       SecurityLevel requested_level,
@@ -55,8 +55,8 @@ class Phase1 final : public PairingPhase, public PairingChannelHandler {
   // is supplied the Pairing Request from the remote as responder. See private
   // ctor for parameter descriptions.
   static std::unique_ptr<Phase1> CreatePhase1Responder(
-      PairingChannel::WeakPtr chan,
-      Listener::WeakPtr listener,
+      PairingChannel::WeakPtrType chan,
+      Listener::WeakPtrType listener,
       PairingRequestParams preq,
       IOCapability io_capability,
       BondableMode bondable_mode,
@@ -81,8 +81,8 @@ class Phase1 final : public PairingPhase, public PairingChannelHandler {
   //                      authenticated, the ctor ASSERTs that |io_capabilities|
   //                      can perform authenticated pairing.
   //   |on_complete|: called at the end of Phase 1 with the resulting features.
-  Phase1(PairingChannel::WeakPtr chan,
-         Listener::WeakPtr listener,
+  Phase1(PairingChannel::WeakPtrType chan,
+         Listener::WeakPtrType listener,
          Role role,
          std::optional<PairingRequestParams> preq,
          IOCapability io_capability,

@@ -37,23 +37,23 @@ class PairingChannel {
     virtual void OnRxBFrame(ByteBufferPtr) = 0;
     virtual void OnChannelClosed() = 0;
 
-    using WeakPtr = WeakSelf<Handler>::WeakPtr;
+    using WeakPtrType = WeakSelf<Handler>::WeakPtrType;
   };
 
   // Initializes this PairingChannel with the L2CAP SMP fixed channel that this
   // class wraps and the specified timer reset method. For use in production
   // code.
-  PairingChannel(l2cap::Channel::WeakPtr chan, fit::closure timer_resetter);
+  PairingChannel(l2cap::Channel::WeakPtrType chan, fit::closure timer_resetter);
 
   // Initializes this PairingChannel with a no-op timer reset method. Only for
   // use in tests of classes which do not depend on the timer reset behavior.
-  explicit PairingChannel(l2cap::Channel::WeakPtr chan);
+  explicit PairingChannel(l2cap::Channel::WeakPtrType chan);
 
   // For setting the new handler, expected to be used when switching phases.
   // PairingChannel is not fully initialized until SetChannelHandler has been
   // called with a valid Handler. This two-phase initialization exists because
   // concrete Handlers are expected to depend on PairingChannels.
-  void SetChannelHandler(Handler::WeakPtr new_handler);
+  void SetChannelHandler(Handler::WeakPtrType new_handler);
 
   // Wrapper which encapsulates some of the boilerplate involved in sending an
   // SMP object.
@@ -77,8 +77,8 @@ class PairingChannel {
     chan_->Send(std::move(pdu));
   }
 
-  using WeakPtr = WeakSelf<PairingChannel>::WeakPtr;
-  PairingChannel::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<PairingChannel>::WeakPtrType;
+  PairingChannel::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   bool SupportsSecureConnections() const {
     return chan_->max_rx_sdu_size() >= kLeSecureConnectionsMtu &&
@@ -105,7 +105,7 @@ class PairingChannel {
   fit::closure reset_timer_;
 
   // L2CAP channel events are delegated to this handler.
-  Handler::WeakPtr handler_;
+  Handler::WeakPtrType handler_;
 
   WeakSelf<PairingChannel> weak_self_;
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(PairingChannel);

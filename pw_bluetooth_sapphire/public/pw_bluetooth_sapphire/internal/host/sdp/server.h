@@ -51,7 +51,7 @@ class Server final {
 
   // Initialize a new SDP profile connection with |peer_id| on |channel|.
   // Returns false if the channel cannot be activated.
-  bool AddConnection(l2cap::Channel::WeakPtr channel);
+  bool AddConnection(l2cap::Channel::WeakPtrType channel);
 
   // An identifier for a set of services that have been registered at the same
   // time.
@@ -73,7 +73,7 @@ class Server final {
   // |records| with a connected channel and the descriptor list for the endpoint
   // which was connected.
   using ConnectCallback =
-      fit::function<void(l2cap::Channel::WeakPtr, const DataElement&)>;
+      fit::function<void(l2cap::Channel::WeakPtrType, const DataElement&)>;
   RegistrationHandle RegisterService(std::vector<ServiceRecord> records,
                                      l2cap::ChannelParameters chan_params,
                                      ConnectCallback conn_cb);

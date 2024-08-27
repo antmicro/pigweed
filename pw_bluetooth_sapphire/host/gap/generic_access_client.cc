@@ -21,7 +21,7 @@
 namespace bt::gap::internal {
 
 GenericAccessClient::GenericAccessClient(PeerId peer_id,
-                                         gatt::RemoteService::WeakPtr service)
+                                         gatt::RemoteService::WeakPtrType service)
     : WeakSelf(this), service_(std::move(service)), peer_id_(peer_id) {
   BT_ASSERT(service_.is_alive());
   BT_ASSERT(service_->uuid() == kGenericAccessService);

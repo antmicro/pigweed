@@ -108,8 +108,8 @@ class FakeDynamicChannel {
   }
 
   // Return a WeakPtr instance of this FakeDynamicChannel
-  using WeakPtr = WeakSelf<FakeDynamicChannel>::WeakPtr;
-  FakeDynamicChannel::WeakPtr AsWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<FakeDynamicChannel>::WeakPtrType;
+  FakeDynamicChannel::WeakPtrType AsWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
   // ConnectionHandle associated with what

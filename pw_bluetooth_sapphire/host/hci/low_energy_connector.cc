@@ -41,7 +41,7 @@ LowEnergyConnector::PendingRequest::PendingRequest(
     : peer_address(peer_address), status_callback(std::move(status_callback)) {}
 
 LowEnergyConnector::LowEnergyConnector(
-    Transport::WeakPtr hci,
+    Transport::WeakPtrType hci,
     LocalAddressDelegate* local_addr_delegate,
     pw::async::Dispatcher& dispatcher,
     IncomingConnectionDelegate delegate,

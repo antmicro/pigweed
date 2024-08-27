@@ -67,7 +67,7 @@ class FakeListener : public PairingPhase::Listener {
     last_error_ = error;
   }
 
-  PairingPhase::Listener::WeakPtr as_weak_ptr() {
+  PairingPhase::Listener::WeakPtrType as_weak_ptr() {
     return weak_self_.GetWeakPtr();
   }
 

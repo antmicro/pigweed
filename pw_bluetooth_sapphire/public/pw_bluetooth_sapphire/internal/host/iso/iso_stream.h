@@ -53,11 +53,11 @@ class IsoStream {
       uint8_t cis_id,
       hci_spec::ConnectionHandle cis_handle,
       CisEstablishedCallback on_established_cb,
-      hci::CommandChannel::WeakPtr cmd_channel,
+      hci::CommandChannel::WeakPtrType cmd_channel,
       pw::Callback<void()> on_closed_cb);
 
-  using WeakPtr = WeakSelf<IsoStream>::WeakPtr;
-  virtual WeakPtr GetWeakPtr() = 0;
+  using WeakPtrType = WeakSelf<IsoStream>::WeakPtrType;
+  virtual WeakPtrType GetWeakPtr() = 0;
 };
 
 }  // namespace bt::iso

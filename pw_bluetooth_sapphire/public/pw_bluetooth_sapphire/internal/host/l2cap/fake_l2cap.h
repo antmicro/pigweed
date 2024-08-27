@@ -84,10 +84,10 @@ class FakeL2cap final : public ChannelManager {
       hci_spec::LEPreferredConnectionParameters params,
       ConnectionParameterUpdateRequestCallback request_cb) override;
 
-  Channel::WeakPtr OpenFixedChannel(
+  Channel::WeakPtrType OpenFixedChannel(
       hci_spec::ConnectionHandle connection_handle,
       ChannelId channel_id) override {
-    return Channel::WeakPtr();
+    return Channel::WeakPtrType();
   }
   void OpenL2capChannel(hci_spec::ConnectionHandle handle,
                         Psm psm,
@@ -98,15 +98,15 @@ class FakeL2cap final : public ChannelManager {
                        ChannelCallback channel_callback) override;
   void UnregisterService(Psm psm) override;
 
-  WeakSelf<internal::LogicalLink>::WeakPtr LogicalLinkForTesting(
+  WeakSelf<internal::LogicalLink>::WeakPtrType LogicalLinkForTesting(
       hci_spec::ConnectionHandle handle) override {
-    return WeakSelf<internal::LogicalLink>::WeakPtr();
+    return WeakSelf<internal::LogicalLink>::WeakPtrType();
   }
 
   // Called when a new channel gets opened. Tests can use this to obtain a
   // reference to all channels.
   using FakeChannelCallback =
-      fit::function<void(testing::FakeChannel::WeakPtr)>;
+      fit::function<void(testing::FakeChannel::WeakPtrType)>;
   void set_channel_callback(FakeChannelCallback callback) {
     chan_cb_ = std::move(callback);
   }
@@ -154,12 +154,12 @@ class FakeL2cap final : public ChannelManager {
                              bt::LinkType link_type,
                              LinkErrorCallback link_error_callback);
 
-  testing::FakeChannel::WeakPtr OpenFakeChannel(
+  testing::FakeChannel::WeakPtrType OpenFakeChannel(
       LinkData* link,
       ChannelId id,
       ChannelId remote_id,
       ChannelInfo info = ChannelInfo::MakeBasicMode(kDefaultMTU, kDefaultMTU));
-  testing::FakeChannel::WeakPtr OpenFakeFixedChannel(LinkData* link,
+  testing::FakeChannel::WeakPtrType OpenFakeFixedChannel(LinkData* link,
                                                      ChannelId id);
 
   // Gets the link data for |handle|, creating it if necessary.

@@ -26,8 +26,8 @@
 namespace bt::sm {
 
 SecurityRequestPhase::SecurityRequestPhase(
-    PairingChannel::WeakPtr chan,
-    Listener::WeakPtr listener,
+    PairingChannel::WeakPtrType chan,
+    Listener::WeakPtrType listener,
     SecurityLevel desired_level,
     BondableMode bondable_mode,
     PairingRequestCallback on_pairing_req)

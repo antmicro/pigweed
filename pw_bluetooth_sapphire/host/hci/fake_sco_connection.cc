@@ -19,7 +19,7 @@ namespace bt::hci::testing {
 FakeScoConnection::FakeScoConnection(hci_spec::ConnectionHandle handle,
                                      const DeviceAddress& local_address,
                                      const DeviceAddress& peer_address,
-                                     const hci::Transport::WeakPtr& hci)
+                                     const hci::Transport::WeakPtrType& hci)
     : ScoConnection(handle, local_address, peer_address, hci) {}
 
 }  // namespace bt::hci::testing

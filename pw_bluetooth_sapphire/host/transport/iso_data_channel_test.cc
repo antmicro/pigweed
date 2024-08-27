@@ -42,8 +42,8 @@ class IsoMockConnectionInterface : public IsoDataChannel::ConnectionInterface {
 
   void ReceiveInboundPacket() override {}
 
-  using WeakPtr = WeakSelf<IsoMockConnectionInterface>::WeakPtr;
-  IsoMockConnectionInterface::WeakPtr GetWeakPtr() {
+  using WeakPtrType = WeakSelf<IsoMockConnectionInterface>::WeakPtrType;
+  IsoMockConnectionInterface::WeakPtrType GetWeakPtr() {
     return weak_self_.GetWeakPtr();
   }
 

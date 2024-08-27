@@ -22,9 +22,9 @@
 namespace bt::gap {
 
 LowEnergyInterrogator::LowEnergyInterrogator(
-    Peer::WeakPtr peer,
+    Peer::WeakPtrType peer,
     hci_spec::ConnectionHandle handle,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     bool sca_supported)
     : peer_(std::move(peer)),
       peer_id_(peer_->identifier()),

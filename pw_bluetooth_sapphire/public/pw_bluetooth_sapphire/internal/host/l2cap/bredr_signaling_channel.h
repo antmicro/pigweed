@@ -24,7 +24,7 @@ namespace bt::l2cap::internal {
 // the L2CAP thread in production.
 class BrEdrSignalingChannel final : public SignalingChannel {
  public:
-  BrEdrSignalingChannel(Channel::WeakPtr chan,
+  BrEdrSignalingChannel(Channel::WeakPtrType chan,
                         pw::bluetooth::emboss::ConnectionRole role,
                         pw::async::Dispatcher& dispatcher);
   ~BrEdrSignalingChannel() override = default;

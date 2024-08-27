@@ -40,12 +40,12 @@ uint8_t GetPasskeyBit(uint32_t passkey, size_t passkey_bit_location) {
 
 }  // namespace
 
-ScStage1Passkey::ScStage1Passkey(PairingPhase::Listener::WeakPtr listener,
+ScStage1Passkey::ScStage1Passkey(PairingPhase::Listener::WeakPtrType listener,
                                  Role role,
                                  UInt256 local_pub_key_x,
                                  UInt256 peer_pub_key_x,
                                  PairingMethod method,
-                                 PairingChannel::WeakPtr sm_chan,
+                                 PairingChannel::WeakPtrType sm_chan,
                                  Stage1CompleteCallback on_complete)
     : listener_(std::move(listener)),
       role_(role),

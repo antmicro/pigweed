@@ -62,10 +62,10 @@ class SecurityManagerImpl final : public SecurityManager,
                                   public PairingChannel::Handler {
  public:
   ~SecurityManagerImpl() override;
-  SecurityManagerImpl(hci::LowEnergyConnection::WeakPtr link,
-                      l2cap::Channel::WeakPtr smp,
+  SecurityManagerImpl(hci::LowEnergyConnection::WeakPtrType link,
+                      l2cap::Channel::WeakPtrType smp,
                       IOCapability io_capability,
-                      Delegate::WeakPtr delegate,
+                      Delegate::WeakPtrType delegate,
                       BondableMode bondable_mode,
                       gap::LESecurityMode security_mode,
                       pw::async::Dispatcher& dispatcher);
@@ -202,10 +202,10 @@ class SecurityManagerImpl final : public SecurityManager,
   PairingProcedureId next_pairing_id_;
 
   // The higher-level class acting as a delegate for operations outside of SMP.
-  Delegate::WeakPtr delegate_;
+  Delegate::WeakPtrType delegate_;
 
   // Data for the currently registered LE-U link, if any.
-  hci::LowEnergyConnection::WeakPtr le_link_;
+  hci::LowEnergyConnection::WeakPtrType le_link_;
 
   // The IO capabilities of the device
   IOCapability io_cap_;
@@ -258,10 +258,10 @@ SecurityManagerImpl::~SecurityManagerImpl() {
   }
 }
 
-SecurityManagerImpl::SecurityManagerImpl(hci::LowEnergyConnection::WeakPtr link,
-                                         l2cap::Channel::WeakPtr smp,
+SecurityManagerImpl::SecurityManagerImpl(hci::LowEnergyConnection::WeakPtrType link,
+                                         l2cap::Channel::WeakPtrType smp,
                                          IOCapability io_capability,
-                                         Delegate::WeakPtr delegate,
+                                         Delegate::WeakPtrType delegate,
                                          BondableMode bondable_mode,
                                          gap::LESecurityMode security_mode,
                                          pw::async::Dispatcher& dispatcher)
@@ -1014,10 +1014,10 @@ Result<> SecurityManagerImpl::ValidateExistingLocalLtk() {
 }
 
 std::unique_ptr<SecurityManager> SecurityManager::Create(
-    hci::LowEnergyConnection::WeakPtr link,
-    l2cap::Channel::WeakPtr smp,
+    hci::LowEnergyConnection::WeakPtrType link,
+    l2cap::Channel::WeakPtrType smp,
     IOCapability io_capability,
-    Delegate::WeakPtr delegate,
+    Delegate::WeakPtrType delegate,
     BondableMode bondable_mode,
     gap::LESecurityMode security_mode,
     pw::async::Dispatcher& dispatcher) {

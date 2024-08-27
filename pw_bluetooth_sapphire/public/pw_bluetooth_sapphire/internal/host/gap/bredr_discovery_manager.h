@@ -51,7 +51,7 @@ class BrEdrDiscoveryManager final {
  public:
   // |peer_cache| MUST out-live this BrEdrDiscoveryManager.
   BrEdrDiscoveryManager(pw::async::Dispatcher& pw_dispatcher,
-                        hci::CommandChannel::WeakPtr cmd,
+                        hci::CommandChannel::WeakPtrType cmd,
                         pw::bluetooth::emboss::InquiryMode mode,
                         PeerCache* peer_cache);
 
@@ -87,7 +87,7 @@ class BrEdrDiscoveryManager final {
   // Attach discovery manager inspect node as a child node of |parent|.
   void AttachInspect(inspect::Node& parent, std::string name);
 
-  using WeakPtr = WeakSelf<BrEdrDiscoveryManager>::WeakPtr;
+  using WeakPtrType = WeakSelf<BrEdrDiscoveryManager>::WeakPtrType;
 
  private:
   friend class BrEdrDiscoverySession;
@@ -151,7 +151,7 @@ class BrEdrDiscoveryManager final {
   void UpdateInspectProperties();
 
   // The Command channel
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   struct InspectProperties {
     inspect::Node node;
@@ -256,7 +256,7 @@ class BrEdrDiscoverySession final {
   friend class BrEdrDiscoveryManager;
 
   // Used by the BrEdrDiscoveryManager to create a session.
-  explicit BrEdrDiscoverySession(BrEdrDiscoveryManager::WeakPtr manager);
+  explicit BrEdrDiscoverySession(BrEdrDiscoveryManager::WeakPtrType manager);
 
   // Called by the BrEdrDiscoveryManager when a peer report is found.
   void NotifyDiscoveryResult(const Peer& peer) const;
@@ -264,7 +264,7 @@ class BrEdrDiscoverySession final {
   // Marks this session as ended because of an error.
   void NotifyError() const;
 
-  BrEdrDiscoveryManager::WeakPtr manager_;
+  BrEdrDiscoveryManager::WeakPtrType manager_;
   fit::closure error_callback_;
   PeerFoundCallback peer_found_callback_;
 
@@ -281,9 +281,9 @@ class BrEdrDiscoverableSession final {
   friend class BrEdrDiscoveryManager;
 
   // Used by the BrEdrDiscoveryManager to create a session.
-  explicit BrEdrDiscoverableSession(BrEdrDiscoveryManager::WeakPtr manager);
+  explicit BrEdrDiscoverableSession(BrEdrDiscoveryManager::WeakPtrType manager);
 
-  BrEdrDiscoveryManager::WeakPtr manager_;
+  BrEdrDiscoveryManager::WeakPtrType manager_;
 
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(BrEdrDiscoverableSession);
 };

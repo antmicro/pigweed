@@ -94,10 +94,10 @@ class Connection {
   Connection(hci_spec::ConnectionHandle handle,
              const DeviceAddress& local_address,
              const DeviceAddress& peer_address,
-             Transport::WeakPtr hci,
+             Transport::WeakPtrType hci,
              fit::callback<void()> on_disconnection_complete);
 
-  const Transport::WeakPtr& hci() { return hci_; }
+  const Transport::WeakPtrType& hci() { return hci_; }
 
   PeerDisconnectCallback& peer_disconnect_callback() {
     return peer_disconnect_callback_;
@@ -110,7 +110,7 @@ class Connection {
   // connection. This method is static so that it can be called in an event
   // handler after this object has been destroyed.
   static CommandChannel::EventCallbackResult OnDisconnectionComplete(
-      const WeakSelf<Connection>::WeakPtr& self,
+      const WeakSelf<Connection>::WeakPtrType& self,
       hci_spec::ConnectionHandle handle,
       const EmbossEventPacket& event,
       fit::callback<void()> on_disconnection_complete);
@@ -125,7 +125,7 @@ class Connection {
 
   State conn_state_;
 
-  Transport::WeakPtr hci_;
+  Transport::WeakPtrType hci_;
 
   WeakSelf<Connection> weak_self_;
 

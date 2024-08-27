@@ -237,8 +237,8 @@ class CommandChannel final {
   void AttachInspect(inspect::Node& parent,
                      const std::string& name = kInspectNodeName);
 
-  using WeakPtr = WeakSelf<CommandChannel>::WeakPtr;
-  WeakPtr AsWeakPtr() { return weak_ptr_factory_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<CommandChannel>::WeakPtrType;
+  WeakPtrType AsWeakPtr() { return weak_ptr_factory_.GetWeakPtr(); }
 
  private:
   TransactionId SendExclusiveCommandInternal(

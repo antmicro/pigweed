@@ -24,7 +24,7 @@
 
 namespace bt::l2cap::internal {
 
-SignalingChannel::SignalingChannel(Channel::WeakPtr chan,
+SignalingChannel::SignalingChannel(Channel::WeakPtrType chan,
                                    pw::bluetooth::emboss::ConnectionRole role,
                                    pw::async::Dispatcher& dispatcher)
     : pw_dispatcher_(dispatcher),

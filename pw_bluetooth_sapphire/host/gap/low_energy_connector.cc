@@ -46,11 +46,11 @@ constexpr const char* kInspectIsOutboundPropertyName = "is_outbound";
 LowEnergyConnector::LowEnergyConnector(
     PeerId peer_id,
     LowEnergyConnectionOptions options,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     PeerCache* peer_cache,
-    WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+    WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
     l2cap::ChannelManager* l2cap,
-    gatt::GATT::WeakPtr gatt,
+    gatt::GATT::WeakPtrType gatt,
     const AdapterState& adapter_state,
     pw::async::Dispatcher& dispatcher)
     : dispatcher_(dispatcher),
@@ -101,7 +101,7 @@ LowEnergyConnector::~LowEnergyConnector() {
 void LowEnergyConnector::StartOutbound(
     pw::chrono::SystemClock::duration request_timeout,
     hci::LowEnergyConnector* connector,
-    LowEnergyDiscoveryManager::WeakPtr discovery_manager,
+    LowEnergyDiscoveryManager::WeakPtrType discovery_manager,
     ResultCallback cb) {
   BT_ASSERT(*state_ == State::kDefault);
   BT_ASSERT(discovery_manager.is_alive());

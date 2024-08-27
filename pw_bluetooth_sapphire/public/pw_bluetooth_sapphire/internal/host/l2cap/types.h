@@ -33,7 +33,7 @@ namespace bt::l2cap {
 class Channel;
 // Callback invoked when a channel has been created or when an error occurs
 // during channel creation (in which case the channel will be nullptr).
-using ChannelCallback = fit::function<void(WeakSelf<Channel>::WeakPtr)>;
+using ChannelCallback = fit::function<void(WeakSelf<Channel>::WeakPtrType)>;
 
 // Callback invoked when a logical link should be closed due to an error.
 using LinkErrorCallback = fit::closure;
@@ -52,7 +52,7 @@ using ConnectionParameterUpdateRequestCallback =
 // Callback used to deliver LE fixed channels that are created when a LE link is
 // registered with L2CAP.
 using LEFixedChannelsCallback = fit::function<void(
-    WeakSelf<Channel>::WeakPtr att, WeakSelf<Channel>::WeakPtr smp)>;
+    WeakSelf<Channel>::WeakPtrType att, WeakSelf<Channel>::WeakPtrType smp)>;
 
 // Callback used to request a security upgrade for an active logical link.
 // Invokes its |callback| argument with the result of the operation.

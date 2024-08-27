@@ -36,12 +36,12 @@ namespace bt::sm {
 // Phase2SecureConnections's creation thread.
 class ScStage1JustWorksNumericComparison final : public ScStage1 {
  public:
-  ScStage1JustWorksNumericComparison(PairingPhase::Listener::WeakPtr listener,
+  ScStage1JustWorksNumericComparison(PairingPhase::Listener::WeakPtrType listener,
                                      Role role,
                                      UInt256 local_pub_key_x,
                                      UInt256 peer_pub_key_x,
                                      PairingMethod method,
-                                     PairingChannel::WeakPtr sm_chan,
+                                     PairingChannel::WeakPtrType sm_chan,
                                      Stage1CompleteCallback on_complete);
   void Run() override;
   void OnPairingConfirm(PairingConfirmValue confirm) override;
@@ -53,7 +53,7 @@ class ScStage1JustWorksNumericComparison final : public ScStage1 {
   // Called after all crypto messages have been exchanged
   void CompleteStage1();
 
-  PairingPhase::Listener::WeakPtr listener_;
+  PairingPhase::Listener::WeakPtrType listener_;
   Role role_;
   UInt256 local_public_key_x_;
   UInt256 peer_public_key_x_;
@@ -72,7 +72,7 @@ class ScStage1JustWorksNumericComparison final : public ScStage1 {
   // Random message.
   std::optional<PairingRandomValue> peer_rand_;
 
-  PairingChannel::WeakPtr sm_chan_;
+  PairingChannel::WeakPtrType sm_chan_;
   Stage1CompleteCallback on_complete_;
   WeakSelf<ScStage1JustWorksNumericComparison> weak_self_;
 };

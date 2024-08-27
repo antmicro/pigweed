@@ -69,7 +69,7 @@ std::unique_ptr<ChannelImpl> ChannelImpl::CreateFixedChannel(
     pw::async::Dispatcher& dispatcher,
     ChannelId id,
     internal::LogicalLinkWeakPtr link,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     uint16_t max_acl_payload_size,
     A2dpOffloadManager& a2dp_offload_manager,
     uint16_t max_tx_queued) {
@@ -99,7 +99,7 @@ std::unique_ptr<ChannelImpl> ChannelImpl::CreateDynamicChannel(
     ChannelId peer_id,
     internal::LogicalLinkWeakPtr link,
     ChannelInfo info,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     uint16_t max_acl_payload_size,
     A2dpOffloadManager& a2dp_offload_manager,
     uint16_t max_tx_queued) {
@@ -119,7 +119,7 @@ ChannelImpl::ChannelImpl(pw::async::Dispatcher& dispatcher,
                          ChannelId remote_id,
                          internal::LogicalLinkWeakPtr link,
                          ChannelInfo info,
-                         hci::CommandChannel::WeakPtr cmd_channel,
+                         hci::CommandChannel::WeakPtrType cmd_channel,
                          uint16_t max_acl_payload_size,
                          A2dpOffloadManager& a2dp_offload_manager,
                          uint16_t max_tx_queued)

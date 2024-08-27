@@ -63,8 +63,8 @@ class FakeChannel : public Channel {
   // Emulates channel closure.
   void Close();
 
-  using WeakPtr = WeakSelf<FakeChannel>::WeakPtr;
-  FakeChannel::WeakPtr AsWeakPtr() { return weak_fake_chan_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<FakeChannel>::WeakPtrType;
+  FakeChannel::WeakPtrType AsWeakPtr() { return weak_fake_chan_.GetWeakPtr(); }
 
   // Activating always fails if true.
   void set_activate_fails(bool value) { activate_fails_ = value; }

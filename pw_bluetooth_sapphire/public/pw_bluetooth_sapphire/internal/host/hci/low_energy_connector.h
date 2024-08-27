@@ -74,7 +74,7 @@ class LowEnergyConnector : public LocalAddressClient {
   //
   //   - |use_extended_operations|: If true, send LE Extended Create Connection
   //     to the Controller instead of LE Create Connection.
-  LowEnergyConnector(Transport::WeakPtr hci,
+  LowEnergyConnector(Transport::WeakPtrType hci,
                      LocalAddressDelegate* local_addr_delegate,
                      pw::async::Dispatcher& dispatcher,
                      IncomingConnectionDelegate delegate,
@@ -174,7 +174,7 @@ class LowEnergyConnector : public LocalAddressClient {
   template <typename T>
   void OnConnectionCompleteEvent(const EmbossEventPacket& event);
 
-  Transport::WeakPtr hci() const { return hci_; }
+  Transport::WeakPtrType hci() const { return hci_; }
 
   // Called by CreateConnection() after the local device address has been
   // obtained.
@@ -201,7 +201,7 @@ class LowEnergyConnector : public LocalAddressClient {
   pw::async::Dispatcher& pw_dispatcher_;
 
   // The HCI transport.
-  Transport::WeakPtr hci_;
+  Transport::WeakPtrType hci_;
 
   // Used to obtain the local device address type to use during initiation.
   LocalAddressDelegate* local_addr_delegate_;  // weak

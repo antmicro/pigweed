@@ -281,7 +281,7 @@ void Server::AttachInspect(inspect::Node& parent, std::string name) {
   UpdateInspectProperties();
 }
 
-bool Server::AddConnection(l2cap::Channel::WeakPtr channel) {
+bool Server::AddConnection(l2cap::Channel::WeakPtrType channel) {
   BT_ASSERT(channel.is_alive());
   hci_spec::ConnectionHandle handle = channel->link_handle();
   bt_log(DEBUG, "sdp", "add connection handle %#.4x", handle);
@@ -539,7 +539,7 @@ RegistrationHandle Server::RegisterService(std::vector<ServiceRecord> records,
         psm,
         chan_params,
         [psm = psm,
-         conn_cb = conn_cb.share()](l2cap::Channel::WeakPtr channel) mutable {
+         conn_cb = conn_cb.share()](l2cap::Channel::WeakPtrType channel) mutable {
           bt_log(TRACE, "sdp", "Channel connected to %#.4x", psm);
           // Build the L2CAP descriptor
           std::vector<DataElement> protocol_l2cap;
@@ -821,7 +821,7 @@ void Server::Send(l2cap::Channel::UniqueId channel_id, ByteBufferPtr bytes) {
     bt_log(ERROR, "sdp", "can't find peer to respond to; dropping");
     return;
   }
-  l2cap::Channel::WeakPtr chan = it->second.get();
+  l2cap::Channel::WeakPtrType chan = it->second.get();
   chan->Send(std::move(bytes));
 }
 

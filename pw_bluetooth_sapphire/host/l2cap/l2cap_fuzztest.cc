@@ -142,7 +142,7 @@ class DataFuzzTest : public TestingBase {
     channel_manager_->RegisterService(
         l2cap::kAVDTP,
         l2cap::ChannelParameters(),
-        [this](l2cap::Channel::WeakPtr chan) {
+        [this](l2cap::Channel::WeakPtrType chan) {
           if (!chan.is_alive()) {
             return;
           }
@@ -172,7 +172,7 @@ class DataFuzzTest : public TestingBase {
   pw::random::FuzzerRandomGenerator rng_;
   std::unique_ptr<l2cap::ChannelManager> channel_manager_;
   bool connection_ = false;
-  std::unordered_map<l2cap::ChannelId, l2cap::Channel::WeakPtr> channels_;
+  std::unordered_map<l2cap::ChannelId, l2cap::Channel::WeakPtrType> channels_;
 };
 
 }  // namespace bt::testing

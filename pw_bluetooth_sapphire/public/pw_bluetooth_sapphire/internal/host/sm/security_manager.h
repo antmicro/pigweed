@@ -51,10 +51,10 @@ class SecurityManager {
   // (see v5.2, Vol. 3, Part C 9.4). |security_mode|: the security mode of this
   // SecurityManager (see v5.2, Vol. 3, Part C 10.2).
   static std::unique_ptr<SecurityManager> Create(
-      hci::LowEnergyConnection::WeakPtr link,
-      l2cap::Channel::WeakPtr smp,
+      hci::LowEnergyConnection::WeakPtrType link,
+      l2cap::Channel::WeakPtrType smp,
       IOCapability io_capability,
-      Delegate::WeakPtr delegate,
+      Delegate::WeakPtrType delegate,
       BondableMode bondable_mode,
       gap::LESecurityMode security_mode,
       pw::async::Dispatcher& dispatcher);

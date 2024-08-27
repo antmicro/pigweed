@@ -46,10 +46,10 @@ namespace bt {
 
 namespace sm {
 using SecurityManagerFactory = std::function<std::unique_ptr<SecurityManager>(
-    hci::LowEnergyConnection::WeakPtr,
-    l2cap::Channel::WeakPtr,
+    hci::LowEnergyConnection::WeakPtrType,
+    l2cap::Channel::WeakPtrType,
     IOCapability,
-    Delegate::WeakPtr,
+    Delegate::WeakPtrType,
     BondableMode,
     gap::LESecurityMode,
     pw::async::Dispatcher&)>;
@@ -102,13 +102,13 @@ class LowEnergyConnectionManager final {
   // |gatt|: Used to interact with the GATT profile layer.
   // |adapter_state|: Provides information on controller capabilities.
   LowEnergyConnectionManager(
-      hci::CommandChannel::WeakPtr cmd_channel,
+      hci::CommandChannel::WeakPtrType cmd_channel,
       hci::LocalAddressDelegate* addr_delegate,
       hci::LowEnergyConnector* connector,
       PeerCache* peer_cache,
       l2cap::ChannelManager* l2cap,
-      gatt::GATT::WeakPtr gatt,
-      LowEnergyDiscoveryManager::WeakPtr discovery_manager,
+      gatt::GATT::WeakPtrType gatt,
+      LowEnergyDiscoveryManager::WeakPtrType discovery_manager,
       sm::SecurityManagerFactory sm_creator,
       const AdapterState& adapter_state,
       pw::async::Dispatcher& dispatcher);
@@ -169,7 +169,7 @@ class LowEnergyConnectionManager final {
       ConnectionResultCallback callback);
 
   // Returns the PairingDelegate currently assigned to this connection manager.
-  const PairingDelegate::WeakPtr& pairing_delegate() const {
+  const PairingDelegate::WeakPtrType& pairing_delegate() const {
     return pairing_delegate_;
   }
 
@@ -177,7 +177,7 @@ class LowEnergyConnectionManager final {
   // Replacing an existing pairing delegate cancels all ongoing pairing
   // procedures. If a delegate is not set then all pairing requests will be
   // rejected.
-  void SetPairingDelegate(const PairingDelegate::WeakPtr& delegate);
+  void SetPairingDelegate(const PairingDelegate::WeakPtrType& delegate);
 
   // TODO(armansito): Add a PeerCache::Observer interface and move these
   // callbacks there.
@@ -237,7 +237,7 @@ class LowEnergyConnectionManager final {
     return sm_factory_func_;
   }
 
-  using WeakPtr = WeakSelf<LowEnergyConnectionManager>::WeakPtr;
+  using WeakPtrType = WeakSelf<LowEnergyConnectionManager>::WeakPtrType;
 
  private:
   friend class internal::LowEnergyConnection;
@@ -319,11 +319,11 @@ class LowEnergyConnectionManager final {
 
   pw::async::Dispatcher& dispatcher_;
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   // The pairing delegate used for authentication challenges. If nullptr, all
   // pairing requests will be rejected.
-  PairingDelegate::WeakPtr pairing_delegate_;
+  PairingDelegate::WeakPtrType pairing_delegate_;
 
   // The GAP LE security mode of the device (v5.2 Vol. 3 Part C 10.2).
   LESecurityMode security_mode_;
@@ -347,7 +347,7 @@ class LowEnergyConnectionManager final {
 
   // The GATT layer reference, used to add and remove ATT data bearers and
   // service discovery.
-  gatt::GATT::WeakPtr gatt_;
+  gatt::GATT::WeakPtrType gatt_;
 
   // Provides us with information on the capabilities of our controller
   AdapterState adapter_state_;
@@ -355,7 +355,7 @@ class LowEnergyConnectionManager final {
   // Local GATT service registry.
   std::unique_ptr<gatt::LocalServiceManager> gatt_registry_;
 
-  LowEnergyDiscoveryManager::WeakPtr discovery_manager_;
+  LowEnergyDiscoveryManager::WeakPtrType discovery_manager_;
 
   // Callbacks used by unit tests to observe connection state events.
   DisconnectCallback test_disconn_cb_;

@@ -21,7 +21,7 @@
 namespace bt::gatt::testing {
 
 MockServer::MockServer(PeerId peer_id,
-                       LocalServiceManager::WeakPtr local_services)
+                       LocalServiceManager::WeakPtrType local_services)
     : peer_id_(peer_id),
       local_services_(std::move(local_services)),
       weak_self_(this) {}

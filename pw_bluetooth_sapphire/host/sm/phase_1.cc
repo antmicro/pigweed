@@ -31,8 +31,8 @@
 namespace bt::sm {
 
 std::unique_ptr<Phase1> Phase1::CreatePhase1Initiator(
-    PairingChannel::WeakPtr chan,
-    Listener::WeakPtr listener,
+    PairingChannel::WeakPtrType chan,
+    Listener::WeakPtrType listener,
     IOCapability io_capability,
     BondableMode bondable_mode,
     SecurityLevel requested_level,
@@ -51,8 +51,8 @@ std::unique_ptr<Phase1> Phase1::CreatePhase1Initiator(
 }
 
 std::unique_ptr<Phase1> Phase1::CreatePhase1Responder(
-    PairingChannel::WeakPtr chan,
-    Listener::WeakPtr listener,
+    PairingChannel::WeakPtrType chan,
+    Listener::WeakPtrType listener,
     PairingRequestParams preq,
     IOCapability io_capability,
     BondableMode bondable_mode,
@@ -71,8 +71,8 @@ std::unique_ptr<Phase1> Phase1::CreatePhase1Responder(
                                             std::move(on_complete)));
 }
 
-Phase1::Phase1(PairingChannel::WeakPtr chan,
-               Listener::WeakPtr listener,
+Phase1::Phase1(PairingChannel::WeakPtrType chan,
+               Listener::WeakPtrType listener,
                Role role,
                std::optional<PairingRequestParams> preq,
                IOCapability io_capability,

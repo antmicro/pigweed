@@ -50,7 +50,7 @@ void MockChannelTest::QueueTransaction(
   transactions_.emplace(expected, replies, meta);
 }
 
-FakeChannel::WeakPtr MockChannelTest::CreateFakeChannel(
+FakeChannel::WeakPtrType MockChannelTest::CreateFakeChannel(
     const ChannelOptions& options) {
   fake_chan_ = std::make_unique<FakeChannel>(
       options.id,

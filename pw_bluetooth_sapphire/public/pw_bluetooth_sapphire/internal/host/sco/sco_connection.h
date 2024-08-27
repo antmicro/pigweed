@@ -79,8 +79,8 @@ class ScoConnection final : public hci::ScoDataChannel::ConnectionInterface {
   // returns nullptr.
   std::unique_ptr<hci::ScoDataPacket> Read();
 
-  using WeakPtr = WeakSelf<ScoConnection>::WeakPtr;
-  WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<ScoConnection>::WeakPtrType;
+  WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   // ScoDataChannel overrides:
   bt::StaticPacket<pw::bluetooth::emboss::SynchronousConnectionParametersWriter>

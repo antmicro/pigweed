@@ -39,7 +39,7 @@ constexpr bt::UUID kChrcUuid(uint16_t{113u});
 // Factory function for tests of client-facing behavior that don't care about
 // the server
 std::unique_ptr<Server> CreateMockServer(
-    PeerId peer_id, LocalServiceManager::WeakPtr local_services) {
+    PeerId peer_id, LocalServiceManager::WeakPtrType local_services) {
   return std::make_unique<testing::MockServer>(peer_id,
                                                std::move(local_services));
 }
@@ -108,13 +108,13 @@ class GattTest : public pw::async::test::FakeDispatcherFixture {
 
   GATT* gatt() const { return gatt_.get(); }
 
-  testing::FakeClient::WeakPtr fake_client() const { return fake_client_weak_; }
+  testing::FakeClient::WeakPtrType fake_client() const { return fake_client_weak_; }
   std::unique_ptr<Client> take_client() { return std::move(client_); }
 
  private:
   std::unique_ptr<GATT> gatt_;
   std::unique_ptr<Client> client_;
-  testing::FakeClient::WeakPtr fake_client_weak_;
+  testing::FakeClient::WeakPtrType fake_client_weak_;
 
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(GattTest);
 };
@@ -387,9 +387,9 @@ TEST_F(GattTest, MultipleRegisterRemoteServiceWatcherForPeers) {
 }
 
 TEST_F(GattTest, ServiceDiscoveryFailureShutsDownConnection) {
-  testing::MockServer::WeakPtr mock_server;
+  testing::MockServer::WeakPtrType mock_server;
   auto mock_server_factory = [&](PeerId peer_id,
-                                 LocalServiceManager::WeakPtr local_services) {
+                                 LocalServiceManager::WeakPtrType local_services) {
     auto unique_mock_server = std::make_unique<testing::MockServer>(
         peer_id, std::move(local_services));
     mock_server = unique_mock_server->AsMockWeakPtr();
@@ -422,9 +422,9 @@ class GattTestBoolParam : public GattTest,
                           public ::testing::WithParamInterface<bool> {};
 
 TEST_P(GattTestBoolParam, SendIndicationReceiveResponse) {
-  testing::MockServer::WeakPtr mock_server;
+  testing::MockServer::WeakPtrType mock_server;
   auto mock_server_factory = [&](PeerId peer_id,
-                                 LocalServiceManager::WeakPtr local_services) {
+                                 LocalServiceManager::WeakPtrType local_services) {
     auto unique_mock_server = std::make_unique<testing::MockServer>(
         peer_id, std::move(local_services));
     mock_server = unique_mock_server->AsMockWeakPtr();
@@ -488,9 +488,9 @@ TEST_F(GattTest, NotifyConnectedPeerWithConnectionDoesntCrash) {
   // realistic test.
   IdType svc_id = RegisterArbitraryService();
 
-  testing::MockServer::WeakPtr mock_server;
+  testing::MockServer::WeakPtrType mock_server;
   auto mock_server_factory = [&](PeerId peer_id,
-                                 LocalServiceManager::WeakPtr local_services) {
+                                 LocalServiceManager::WeakPtrType local_services) {
     auto unique_mock_server = std::make_unique<testing::MockServer>(
         peer_id, std::move(local_services));
     mock_server = unique_mock_server->AsMockWeakPtr();
@@ -625,9 +625,9 @@ TEST_F(GattTest, MtuExchangeFailsListenersNotNotifiedConnectionShutdown) {
   fake_client()->set_exchange_mtu_status(ToResult(HostError::kFailed));
 
   // Track mock server
-  testing::MockServer::WeakPtr mock_server;
+  testing::MockServer::WeakPtrType mock_server;
   auto mock_server_factory = [&](PeerId peer_id,
-                                 LocalServiceManager::WeakPtr local_services) {
+                                 LocalServiceManager::WeakPtrType local_services) {
     auto unique_mock_server = std::make_unique<testing::MockServer>(
         peer_id, std::move(local_services));
     mock_server = unique_mock_server->AsMockWeakPtr();
@@ -656,7 +656,7 @@ class GattIndicateMultipleConnectedPeersTest : public GattTest {
 
     // Add first connection
     auto mock_server_factory_0 =
-        [&](PeerId peer_id, LocalServiceManager::WeakPtr local_services) {
+        [&](PeerId peer_id, LocalServiceManager::WeakPtrType local_services) {
           auto unique_mock_server = std::make_unique<testing::MockServer>(
               peer_id, std::move(local_services));
           mock_server_0_ = unique_mock_server->AsMockWeakPtr();
@@ -669,7 +669,7 @@ class GattIndicateMultipleConnectedPeersTest : public GattTest {
 
     // Add second connection
     auto mock_server_factory_1 =
-        [&](PeerId peer_id, LocalServiceManager::WeakPtr local_services) {
+        [&](PeerId peer_id, LocalServiceManager::WeakPtrType local_services) {
           auto unique_mock_server = std::make_unique<testing::MockServer>(
               peer_id, std::move(local_services));
           mock_server_1_ = unique_mock_server->AsMockWeakPtr();
@@ -703,8 +703,8 @@ class GattIndicateMultipleConnectedPeersTest : public GattTest {
   IndicationCallback indication_ack_cb_0_;
   IndicationCallback indication_ack_cb_1_;
   IdType svc_id_;
-  testing::MockServer::WeakPtr mock_server_0_;
-  testing::MockServer::WeakPtr mock_server_1_;
+  testing::MockServer::WeakPtrType mock_server_0_;
+  testing::MockServer::WeakPtrType mock_server_1_;
 };
 
 TEST_F(GattIndicateMultipleConnectedPeersTest,

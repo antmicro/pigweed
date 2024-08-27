@@ -56,7 +56,7 @@ class ScoConnectionManager final {
                        hci_spec::ConnectionHandle acl_handle,
                        DeviceAddress peer_address,
                        DeviceAddress local_address,
-                       hci::Transport::WeakPtr transport);
+                       hci::Transport::WeakPtrType transport);
   // Closes connections and cancels connection requests.
   ~ScoConnectionManager();
 
@@ -66,7 +66,7 @@ class ScoConnectionManager final {
   // or |kFailed| if establishing a connection failed. Returns a handle that
   // will cancel the request when dropped (if connection establishment has not
   // started).
-  using OpenConnectionResult = fit::result<HostError, ScoConnection::WeakPtr>;
+  using OpenConnectionResult = fit::result<HostError, ScoConnection::WeakPtrType>;
   using OpenConnectionCallback = fit::callback<void(OpenConnectionResult)>;
   RequestHandle OpenConnection(
       bt::StaticPacket<
@@ -85,7 +85,7 @@ class ScoConnectionManager final {
   // when destroyed (if connection establishment has not started).
   using AcceptConnectionResult = fit::result<
       HostError,
-      std::pair<ScoConnection::WeakPtr, size_t /*index of parameters used*/>>;
+      std::pair<ScoConnection::WeakPtrType, size_t /*index of parameters used*/>>;
   using AcceptConnectionCallback = fit::callback<void(AcceptConnectionResult)>;
   RequestHandle AcceptConnection(
       std::vector<bt::StaticPacket<
@@ -97,7 +97,7 @@ class ScoConnectionManager final {
   using ScoRequestId = uint64_t;
   using ConnectionResult = fit::result<
       HostError,
-      std::pair<ScoConnection::WeakPtr, size_t /*index of parameters used*/>>;
+      std::pair<ScoConnection::WeakPtrType, size_t /*index of parameters used*/>>;
   using ConnectionCallback = fit::callback<void(ConnectionResult)>;
 
   class ConnectionRequest final {
@@ -200,7 +200,7 @@ class ScoConnectionManager final {
 
   hci_spec::ConnectionHandle acl_handle_;
 
-  hci::Transport::WeakPtr transport_;
+  hci::Transport::WeakPtrType transport_;
 
   // Keep this as the last member to make sure that all weak pointers are
   // invalidated before other members get destroyed.

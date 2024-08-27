@@ -507,9 +507,9 @@ void RemoteServiceManager::ListServices(const std::vector<UUID>& uuids,
   }
 }
 
-RemoteService::WeakPtr RemoteServiceManager::FindService(att::Handle handle) {
+RemoteService::WeakPtrType RemoteServiceManager::FindService(att::Handle handle) {
   auto iter = services_.find(handle);
-  return iter == services_.end() ? RemoteService::WeakPtr()
+  return iter == services_.end() ? RemoteService::WeakPtrType()
                                  : iter->second->GetWeakPtr();
 }
 

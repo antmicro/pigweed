@@ -40,7 +40,7 @@ class FakeIsoStream : public IsoStream {
 
   void Close() override {}
 
-  IsoStream::WeakPtr GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
+  IsoStream::WeakPtrType GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
 
   void SetSetupDataPathReturnStatus(IsoStream::SetupDataPathError status) {
     setup_data_path_status_ = status;

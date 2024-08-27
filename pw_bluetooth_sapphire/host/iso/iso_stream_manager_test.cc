@@ -55,7 +55,7 @@ class IsoStreamManagerTest : public MockControllerTestBase {
         id,
         [id, cb_invoked, this](
             pw::bluetooth::emboss::StatusCode status,
-            std::optional<WeakSelf<IsoStream>::WeakPtr> iso_weak_ptr,
+            std::optional<WeakSelf<IsoStream>::WeakPtrType> iso_weak_ptr,
             const std::optional<CisEstablishedParameters>& cis_parameters) {
           if (cb_invoked) {
             *cb_invoked = true;
@@ -68,7 +68,7 @@ class IsoStreamManagerTest : public MockControllerTestBase {
   }
 
  protected:
-  std::unordered_map<bt::iso::CigCisIdentifier, WeakSelf<IsoStream>::WeakPtr>
+  std::unordered_map<bt::iso::CigCisIdentifier, WeakSelf<IsoStream>::WeakPtrType>
       iso_streams_;
 
  private:

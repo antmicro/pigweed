@@ -61,7 +61,7 @@ struct AdvertisementStatus {
 class FakeLowEnergyAdvertiser final : public hci::LowEnergyAdvertiser {
  public:
   FakeLowEnergyAdvertiser(
-      const hci::Transport::WeakPtr& hci,
+      const hci::Transport::WeakPtrType& hci,
       std::unordered_map<DeviceAddress, AdvertisementStatus>* ad_store)
       : hci::LowEnergyAdvertiser(hci, kDefaultMaxAdSize),
         ads_(ad_store),
@@ -202,7 +202,7 @@ class FakeLowEnergyAdvertiser final : public hci::LowEnergyAdvertiser {
 
   std::unordered_map<DeviceAddress, AdvertisementStatus>* ads_;
   hci::Result<> pending_error_ = fit::ok();
-  hci::Transport::WeakPtr hci_;
+  hci::Transport::WeakPtrType hci_;
 
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(FakeLowEnergyAdvertiser);
 };

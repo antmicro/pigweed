@@ -22,7 +22,7 @@ class FakeScoConnection final : public ScoConnection {
   FakeScoConnection(hci_spec::ConnectionHandle handle,
                     const DeviceAddress& local_address,
                     const DeviceAddress& peer_address,
-                    const hci::Transport::WeakPtr& hci);
+                    const hci::Transport::WeakPtrType& hci);
 
   void TriggerPeerDisconnectCallback() {
     peer_disconnect_callback()(

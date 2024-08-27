@@ -60,7 +60,7 @@ class ChannelManagerImpl final : public ChannelManager {
   void AssignLinkSecurityProperties(hci_spec::ConnectionHandle handle,
                                     sm::SecurityProperties security) override;
 
-  Channel::WeakPtr OpenFixedChannel(
+  Channel::WeakPtrType OpenFixedChannel(
       hci_spec::ConnectionHandle connection_handle,
       ChannelId channel_id) override;
 
@@ -81,7 +81,7 @@ class ChannelManagerImpl final : public ChannelManager {
 
   void AttachInspect(inspect::Node& parent, std::string name) override;
 
-  internal::LogicalLink::WeakPtr LogicalLinkForTesting(
+  internal::LogicalLink::WeakPtrType LogicalLinkForTesting(
       hci_spec::ConnectionHandle handle) override;
 
  private:
@@ -204,7 +204,7 @@ ChannelManagerImpl::BrEdrFixedChannels ChannelManagerImpl::AddACLConnection(
   ll->set_error_callback(std::move(link_error_cb));
   ll->set_security_upgrade_callback(std::move(security_cb));
 
-  Channel::WeakPtr smp = OpenFixedChannel(handle, kSMPChannelId);
+  Channel::WeakPtrType smp = OpenFixedChannel(handle, kSMPChannelId);
   BT_ASSERT(smp.is_alive());
   return BrEdrFixedChannels{.smp = std::move(smp)};
 }
@@ -223,8 +223,8 @@ ChannelManagerImpl::LEFixedChannels ChannelManagerImpl::AddLEConnection(
   ll->set_security_upgrade_callback(std::move(security_cb));
   ll->set_connection_parameter_update_callback(std::move(conn_param_cb));
 
-  Channel::WeakPtr att = OpenFixedChannel(handle, kATTChannelId);
-  Channel::WeakPtr smp = OpenFixedChannel(handle, kLESMPChannelId);
+  Channel::WeakPtrType att = OpenFixedChannel(handle, kATTChannelId);
+  Channel::WeakPtrType smp = OpenFixedChannel(handle, kLESMPChannelId);
   BT_ASSERT(att.is_alive());
   BT_ASSERT(smp.is_alive());
   return LEFixedChannels{.att = std::move(att), .smp = std::move(smp)};
@@ -265,7 +265,7 @@ void ChannelManagerImpl::AssignLinkSecurityProperties(
   iter->second->AssignSecurityProperties(security);
 }
 
-Channel::WeakPtr ChannelManagerImpl::OpenFixedChannel(
+Channel::WeakPtrType ChannelManagerImpl::OpenFixedChannel(
     hci_spec::ConnectionHandle handle, ChannelId channel_id) {
   auto iter = ll_map_.find(handle);
   if (iter == ll_map_.end()) {
@@ -273,7 +273,7 @@ Channel::WeakPtr ChannelManagerImpl::OpenFixedChannel(
            "l2cap",
            "cannot open fixed channel on unknown connection handle: %#.4x",
            handle);
-    return Channel::WeakPtr();
+    return Channel::WeakPtrType();
   }
 
   return iter->second->OpenFixedChannel(channel_id);
@@ -289,7 +289,7 @@ void ChannelManagerImpl::OpenL2capChannel(hci_spec::ConnectionHandle handle,
            "l2cap",
            "Cannot open channel on unknown connection handle: %#.4x",
            handle);
-    cb(Channel::WeakPtr());
+    cb(Channel::WeakPtrType());
     return;
   }
 
@@ -357,11 +357,11 @@ void ChannelManagerImpl::AttachInspect(inspect::Node& parent,
   }
 }
 
-internal::LogicalLink::WeakPtr ChannelManagerImpl::LogicalLinkForTesting(
+internal::LogicalLink::WeakPtrType ChannelManagerImpl::LogicalLinkForTesting(
     hci_spec::ConnectionHandle handle) {
   auto iter = ll_map_.find(handle);
   if (iter == ll_map_.end()) {
-    return internal::LogicalLink::WeakPtr();
+    return internal::LogicalLink::WeakPtrType();
   }
   return iter->second->GetWeakPtr();
 }

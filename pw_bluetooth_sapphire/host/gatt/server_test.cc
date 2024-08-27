@@ -68,7 +68,7 @@ class ServerTest : public l2cap::testing::MockChannelTest {
     RunUntilIdle();
     server_ = nullptr;
     att_ = nullptr;
-    fake_att_chan_ = l2cap::testing::FakeChannel::WeakPtr();
+    fake_att_chan_ = l2cap::testing::FakeChannel::WeakPtrType();
     local_services_ = nullptr;
   }
 
@@ -114,7 +114,7 @@ class ServerTest : public l2cap::testing::MockChannelTest {
   }
   Server* server() const { return server_.get(); }
 
-  att::Database::WeakPtr db() const { return local_services_->database(); }
+  att::Database::WeakPtrType db() const { return local_services_->database(); }
 
   // TODO(armansito): Consider introducing a FakeBearer for testing
   // (fxbug.dev/42142784).
@@ -173,7 +173,7 @@ class ServerTest : public l2cap::testing::MockChannelTest {
   }
 
   std::unique_ptr<LocalServiceManager> local_services_;
-  l2cap::testing::FakeChannel::WeakPtr fake_att_chan_;
+  l2cap::testing::FakeChannel::WeakPtrType fake_att_chan_;
   std::unique_ptr<att::Bearer> att_;
   std::unique_ptr<Server> server_;
 

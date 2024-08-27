@@ -23,7 +23,7 @@ namespace bt::gap {
 LowEnergyAddressManager::LowEnergyAddressManager(
     const DeviceAddress& public_address,
     StateQueryDelegate delegate,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     pw::async::Dispatcher& dispatcher)
     : dispatcher_(dispatcher),
       delegate_(std::move(delegate)),

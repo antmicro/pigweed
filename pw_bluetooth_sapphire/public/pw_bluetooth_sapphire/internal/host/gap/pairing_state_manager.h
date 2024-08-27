@@ -75,7 +75,7 @@ class PairingStateManager final {
   // a Legacy Pairing request before the ACL connection between the two devices
   // was complete. |legacy_pairing_state| is transferred to the
   // PairingStateManager.
-  PairingStateManager(Peer::WeakPtr peer,
+  PairingStateManager(Peer::WeakPtrType peer,
                       WeakPtr<hci::BrEdrConnection> link,
                       std::unique_ptr<LegacyPairingState> legacy_pairing_state,
                       bool outgoing_connection,
@@ -91,7 +91,7 @@ class PairingStateManager final {
   // If the delegate indicates passkey display capabilities, then it will always
   // be asked to confirm pairing, even when Core Spec v5.0, Vol 3, Part C,
   // Section 5.2.2.6 indicates "automatic confirmation."
-  void SetPairingDelegate(const PairingDelegate::WeakPtr& pairing_delegate) {
+  void SetPairingDelegate(const PairingDelegate::WeakPtrType& pairing_delegate) {
     if (secure_simple_pairing_state_) {
       secure_simple_pairing_state_->SetPairingDelegate(pairing_delegate);
     }
@@ -177,7 +177,7 @@ class PairingStateManager final {
   std::unique_ptr<SecureSimplePairingState> secure_simple_pairing_state_;
   std::unique_ptr<LegacyPairingState> legacy_pairing_state_;
 
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
 
   // The BR/EDR link whose pairing is being driven by this object.
   WeakPtr<hci::BrEdrConnection> link_;

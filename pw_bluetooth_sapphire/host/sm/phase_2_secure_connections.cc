@@ -36,8 +36,8 @@
 namespace bt::sm {
 
 Phase2SecureConnections::Phase2SecureConnections(
-    PairingChannel::WeakPtr chan,
-    Listener::WeakPtr listener,
+    PairingChannel::WeakPtrType chan,
+    Listener::WeakPtrType listener,
     Role role,
     PairingFeatures features,
     PairingRequestParams preq,

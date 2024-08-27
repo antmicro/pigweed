@@ -107,7 +107,7 @@ class LowEnergyConnectionManagerTest : public TestingBase {
     peer_cache_ = std::make_unique<PeerCache>(dispatcher());
     l2cap_ = std::make_unique<l2cap::testing::FakeL2cap>(dispatcher());
 
-    const hci::CommandChannel::WeakPtr cmd_weak = cmd_channel()->AsWeakPtr();
+    const hci::CommandChannel::WeakPtrType cmd_weak = cmd_channel()->AsWeakPtr();
 
     connector_ = std::make_unique<hci::LowEnergyConnector>(
         transport()->GetWeakPtr(),
@@ -183,7 +183,7 @@ class LowEnergyConnectionManagerTest : public TestingBase {
     return std::move(last_remote_initiated_);
   }
 
-  TestSm::WeakPtr TestSmByHandle(hci_spec::ConnectionHandle handle) {
+  TestSm::WeakPtrType TestSmByHandle(hci_spec::ConnectionHandle handle) {
     return sm_factory_->GetTestSm(handle);
   }
 
@@ -1622,7 +1622,7 @@ TEST_F(LowEnergyConnectionManagerTest, L2CAPSignalLinkError) {
   auto* peer = peer_cache()->NewPeer(kAddress0, /*connectable=*/true);
   ASSERT_TRUE(peer);
 
-  l2cap::testing::FakeChannel::WeakPtr smp_chan;
+  l2cap::testing::FakeChannel::WeakPtrType smp_chan;
   auto l2cap_chan_cb = [&smp_chan](auto chan) { smp_chan = chan; };
   fake_l2cap()->set_channel_callback(l2cap_chan_cb);
 
@@ -1652,8 +1652,8 @@ TEST_F(LowEnergyConnectionManagerTest, AttBearerSignalsLinkError) {
   auto* peer = peer_cache()->NewPeer(kAddress0, /*connectable=*/true);
   ASSERT_TRUE(peer);
 
-  l2cap::testing::FakeChannel::WeakPtr att_chan;
-  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtr chan) {
+  l2cap::testing::FakeChannel::WeakPtrType att_chan;
+  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtrType chan) {
     if (chan->id() == l2cap::kATTChannelId) {
       att_chan = std::move(chan);
     }
@@ -1687,8 +1687,8 @@ TEST_F(LowEnergyConnectionManagerTest, OutboundConnectATTChannelActivateFails) {
   auto* peer = peer_cache()->NewPeer(kAddress0, /*connectable=*/true);
   ASSERT_TRUE(peer);
 
-  std::optional<l2cap::testing::FakeChannel::WeakPtr> att_chan;
-  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtr chan) {
+  std::optional<l2cap::testing::FakeChannel::WeakPtrType> att_chan;
+  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtrType chan) {
     if (chan->id() == l2cap::kATTChannelId) {
       // Cause att::Bearer construction/activation to fail.
       chan->set_activate_fails(true);
@@ -1719,8 +1719,8 @@ TEST_F(LowEnergyConnectionManagerTest,
   auto* peer = peer_cache()->NewPeer(kAddress0, /*connectable=*/true);
   ASSERT_TRUE(peer);
 
-  std::optional<l2cap::testing::FakeChannel::WeakPtr> att_chan;
-  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtr chan) {
+  std::optional<l2cap::testing::FakeChannel::WeakPtrType> att_chan;
+  auto l2cap_chan_cb = [&att_chan](l2cap::testing::FakeChannel::WeakPtrType chan) {
     if (chan->id() == l2cap::kATTChannelId) {
       // Cause att::Bearer construction/activation to fail.
       chan->set_activate_fails(true);
@@ -1756,8 +1756,8 @@ TEST_F(LowEnergyConnectionManagerTest, LinkErrorDuringInterrogation) {
   ASSERT_TRUE(peer);
 
   // Get an arbitrary channel in order to signal a link error.
-  l2cap::testing::FakeChannel::WeakPtr chan;
-  auto l2cap_chan_cb = [&chan](l2cap::testing::FakeChannel::WeakPtr cb_chan) {
+  l2cap::testing::FakeChannel::WeakPtrType chan;
+  auto l2cap_chan_cb = [&chan](l2cap::testing::FakeChannel::WeakPtrType cb_chan) {
     chan = std::move(cb_chan);
   };
   fake_l2cap()->set_channel_callback(l2cap_chan_cb);
@@ -1824,7 +1824,7 @@ TEST_F(LowEnergyConnectionManagerTest, PairWithBondableModes) {
   ASSERT_TRUE(peer->le());
 
   RunUntilIdle();
-  TestSm::WeakPtr mock_sm = TestSmByHandle(conn_handle->handle());
+  TestSm::WeakPtrType mock_sm = TestSmByHandle(conn_handle->handle());
   ASSERT_TRUE(mock_sm.is_alive());
 
   ASSERT_EQ(Peer::ConnectionState::kConnected, peer->le()->connection_state());
@@ -3100,7 +3100,7 @@ TEST_F(LowEnergyConnectionManagerTest, SetSecureConnectionsOnlyModeWorks) {
                       MakeConnectionResultCallback(existing_conn_handle),
                       kConnectionOptions);
   RunUntilIdle();
-  TestSm::WeakPtr existing_peer_sm =
+  TestSm::WeakPtrType existing_peer_sm =
       TestSmByHandle(existing_conn_handle->handle());
   ASSERT_TRUE(existing_peer_sm.is_alive());
   EXPECT_EQ(LESecurityMode::Mode1, existing_peer_sm->security_mode());
@@ -3121,7 +3121,7 @@ TEST_F(LowEnergyConnectionManagerTest, SetSecureConnectionsOnlyModeWorks) {
                       MakeConnectionResultCallback(new_conn_handle),
                       kConnectionOptions);
   RunUntilIdle();
-  TestSm::WeakPtr new_peer_sm = TestSmByHandle(new_conn_handle->handle());
+  TestSm::WeakPtrType new_peer_sm = TestSmByHandle(new_conn_handle->handle());
   ASSERT_TRUE(new_peer_sm.is_alive());
   EXPECT_EQ(2u, connected_peers().size());
 

@@ -30,15 +30,15 @@ namespace bt::gatt {
 class Client {
  public:
   // Constructs a new Client. |bearer| must outlive this object.
-  static std::unique_ptr<Client> Create(att::Bearer::WeakPtr bearer);
+  static std::unique_ptr<Client> Create(att::Bearer::WeakPtrType bearer);
 
   virtual ~Client() = default;
 
   // Returns a weak pointer to this Client. The weak pointer should be checked
   // on the data bearer's thread only as Client can only be accessed on that
   // thread.
-  using WeakPtr = WeakSelf<Client>::WeakPtr;
-  virtual Client::WeakPtr GetWeakPtr() = 0;
+  using WeakPtrType = WeakSelf<Client>::WeakPtrType;
+  virtual Client::WeakPtrType GetWeakPtr() = 0;
 
   // Returns the current ATT MTU.
   virtual uint16_t mtu() const = 0;

@@ -33,12 +33,12 @@ namespace bt::sm {
 // ScStage1Passkey's creation thread.
 class ScStage1Passkey final : public ScStage1 {
  public:
-  ScStage1Passkey(PairingPhase::Listener::WeakPtr listener,
+  ScStage1Passkey(PairingPhase::Listener::WeakPtrType listener,
                   Role role,
                   UInt256 local_pub_key_x,
                   UInt256 peer_pub_key_x,
                   PairingMethod method,
-                  PairingChannel::WeakPtr sm_chan,
+                  PairingChannel::WeakPtrType sm_chan,
                   Stage1CompleteCallback on_complete);
   void Run() override;
   void OnPairingConfirm(PairingConfirmValue confirm) override;
@@ -60,7 +60,7 @@ class ScStage1Passkey final : public ScStage1 {
   // StartBitExchange if there are still more bits.
   void FinishBitExchange();
 
-  PairingPhase::Listener::WeakPtr listener_;
+  PairingPhase::Listener::WeakPtrType listener_;
   Role role_;
   UInt256 local_public_key_x_;
   UInt256 peer_public_key_x_;
@@ -83,7 +83,7 @@ class ScStage1Passkey final : public ScStage1 {
   // Random message.
   std::optional<PairingRandomValue> peer_rand_;
 
-  PairingChannel::WeakPtr sm_chan_;
+  PairingChannel::WeakPtrType sm_chan_;
   Stage1CompleteCallback on_complete_;
   WeakSelf<ScStage1Passkey> weak_self_;
 };

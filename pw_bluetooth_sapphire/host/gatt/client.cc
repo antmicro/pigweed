@@ -94,7 +94,7 @@ bool ProcessDescriptorDiscoveryResponse(
 
 class Impl final : public Client {
  public:
-  explicit Impl(att::Bearer::WeakPtr bearer)
+  explicit Impl(att::Bearer::WeakPtrType bearer)
       : att_(std::move(bearer)), weak_self_(this) {
     BT_DEBUG_ASSERT(att_.is_alive());
 
@@ -155,8 +155,8 @@ class Impl final : public Client {
     att_->UnregisterHandler(ind_handler_id_);
   }
 
-  using WeakPtr = WeakSelf<Client>::WeakPtr;
-  WeakPtr GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<Client>::WeakPtrType;
+  WeakPtrType GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
 
  private:
   uint16_t mtu() const override { return att_->mtu(); }
@@ -1299,7 +1299,7 @@ class Impl final : public Client {
     };
   }
 
-  att::Bearer::WeakPtr att_;
+  att::Bearer::WeakPtrType att_;
   att::Bearer::HandlerId not_handler_id_;
   att::Bearer::HandlerId ind_handler_id_;
 
@@ -1320,7 +1320,7 @@ class Impl final : public Client {
 };
 
 // static
-std::unique_ptr<Client> Client::Create(att::Bearer::WeakPtr bearer) {
+std::unique_ptr<Client> Client::Create(att::Bearer::WeakPtrType bearer) {
   return std::make_unique<Impl>(std::move(bearer));
 }
 

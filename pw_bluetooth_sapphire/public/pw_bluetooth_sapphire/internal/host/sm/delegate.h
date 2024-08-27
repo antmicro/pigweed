@@ -67,7 +67,7 @@ class Delegate {
   // Called when the security properties of the link change.
   virtual void OnNewSecurityProperties(const SecurityProperties& sec) = 0;
 
-  using WeakPtr = WeakSelf<Delegate>::WeakPtr;
+  using WeakPtrType = WeakSelf<Delegate>::WeakPtrType;
 };
 
 }  // namespace bt::sm

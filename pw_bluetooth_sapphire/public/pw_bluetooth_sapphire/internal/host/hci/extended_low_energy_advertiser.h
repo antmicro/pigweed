@@ -23,7 +23,7 @@ class SequentialCommandRunner;
 
 class ExtendedLowEnergyAdvertiser final : public LowEnergyAdvertiser {
  public:
-  explicit ExtendedLowEnergyAdvertiser(hci::Transport::WeakPtr hci,
+  explicit ExtendedLowEnergyAdvertiser(hci::Transport::WeakPtrType hci,
                                        uint16_t max_advertising_data_length_);
   ~ExtendedLowEnergyAdvertiser() override;
 

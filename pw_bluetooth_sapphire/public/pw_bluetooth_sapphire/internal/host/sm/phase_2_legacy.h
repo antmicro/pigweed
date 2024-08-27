@@ -43,8 +43,8 @@ class Phase2Legacy final : public PairingPhase, public PairingChannelHandler {
   //                                     used for cryptographic hashing
   // |cb|: Callback that is notified when the Phase2 has negotiated a new
   // encryption key.
-  Phase2Legacy(PairingChannel::WeakPtr chan,
-               Listener::WeakPtr listener,
+  Phase2Legacy(PairingChannel::WeakPtrType chan,
+               Listener::WeakPtrType listener,
                Role role,
                PairingFeatures features,
                const ByteBuffer& preq,

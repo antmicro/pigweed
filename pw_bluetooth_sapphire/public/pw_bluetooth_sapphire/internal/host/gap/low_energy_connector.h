@@ -41,11 +41,11 @@ class LowEnergyConnector final {
   // established with the parameters specified in |options|.
   LowEnergyConnector(PeerId peer_id,
                      LowEnergyConnectionOptions options,
-                     hci::CommandChannel::WeakPtr cmd_channel,
+                     hci::CommandChannel::WeakPtrType cmd_channel,
                      PeerCache* peer_cache,
-                     WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+                     WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
                      l2cap::ChannelManager* l2cap,
-                     gatt::GATT::WeakPtr gatt,
+                     gatt::GATT::WeakPtrType gatt,
                      const AdapterState& adapter_state,
                      pw::async::Dispatcher& dispatcher);
 
@@ -62,7 +62,7 @@ class LowEnergyConnector final {
   // procedure. Must only be called once.
   void StartOutbound(pw::chrono::SystemClock::duration request_timeout,
                      hci::LowEnergyConnector* connector,
-                     LowEnergyDiscoveryManager::WeakPtr discovery_manager,
+                     LowEnergyDiscoveryManager::WeakPtrType discovery_manager,
                      ResultCallback cb);
 
   // Start interrogating peer using an already established |connection|. |cb|
@@ -148,7 +148,7 @@ class LowEnergyConnector final {
 
   // Layer pointers to be passed to LowEnergyConnection.
   l2cap::ChannelManager* l2cap_;
-  gatt::GATT::WeakPtr gatt_;
+  gatt::GATT::WeakPtrType gatt_;
 
   AdapterState adapter_state_;
 
@@ -189,12 +189,12 @@ class LowEnergyConnector final {
   // from peer controllers. Initialized only during interrogation.
   std::optional<LowEnergyInterrogator> interrogator_;
 
-  LowEnergyDiscoveryManager::WeakPtr discovery_manager_;
+  LowEnergyDiscoveryManager::WeakPtrType discovery_manager_;
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   // Only used to construct a LowEnergyConnection.
-  WeakSelf<LowEnergyConnectionManager>::WeakPtr le_connection_manager_;
+  WeakSelf<LowEnergyConnectionManager>::WeakPtrType le_connection_manager_;
 
   struct InspectProperties {
     inspect::StringProperty peer_id;

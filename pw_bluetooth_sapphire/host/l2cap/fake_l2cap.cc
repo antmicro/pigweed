@@ -208,7 +208,7 @@ void FakeL2cap::OpenL2capChannel(hci_spec::ConnectionHandle handle,
 
   auto fake_chan = OpenFakeChannel(
       &link_data, chan_data.local_id, chan_data.remote_id, channel_info);
-  l2cap::Channel::WeakPtr chan;
+  l2cap::Channel::WeakPtrType chan;
   if (fake_chan.is_alive()) {
     chan = fake_chan->GetWeakPtr();
   }
@@ -263,11 +263,11 @@ FakeL2cap::LinkData* FakeL2cap::RegisterInternal(
   return &data;
 }
 
-FakeChannel::WeakPtr FakeL2cap::OpenFakeChannel(LinkData* link,
+FakeChannel::WeakPtrType FakeL2cap::OpenFakeChannel(LinkData* link,
                                                 l2cap::ChannelId id,
                                                 l2cap::ChannelId remote_id,
                                                 l2cap::ChannelInfo info) {
-  FakeChannel::WeakPtr chan;
+  FakeChannel::WeakPtrType chan;
   if (!simulate_open_channel_failure_) {
     auto channel = std::make_unique<FakeChannel>(
         id, remote_id, link->handle, link->type, info);
@@ -284,7 +284,7 @@ FakeChannel::WeakPtr FakeL2cap::OpenFakeChannel(LinkData* link,
   return chan;
 }
 
-FakeChannel::WeakPtr FakeL2cap::OpenFakeFixedChannel(LinkData* link,
+FakeChannel::WeakPtrType FakeL2cap::OpenFakeFixedChannel(LinkData* link,
                                                      l2cap::ChannelId id) {
   return OpenFakeChannel(link, id, id);
 }

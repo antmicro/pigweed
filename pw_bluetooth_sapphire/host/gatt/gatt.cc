@@ -89,8 +89,8 @@ class Impl final : public GATT {
 
     RemoteServiceWatcher service_watcher =
         [this, peer_id](std::vector<att::Handle> removed,
-                        std::vector<RemoteService::WeakPtr> added,
-                        std::vector<RemoteService::WeakPtr> modified) {
+                        std::vector<RemoteService::WeakPtrType> added,
+                        std::vector<RemoteService::WeakPtrType> modified) {
           OnServicesChanged(peer_id, removed, added, modified);
         };
     std::unique_ptr<Server> server =
@@ -271,12 +271,12 @@ class Impl final : public GATT {
                                                         std::move(callback));
   }
 
-  RemoteService::WeakPtr FindService(PeerId peer_id,
+  RemoteService::WeakPtrType FindService(PeerId peer_id,
                                      IdType service_id) override {
     auto iter = connections_.find(peer_id);
     if (iter == connections_.end()) {
       // Connection not found.
-      return RemoteService::WeakPtr();
+      return RemoteService::WeakPtrType();
     }
     return iter->second.remote_service_manager()->FindService(
         static_cast<att::Handle>(service_id));
@@ -285,8 +285,8 @@ class Impl final : public GATT {
  private:
   void OnServicesChanged(PeerId peer_id,
                          const std::vector<att::Handle>& removed,
-                         const std::vector<RemoteService::WeakPtr>& added,
-                         const std::vector<RemoteService::WeakPtr>& modified) {
+                         const std::vector<RemoteService::WeakPtrType>& added,
+                         const std::vector<RemoteService::WeakPtrType>& modified) {
     auto peer_watcher_range =
         peer_remote_service_watchers_.equal_range(peer_id);
     for (auto it = peer_watcher_range.first; it != peer_watcher_range.second;

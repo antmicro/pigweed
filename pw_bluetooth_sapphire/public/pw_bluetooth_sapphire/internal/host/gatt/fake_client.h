@@ -147,9 +147,9 @@ class FakeClient final : public Client {
 
   // Methods to obtain a weak pointer to both FakeClient and the base class
   // types.
-  Client::WeakPtr GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
-  using WeakPtr = WeakSelf<FakeClient>::WeakPtr;
-  FakeClient::WeakPtr AsFakeWeakPtr() { return weak_fake_.GetWeakPtr(); }
+  Client::WeakPtrType GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<FakeClient>::WeakPtrType;
+  FakeClient::WeakPtrType AsFakeWeakPtr() { return weak_fake_.GetWeakPtr(); }
 
   // Client overrides:
   uint16_t mtu() const override;

@@ -67,7 +67,7 @@ class RemoteServiceManager final {
   // Returns the RemoteService with the requested range start |handle| or
   // nullptr if it is not recognized. This method may fail if called before or
   // during initialization.
-  RemoteService::WeakPtr FindService(att::Handle handle);
+  RemoteService::WeakPtrType FindService(att::Handle handle);
 
  private:
   using ServiceMap = std::map<att::Handle, std::unique_ptr<RemoteService>>;

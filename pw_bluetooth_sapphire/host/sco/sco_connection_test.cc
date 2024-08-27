@@ -88,7 +88,7 @@ class ScoConnectionTest : public TestingBase {
  private:
   size_t deactivated_cb_count_;
   std::unique_ptr<ScoConnection> sco_conn_;
-  hci::ScoConnection::WeakPtr hci_conn_;
+  hci::ScoConnection::WeakPtrType hci_conn_;
 };
 
 class HciScoConnectionTest : public ScoConnectionTest {

@@ -43,7 +43,7 @@ class FakeChannelHandler : public PairingChannel::Handler {
 
   int frames_received() const { return frames_received_; }
   int channel_closed_count() const { return channel_closed_count_; }
-  PairingChannel::Handler::WeakPtr as_weak_handler() {
+  PairingChannel::Handler::WeakPtrType as_weak_handler() {
     return weak_self_.GetWeakPtr();
   }
 
@@ -80,7 +80,7 @@ class PairingChannelTest : public l2cap::testing::MockChannelTest {
  private:
   void ResetTimer() { timer_resetter_(); }
 
-  l2cap::testing::FakeChannel::WeakPtr fake_sm_chan_;
+  l2cap::testing::FakeChannel::WeakPtrType fake_sm_chan_;
   std::unique_ptr<PairingChannel> sm_chan_;
   fit::closure timer_resetter_ = []() {};
 };

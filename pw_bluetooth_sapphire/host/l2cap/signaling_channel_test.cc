@@ -39,7 +39,7 @@ const auto kTestResponseHandler = [](Status status,
 
 class TestSignalingChannel : public SignalingChannel {
  public:
-  explicit TestSignalingChannel(Channel::WeakPtr chan,
+  explicit TestSignalingChannel(Channel::WeakPtrType chan,
                                 pw::async::Dispatcher& dispatcher)
       : SignalingChannel(std::move(chan),
                          pw::bluetooth::emboss::ConnectionRole::CENTRAL,

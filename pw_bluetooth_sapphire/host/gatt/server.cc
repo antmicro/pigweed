@@ -31,8 +31,8 @@ namespace bt::gatt {
 class AttBasedServer final : public Server {
  public:
   AttBasedServer(PeerId peer_id,
-                 LocalServiceManager::WeakPtr local_services,
-                 att::Bearer::WeakPtr bearer)
+                 LocalServiceManager::WeakPtrType local_services,
+                 att::Bearer::WeakPtrType bearer)
       : peer_id_(peer_id),
         local_services_(std::move(local_services)),
         att_(std::move(bearer)),
@@ -91,7 +91,7 @@ class AttBasedServer final : public Server {
 
  private:
   // Convenience "alias"
-  inline att::Database::WeakPtr db() { return local_services_->database(); }
+  inline att::Database::WeakPtrType db() { return local_services_->database(); }
 
   // Server overrides:
   void SendUpdate(IdType service_id,
@@ -1007,8 +1007,8 @@ class AttBasedServer final : public Server {
   }
 
   PeerId peer_id_;
-  LocalServiceManager::WeakPtr local_services_;
-  att::Bearer::WeakPtr att_;
+  LocalServiceManager::WeakPtrType local_services_;
+  att::Bearer::WeakPtrType att_;
 
   // The queue data structure used for queued writes (see Vol 3, Part F, 3.4.6).
   att::PrepareWriteQueue prepare_queue_;
@@ -1037,8 +1037,8 @@ class AttBasedServer final : public Server {
 // static
 std::unique_ptr<Server> Server::Create(
     PeerId peer_id,
-    LocalServiceManager::WeakPtr local_services,
-    att::Bearer::WeakPtr bearer) {
+    LocalServiceManager::WeakPtrType local_services,
+    att::Bearer::WeakPtrType bearer) {
   return std::make_unique<AttBasedServer>(
       peer_id, std::move(local_services), std::move(bearer));
 }

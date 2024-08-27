@@ -65,7 +65,7 @@ std::unordered_set<Peer*> ProcessInquiryResultEvent(
 }  // namespace
 
 BrEdrDiscoverySession::BrEdrDiscoverySession(
-    BrEdrDiscoveryManager::WeakPtr manager)
+    BrEdrDiscoveryManager::WeakPtrType manager)
     : manager_(std::move(manager)) {}
 
 BrEdrDiscoverySession::~BrEdrDiscoverySession() {
@@ -85,7 +85,7 @@ void BrEdrDiscoverySession::NotifyError() const {
 }
 
 BrEdrDiscoverableSession::BrEdrDiscoverableSession(
-    BrEdrDiscoveryManager::WeakPtr manager)
+    BrEdrDiscoveryManager::WeakPtrType manager)
     : manager_(std::move(manager)) {}
 
 BrEdrDiscoverableSession::~BrEdrDiscoverableSession() {
@@ -94,7 +94,7 @@ BrEdrDiscoverableSession::~BrEdrDiscoverableSession() {
 
 BrEdrDiscoveryManager::BrEdrDiscoveryManager(
     pw::async::Dispatcher& pw_dispatcher,
-    hci::CommandChannel::WeakPtr cmd,
+    hci::CommandChannel::WeakPtrType cmd,
     pw::bluetooth::emboss::InquiryMode mode,
     PeerCache* peer_cache)
     : cmd_(std::move(cmd)),

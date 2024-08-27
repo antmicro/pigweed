@@ -342,7 +342,7 @@ class LowEnergyDiscoverySession final {
 
   // Called by LowEnergyDiscoveryManager.
   explicit LowEnergyDiscoverySession(
-      bool active, LowEnergyDiscoveryManager::WeakPtr manager);
+      bool active, LowEnergyDiscoveryManager::WeakPtrType manager);
 
   // Called by LowEnergyDiscoveryManager on newly discovered scan results.
   void NotifyDiscoveryResult(const Peer& peer) const;
@@ -352,7 +352,7 @@ class LowEnergyDiscoverySession final {
 
   bool alive_;
   bool active_;
-  LowEnergyDiscoveryManager::WeakPtr manager_;
+  LowEnergyDiscoveryManager::WeakPtrType manager_;
   fit::closure error_callback_;
   PeerFoundCallback peer_found_callback_;
   DiscoveryFilter filter_;

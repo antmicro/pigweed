@@ -77,7 +77,7 @@ enum class DisconnectReason : uint8_t {
 // connection is cleaned up and removed from the internal |connections_| map.
 class BrEdrConnectionManager final {
  public:
-  BrEdrConnectionManager(hci::Transport::WeakPtr hci,
+  BrEdrConnectionManager(hci::Transport::WeakPtrType hci,
                          PeerCache* peer_cache,
                          DeviceAddress local_address,
                          l2cap::ChannelManager* l2cap,
@@ -90,7 +90,7 @@ class BrEdrConnectionManager final {
   void SetConnectable(bool connectable, hci::ResultFunction<> status_cb);
 
   // Returns the PairingDelegate currently assigned to this connection manager.
-  const PairingDelegate::WeakPtr& pairing_delegate() const {
+  const PairingDelegate::WeakPtrType& pairing_delegate() const {
     return pairing_delegate_;
   }
 
@@ -98,7 +98,7 @@ class BrEdrConnectionManager final {
   // Replacing an existing pairing delegate cancels all ongoing pairing
   // procedures. If a delegate is not set then all pairing requests will be
   // rejected.
-  void SetPairingDelegate(PairingDelegate::WeakPtr delegate);
+  void SetPairingDelegate(PairingDelegate::WeakPtrType delegate);
 
   // Retrieves the peer id that is connected to the connection |handle|.
   // Returns kInvalidPeerId if no such peer exists.
@@ -263,7 +263,7 @@ class BrEdrConnectionManager final {
 
   // Called once interrogation completes to make connection identified by
   // |handle| available to upper layers and begin new connection procedures.
-  void CompleteConnectionSetup(Peer::WeakPtr peer,
+  void CompleteConnectionSetup(Peer::WeakPtrType peer,
                                hci_spec::ConnectionHandle handle);
 
   // Callbacks for registered events
@@ -362,12 +362,12 @@ class BrEdrConnectionManager final {
   using ConnectionMap =
       std::unordered_map<hci_spec::ConnectionHandle, BrEdrConnection>;
 
-  hci::Transport::WeakPtr hci_;
+  hci::Transport::WeakPtrType hci_;
   std::unique_ptr<hci::SequentialCommandRunner> hci_cmd_runner_;
 
   // The pairing delegate used for authentication challenges. If nullptr, all
   // pairing requests will be rejected.
-  PairingDelegate::WeakPtr pairing_delegate_;
+  PairingDelegate::WeakPtrType pairing_delegate_;
 
   // Peer cache is used to look up parameters for connecting to peers and
   // update the state of connected peers as well as introduce unknown peers.

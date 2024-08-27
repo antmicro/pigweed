@@ -25,13 +25,13 @@ const char* const kInspectPairingStateNodeName = "secure_simple_pairing_state";
 
 }  // namespace
 
-BrEdrConnection::BrEdrConnection(Peer::WeakPtr peer,
+BrEdrConnection::BrEdrConnection(Peer::WeakPtrType peer,
                                  std::unique_ptr<hci::BrEdrConnection> link,
                                  fit::closure send_auth_request_cb,
                                  fit::callback<void()> disconnect_cb,
                                  fit::closure on_peer_disconnect_cb,
                                  l2cap::ChannelManager* l2cap,
-                                 hci::Transport::WeakPtr transport,
+                                 hci::Transport::WeakPtrType transport,
                                  std::optional<BrEdrConnectionRequest> request,
                                  pw::async::Dispatcher& dispatcher)
     : peer_id_(peer->identifier()),
@@ -125,7 +125,7 @@ void BrEdrConnection::OpenL2capChannel(l2cap::Psm psm,
            "connection not ready; canceling connect to PSM %.4x (peer: %s)",
            psm,
            bt_str(peer_id_));
-    cb(l2cap::Channel::WeakPtr());
+    cb(l2cap::Channel::WeakPtrType());
     return;
   }
 

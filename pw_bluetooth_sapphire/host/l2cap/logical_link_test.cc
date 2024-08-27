@@ -108,7 +108,7 @@ TEST_F(LogicalLinkDeathTest, DestructedWithoutClosingDies) {
 }
 
 TEST_F(LogicalLinkTest, FixedChannelHasCorrectMtu) {
-  Channel::WeakPtr fixed_chan = link()->OpenFixedChannel(kATTChannelId);
+  Channel::WeakPtrType fixed_chan = link()->OpenFixedChannel(kATTChannelId);
   ASSERT_TRUE(fixed_chan.is_alive());
   EXPECT_EQ(kMaxMTU, fixed_chan->max_rx_sdu_size());
   EXPECT_EQ(kMaxMTU, fixed_chan->max_tx_sdu_size());
@@ -131,7 +131,7 @@ TEST_F(LogicalLinkTest, DropsBroadcastPackets) {
                         l2cap::testing::AclFixedChannelsSupportedInfoReq(
                             cmd_ids.fixed_channels_supported_id, kConnHandle));
 
-  Channel::WeakPtr connectionless_chan =
+  Channel::WeakPtrType connectionless_chan =
       link()->OpenFixedChannel(kConnectionlessChannelId);
   ASSERT_TRUE(connectionless_chan.is_alive());
 

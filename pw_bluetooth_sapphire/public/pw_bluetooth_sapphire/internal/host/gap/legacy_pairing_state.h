@@ -68,7 +68,7 @@ class LegacyPairingState final {
   // shall disconnect the link and destroy the LegacyPairingState. When
   // destroyed, status callbacks for any queued pairing requests are called.
   // |status_cb| is not called on destruction.
-  LegacyPairingState(Peer::WeakPtr peer,
+  LegacyPairingState(Peer::WeakPtrType peer,
                      WeakPtr<hci::BrEdrConnection> link,
                      bool outgoing_connection,
                      fit::closure auth_cb,
@@ -77,7 +77,7 @@ class LegacyPairingState final {
   // events to the |peer|, prior to the ACL connection being established. We
   // cannot populate |link_|, |send_auth_request_callback_|, and
   // |status_callback_| until the ACL connection is complete.
-  LegacyPairingState(Peer::WeakPtr peer, bool outgoing_connection);
+  LegacyPairingState(Peer::WeakPtrType peer, bool outgoing_connection);
   ~LegacyPairingState();
 
   // Sets the |link|'s callbacks fields when the ACL connection is complete
@@ -97,7 +97,7 @@ class LegacyPairingState final {
   // If the delegate indicates passkey display capabilities, then it will always
   // be asked to confirm pairing, even when Core Spec v5.4, Vol 3, Part C,
   // Section 5.2.2.6 indicates "automatic confirmation".
-  void SetPairingDelegate(PairingDelegate::WeakPtr pairing_delegate) {
+  void SetPairingDelegate(PairingDelegate::WeakPtrType pairing_delegate) {
     pairing_delegate_ = std::move(pairing_delegate);
   }
 
@@ -139,7 +139,7 @@ class LegacyPairingState final {
     return is_pairing() ? current_pairing_->initiator : false;
   }
 
-  Peer::WeakPtr peer() { return peer_; }
+  Peer::WeakPtrType peer() { return peer_; }
 
   bool outgoing_connection() const { return outgoing_connection_; }
 
@@ -200,8 +200,8 @@ class LegacyPairingState final {
 
     // Used to prevent PairingDelegate callbacks from using captured stale
     // pointers.
-    using WeakPtr = WeakSelf<Pairing>::WeakPtr;
-    Pairing::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+    using WeakPtrType = WeakSelf<Pairing>::WeakPtrType;
+    Pairing::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
     // True if the local device initiated pairing.
     bool initiator;
@@ -275,7 +275,7 @@ class LegacyPairingState final {
   static const char* ToString(State state);
 
   PeerId peer_id_;
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
 
   // The BR/EDR link whose pairing is being driven by this object.
   WeakPtr<hci::BrEdrConnection> link_;
@@ -288,7 +288,7 @@ class LegacyPairingState final {
 
   std::unique_ptr<Pairing> current_pairing_;
 
-  PairingDelegate::WeakPtr pairing_delegate_;
+  PairingDelegate::WeakPtrType pairing_delegate_;
 
   // Before the ACL connection is complete, we can temporarily store the link
   // key in LegacyPairingState. Once the connection is complete, this value will

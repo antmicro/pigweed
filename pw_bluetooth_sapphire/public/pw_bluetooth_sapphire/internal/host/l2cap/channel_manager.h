@@ -48,12 +48,12 @@ class ChannelManager {
   using ServiceInfo = ServiceInfo<ChannelCallback>;
 
   struct LEFixedChannels {
-    l2cap::Channel::WeakPtr att;
-    l2cap::Channel::WeakPtr smp;
+    l2cap::Channel::WeakPtrType att;
+    l2cap::Channel::WeakPtrType smp;
   };
 
   struct BrEdrFixedChannels {
-    l2cap::Channel::WeakPtr smp;
+    l2cap::Channel::WeakPtrType smp;
   };
 
   // Create a ChannelManager. FakeL2cap can be used instead in tests.
@@ -145,7 +145,7 @@ class ChannelManager {
   // identified by |connection_handle| and starts routing packets.
   //
   // Returns nullptr if the channel is already open.
-  virtual Channel::WeakPtr OpenFixedChannel(
+  virtual Channel::WeakPtrType OpenFixedChannel(
       hci_spec::ConnectionHandle connection_handle, ChannelId channel_id) = 0;
 
   // Open an outbound dynamic channel against a peer's Protocol/Service
@@ -189,7 +189,7 @@ class ChannelManager {
   // |handle|, or nullptr if none exists. NOTE: This is intended ONLY for unit
   // tests. Clients should use the other public methods to interact with the
   // link.
-  virtual WeakSelf<internal::LogicalLink>::WeakPtr LogicalLinkForTesting(
+  virtual WeakSelf<internal::LogicalLink>::WeakPtrType LogicalLinkForTesting(
       hci_spec::ConnectionHandle handle) = 0;
 };
 

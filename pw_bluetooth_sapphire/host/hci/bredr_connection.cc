@@ -22,7 +22,7 @@ BrEdrConnection::BrEdrConnection(hci_spec::ConnectionHandle handle,
                                  const DeviceAddress& local_address,
                                  const DeviceAddress& peer_address,
                                  pw::bluetooth::emboss::ConnectionRole role,
-                                 const Transport::WeakPtr& hci)
+                                 const Transport::WeakPtrType& hci)
     : AclConnection(handle, local_address, peer_address, role, hci),
       WeakSelf(this) {
   BT_ASSERT(local_address.type() == DeviceAddress::Type::kBREDR);

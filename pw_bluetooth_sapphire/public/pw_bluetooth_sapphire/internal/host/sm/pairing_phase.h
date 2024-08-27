@@ -63,7 +63,7 @@ class PairingPhase {
     // method should destroy the Phase that calls it.
     virtual void OnPairingFailed(Error error) = 0;
 
-    using WeakPtr = WeakSelf<Listener>::WeakPtr;
+    using WeakPtrType = WeakSelf<Listener>::WeakPtrType;
   };
 
   virtual ~PairingPhase() = default;
@@ -97,8 +97,8 @@ class PairingPhase {
   //   - |listener|: The class that will handle higher-level requests from the
   //   current phase.
   //   - |role|: The local connection role.
-  PairingPhase(PairingChannel::WeakPtr chan,
-               Listener::WeakPtr listener,
+  PairingPhase(PairingChannel::WeakPtrType chan,
+               Listener::WeakPtrType listener,
                Role role);
 
   // For derived final classes to implement PairingChannel::Handler:
@@ -109,7 +109,7 @@ class PairingPhase {
     return sm_chan_.get();
   }
 
-  Listener::WeakPtr listener() const { return listener_; }
+  Listener::WeakPtrType listener() const { return listener_; }
 
   // Concrete classes of PairingPhase must be PairingChannelHandlers and call
   // this function when the phase is ready to handle requests.
@@ -127,8 +127,8 @@ class PairingPhase {
   virtual std::string ToStringInternal() = 0;
 
  private:
-  PairingChannel::WeakPtr sm_chan_;
-  Listener::WeakPtr listener_;
+  PairingChannel::WeakPtrType sm_chan_;
+  Listener::WeakPtrType listener_;
   Role role_;
   bool has_failed_;
   WeakSelf<PairingChannel::Handler> weak_channel_handler_;

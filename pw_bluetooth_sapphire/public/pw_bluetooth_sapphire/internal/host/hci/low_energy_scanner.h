@@ -218,7 +218,7 @@ class LowEnergyScanner : public LocalAddressClient {
   };
 
   LowEnergyScanner(LocalAddressDelegate* local_addr_delegate,
-                   Transport::WeakPtr hci,
+                   Transport::WeakPtrType hci,
                    pw::async::Dispatcher& pw_dispatcher);
   ~LowEnergyScanner() override = default;
 
@@ -311,7 +311,7 @@ class LowEnergyScanner : public LocalAddressClient {
   std::unique_ptr<PendingScanResult> RemovePendingResult(
       const DeviceAddress& address);
 
-  Transport::WeakPtr hci() const { return hci_; }
+  Transport::WeakPtrType hci() const { return hci_; }
   Delegate* delegate() const { return delegate_; }
 
  private:
@@ -348,7 +348,7 @@ class LowEnergyScanner : public LocalAddressClient {
   LocalAddressDelegate* local_addr_delegate_;  // weak
 
   // The HCI transport.
-  Transport::WeakPtr hci_;
+  Transport::WeakPtrType hci_;
 
   // Command runner for all HCI commands sent out by implementations.
   std::unique_ptr<SequentialCommandRunner> hci_cmd_runner_;

@@ -123,7 +123,7 @@ class LocalServiceManager final : public WeakSelf<LocalServiceManager> {
     service_changed_callback_ = std::move(callback);
   }
 
-  inline att::Database::WeakPtr database() { return db_->GetWeakPtr(); }
+  inline att::Database::WeakPtrType database() { return db_->GetWeakPtr(); }
 
  private:
   class ServiceData;

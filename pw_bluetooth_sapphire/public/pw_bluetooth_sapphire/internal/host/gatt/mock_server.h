@@ -28,14 +28,14 @@ using UpdateHandler = fit::function<void(IdType service_id,
 // notifications/ indications without a production att::Bearer in tests.
 class MockServer : public Server {
  public:
-  MockServer(PeerId peer_id, LocalServiceManager::WeakPtr local_services);
+  MockServer(PeerId peer_id, LocalServiceManager::WeakPtrType local_services);
 
   void set_update_handler(UpdateHandler handler) {
     update_handler_ = std::move(handler);
   }
 
-  using WeakPtr = WeakSelf<MockServer>::WeakPtr;
-  MockServer::WeakPtr AsMockWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<MockServer>::WeakPtrType;
+  MockServer::WeakPtrType AsMockWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   bool was_shut_down() const { return was_shut_down_; }
 
@@ -48,7 +48,7 @@ class MockServer : public Server {
   void ShutDown() override { was_shut_down_ = true; }
 
   PeerId peer_id_;
-  LocalServiceManager::WeakPtr local_services_;
+  LocalServiceManager::WeakPtrType local_services_;
   UpdateHandler update_handler_ = nullptr;
   bool was_shut_down_ = false;
   WeakSelf<MockServer> weak_self_;

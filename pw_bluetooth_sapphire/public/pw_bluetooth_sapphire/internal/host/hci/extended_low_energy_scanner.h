@@ -36,7 +36,7 @@ namespace bt::hci {
 class ExtendedLowEnergyScanner final : public LowEnergyScanner {
  public:
   ExtendedLowEnergyScanner(LocalAddressDelegate* local_addr_delegate,
-                           Transport::WeakPtr transport,
+                           Transport::WeakPtrType transport,
                            pw::async::Dispatcher& pw_dispatcher);
   ~ExtendedLowEnergyScanner() override;
 

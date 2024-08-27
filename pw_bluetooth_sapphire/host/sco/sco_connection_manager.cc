@@ -45,7 +45,7 @@ ScoConnectionManager::ScoConnectionManager(
     hci_spec::ConnectionHandle acl_handle,
     DeviceAddress peer_address,
     DeviceAddress local_address,
-    hci::Transport::WeakPtr transport)
+    hci::Transport::WeakPtrType transport)
     : next_req_id_(0u),
       peer_id_(peer_id),
       local_address_(local_address),
@@ -222,7 +222,7 @@ ScoConnectionManager::OnSynchronousConnectionComplete(
                                               std::move(deactivated_cb),
                                               conn_params,
                                               transport_->sco_data_channel());
-  ScoConnection::WeakPtr conn_weak = conn->GetWeakPtr();
+  ScoConnection::WeakPtrType conn_weak = conn->GetWeakPtr();
 
   auto [_, success] =
       connections_.try_emplace(connection_handle, std::move(conn));

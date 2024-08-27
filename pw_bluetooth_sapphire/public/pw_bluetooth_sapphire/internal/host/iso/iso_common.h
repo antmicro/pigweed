@@ -91,7 +91,7 @@ class IsoStream;
 
 using CisEstablishedCallback =
     pw::Callback<void(pw::bluetooth::emboss::StatusCode,
-                      std::optional<WeakSelf<IsoStream>::WeakPtr>,
+                      std::optional<WeakSelf<IsoStream>::WeakPtrType>,
                       const std::optional<CisEstablishedParameters>&)>;
 
 // A convenience class for holding an identifier that uniquely represents a

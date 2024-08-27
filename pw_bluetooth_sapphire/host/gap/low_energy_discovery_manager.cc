@@ -35,7 +35,7 @@ const char* kInspectScanIntervalPropertyName = "scan_interval_ms";
 const char* kInspectScanWindowPropertyName = "scan_window_ms";
 
 LowEnergyDiscoverySession::LowEnergyDiscoverySession(
-    bool active, LowEnergyDiscoveryManager::WeakPtr manager)
+    bool active, LowEnergyDiscoveryManager::WeakPtrType manager)
     : alive_(true), active_(active), manager_(std::move(manager)) {
   BT_ASSERT(manager_.is_alive());
 }

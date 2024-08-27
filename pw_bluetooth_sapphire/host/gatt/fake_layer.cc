@@ -21,7 +21,7 @@ namespace bt::gatt::testing {
 FakeLayer::TestPeer::TestPeer(pw::async::Dispatcher& pw_dispatcher)
     : fake_client(pw_dispatcher) {}
 
-std::pair<RemoteService::WeakPtr, FakeClient::WeakPtr>
+std::pair<RemoteService::WeakPtrType, FakeClient::WeakPtrType>
 FakeLayer::AddPeerService(PeerId peer_id,
                           const ServiceData& info,
                           bool notify) {
@@ -31,7 +31,7 @@ FakeLayer::AddPeerService(PeerId peer_id,
   BT_ASSERT(info.range_start <= info.range_end);
   auto service =
       std::make_unique<RemoteService>(info, peer.fake_client.GetWeakPtr());
-  RemoteService::WeakPtr service_weak = service->GetWeakPtr();
+  RemoteService::WeakPtrType service_weak = service->GetWeakPtr();
 
   std::vector<att::Handle> removed;
   ServiceList added;
@@ -182,7 +182,7 @@ void FakeLayer::InitializeClient(PeerId peer_id,
     return;
   }
 
-  std::vector<RemoteService::WeakPtr> added;
+  std::vector<RemoteService::WeakPtrType> added;
   if (uuids.empty()) {
     for (auto& svc_pair : iter->second.services) {
       added.push_back(svc_pair.second->GetWeakPtr());
@@ -245,15 +245,15 @@ void FakeLayer::ListServices(PeerId peer_id,
   callback(list_services_status_, std::move(services));
 }
 
-RemoteService::WeakPtr FakeLayer::FindService(PeerId peer_id,
+RemoteService::WeakPtrType FakeLayer::FindService(PeerId peer_id,
                                               IdType service_id) {
   auto peer_iter = peers_.find(peer_id);
   if (peer_iter == peers_.end()) {
-    return RemoteService::WeakPtr();
+    return RemoteService::WeakPtrType();
   }
   auto svc_iter = peer_iter->second.services.find(service_id);
   if (svc_iter == peer_iter->second.services.end()) {
-    return RemoteService::WeakPtr();
+    return RemoteService::WeakPtrType();
   }
   return svc_iter->second->GetWeakPtr();
 }

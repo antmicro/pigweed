@@ -30,7 +30,7 @@ constexpr pw::chrono::SystemClock::duration kTransactionTimeout =
 
 class Impl final : public Client {
  public:
-  explicit Impl(l2cap::Channel::WeakPtr channel,
+  explicit Impl(l2cap::Channel::WeakPtrType channel,
                 pw::async::Dispatcher& dispatcher);
 
   ~Impl() override;
@@ -94,7 +94,7 @@ class Impl final : public Client {
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(Impl);
 };
 
-Impl::Impl(l2cap::Channel::WeakPtr channel, pw::async::Dispatcher& dispatcher)
+Impl::Impl(l2cap::Channel::WeakPtrType channel, pw::async::Dispatcher& dispatcher)
     : pw_dispatcher_(dispatcher), channel_(std::move(channel)) {
   auto self = weak_self_.GetWeakPtr();
   bool activated = channel_->Activate(
@@ -312,7 +312,7 @@ TransactionId Impl::GetNextId() {
 
 }  // namespace
 
-std::unique_ptr<Client> Client::Create(l2cap::Channel::WeakPtr channel,
+std::unique_ptr<Client> Client::Create(l2cap::Channel::WeakPtrType channel,
                                        pw::async::Dispatcher& dispatcher) {
   BT_DEBUG_ASSERT(channel.is_alive());
   return std::make_unique<Impl>(std::move(channel), dispatcher);

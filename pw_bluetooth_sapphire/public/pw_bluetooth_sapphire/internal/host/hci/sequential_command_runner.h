@@ -55,7 +55,7 @@ class Transport;
 // RunCommands will report success.
 class SequentialCommandRunner final {
  public:
-  explicit SequentialCommandRunner(hci::CommandChannel::WeakPtr cmd_channel);
+  explicit SequentialCommandRunner(hci::CommandChannel::WeakPtrType cmd_channel);
   ~SequentialCommandRunner() = default;
 
   // Adds a HCI command packet to the queue.
@@ -149,7 +149,7 @@ class SequentialCommandRunner final {
   void Reset();
   void NotifyStatusAndReset(Result<> status);
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   std::queue<QueuedCommand> command_queue_;
 

@@ -24,7 +24,7 @@ class IsoStreamImpl final : public IsoStream {
                 uint8_t cis_id,
                 hci_spec::ConnectionHandle cis_handle,
                 CisEstablishedCallback on_established_cb,
-                hci::CommandChannel::WeakPtr cmd_channel,
+                hci::CommandChannel::WeakPtrType cmd_channel,
                 pw::Callback<void()> on_closed_cb);
 
   bool OnCisEstablished(const hci::EmbossEventPacket& event) override;
@@ -38,7 +38,7 @@ class IsoStreamImpl final : public IsoStream {
 
   void Close() override;
 
-  IsoStream::WeakPtr GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
+  IsoStream::WeakPtrType GetWeakPtr() override { return weak_self_.GetWeakPtr(); }
 
  private:
   enum class IsoStreamState {
@@ -61,7 +61,7 @@ class IsoStreamImpl final : public IsoStream {
   // Called when stream is closed
   pw::Callback<void()> on_closed_cb_;
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   hci::CommandChannel::EventHandlerId cis_established_handler_;
 
@@ -74,7 +74,7 @@ IsoStreamImpl::IsoStreamImpl(uint8_t cig_id,
                              uint8_t cis_id,
                              hci_spec::ConnectionHandle cis_handle,
                              CisEstablishedCallback on_established_cb,
-                             hci::CommandChannel::WeakPtr cmd_channel,
+                             hci::CommandChannel::WeakPtrType cmd_channel,
                              pw::Callback<void()> on_closed_cb)
     : IsoStream(),
       state_(IsoStreamState::kNotEstablished),
@@ -188,7 +188,7 @@ std::unique_ptr<IsoStream> IsoStream::Create(
     uint8_t cis_id,
     hci_spec::ConnectionHandle cis_handle,
     CisEstablishedCallback on_established_cb,
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     pw::Callback<void()> on_closed_cb) {
   return std::make_unique<IsoStreamImpl>(cig_id,
                                          cis_id,

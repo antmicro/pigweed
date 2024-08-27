@@ -20,8 +20,8 @@
 
 namespace bt::sm {
 
-PairingPhase::PairingPhase(PairingChannel::WeakPtr chan,
-                           Listener::WeakPtr listener,
+PairingPhase::PairingPhase(PairingChannel::WeakPtrType chan,
+                           Listener::WeakPtrType listener,
                            Role role)
     : sm_chan_(std::move(chan)),
       listener_(std::move(listener)),

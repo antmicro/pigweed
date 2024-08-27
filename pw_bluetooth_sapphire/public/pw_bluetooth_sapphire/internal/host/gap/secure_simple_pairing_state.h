@@ -188,7 +188,7 @@ class SecureSimplePairingState final {
   // Authentication Request for this peer.
   //
   // |link| must be valid for the lifetime of this object.
-  SecureSimplePairingState(Peer::WeakPtr peer,
+  SecureSimplePairingState(Peer::WeakPtrType peer,
                            WeakPtr<hci::BrEdrConnection> link,
                            bool outgoing_connection,
                            fit::closure auth_cb,
@@ -210,7 +210,7 @@ class SecureSimplePairingState final {
   // If the delegate indicates passkey display capabilities, then it will always
   // be asked to confirm pairing, even when Core Spec v5.0, Vol 3, Part C,
   // Section 5.2.2.6 indicates "automatic confirmation."
-  void SetPairingDelegate(PairingDelegate::WeakPtr pairing_delegate) {
+  void SetPairingDelegate(PairingDelegate::WeakPtrType pairing_delegate) {
     pairing_delegate_ = std::move(pairing_delegate);
   }
 
@@ -358,8 +358,8 @@ class SecureSimplePairingState final {
 
     // Used to prevent PairingDelegate callbacks from using captured stale
     // pointers.
-    using WeakPtr = WeakSelf<Pairing>::WeakPtr;
-    Pairing::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+    using WeakPtrType = WeakSelf<Pairing>::WeakPtrType;
+    Pairing::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
     // True if the local device initiated pairing.
     bool initiator;
@@ -414,7 +414,7 @@ class SecureSimplePairingState final {
   hci_spec::ConnectionHandle handle() const { return link_->handle(); }
 
   // Returns nullptr if the delegate is not set or no longer alive.
-  const PairingDelegate::WeakPtr& pairing_delegate() const {
+  const PairingDelegate::WeakPtrType& pairing_delegate() const {
     return pairing_delegate_;
   }
 
@@ -447,7 +447,7 @@ class SecureSimplePairingState final {
   bool IsPeerSecureConnectionsSupported() const;
 
   PeerId peer_id_;
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
 
   // The current GAP security mode of the device (v5.2 Vol. 3 Part C
   // Section 5.2.2)
@@ -462,7 +462,7 @@ class SecureSimplePairingState final {
   // True when the remote device has reported it doesn't have a link key.
   bool peer_missing_key_;
 
-  PairingDelegate::WeakPtr pairing_delegate_;
+  PairingDelegate::WeakPtrType pairing_delegate_;
 
   // State machine representation.
   State state_;

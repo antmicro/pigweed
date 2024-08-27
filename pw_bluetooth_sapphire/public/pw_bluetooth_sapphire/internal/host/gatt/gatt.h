@@ -203,7 +203,7 @@ class GATT : public WeakSelf<GATT> {
   // Connects the RemoteService with the given identifier found on the device
   // with |peer_id|. A pointer to the service will be returned if it exists, or
   // nullptr will be returned otherwise.
-  virtual RemoteService::WeakPtr FindService(PeerId peer_id,
+  virtual RemoteService::WeakPtrType FindService(PeerId peer_id,
                                              IdType service_id) = 0;
 
  private:

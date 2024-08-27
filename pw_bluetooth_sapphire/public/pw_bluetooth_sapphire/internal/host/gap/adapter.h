@@ -81,8 +81,8 @@ class Adapter {
   // L2cap.
   static std::unique_ptr<Adapter> Create(
       pw::async::Dispatcher& pw_dispatcher,
-      hci::Transport::WeakPtr hci,
-      gatt::GATT::WeakPtr gatt,
+      hci::Transport::WeakPtrType hci,
+      gatt::GATT::WeakPtrType gatt,
       std::unique_ptr<l2cap::ChannelManager> l2cap = nullptr);
   virtual ~Adapter() = default;
 
@@ -425,7 +425,7 @@ class Adapter {
   // Assigns a pairing delegate to this adapter. This PairingDelegate and its
   // I/O capabilities will be used for all future pairing procedures. Setting a
   // new PairingDelegate cancels all ongoing pairing procedures.
-  virtual void SetPairingDelegate(PairingDelegate::WeakPtr delegate) = 0;
+  virtual void SetPairingDelegate(PairingDelegate::WeakPtrType delegate) = 0;
 
   // Returns true if this adapter is currently in discoverable mode on the LE or
   // BR/EDR transports.
@@ -473,8 +473,8 @@ class Adapter {
   virtual void AttachInspect(inspect::Node& parent, std::string name) = 0;
 
   // Returns a weak pointer to this adapter.
-  using WeakPtr = WeakSelf<Adapter>::WeakPtr;
-  virtual Adapter::WeakPtr AsWeakPtr() = 0;
+  using WeakPtrType = WeakSelf<Adapter>::WeakPtrType;
+  virtual Adapter::WeakPtrType AsWeakPtr() = 0;
 };
 
 }  // namespace gap

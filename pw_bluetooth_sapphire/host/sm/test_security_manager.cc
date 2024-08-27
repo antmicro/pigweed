@@ -22,10 +22,10 @@
 
 namespace bt::sm::testing {
 
-TestSecurityManager::TestSecurityManager(hci::LowEnergyConnection::WeakPtr link,
-                                         l2cap::Channel::WeakPtr smp,
+TestSecurityManager::TestSecurityManager(hci::LowEnergyConnection::WeakPtrType link,
+                                         l2cap::Channel::WeakPtrType smp,
                                          IOCapability io_capability,
-                                         Delegate::WeakPtr delegate,
+                                         Delegate::WeakPtrType delegate,
                                          BondableMode bondable_mode,
                                          gap::LESecurityMode security_mode)
     : SecurityManager(bondable_mode, security_mode),
@@ -54,10 +54,10 @@ void TestSecurityManager::Reset(IOCapability io_capability) {}
 void TestSecurityManager::Abort(ErrorCode ecode) {}
 
 std::unique_ptr<SecurityManager> TestSecurityManagerFactory::CreateSm(
-    hci::LowEnergyConnection::WeakPtr link,
-    l2cap::Channel::WeakPtr smp,
+    hci::LowEnergyConnection::WeakPtrType link,
+    l2cap::Channel::WeakPtrType smp,
     IOCapability io_capability,
-    Delegate::WeakPtr delegate,
+    Delegate::WeakPtrType delegate,
     BondableMode bondable_mode,
     gap::LESecurityMode security_mode,
     pw::async::Dispatcher& /*dispatcher*/) {
@@ -73,7 +73,7 @@ std::unique_ptr<SecurityManager> TestSecurityManagerFactory::CreateSm(
   return test_sm;
 }
 
-WeakSelf<TestSecurityManager>::WeakPtr TestSecurityManagerFactory::GetTestSm(
+WeakSelf<TestSecurityManager>::WeakPtrType TestSecurityManagerFactory::GetTestSm(
     hci_spec::ConnectionHandle conn_handle) {
   auto iter = test_sms_.find(conn_handle);
   BT_ASSERT(iter != test_sms_.end());

@@ -29,7 +29,7 @@ const char* const kInspectSecurityPropertiesPropertyName =
     "security_properties";
 }  // namespace
 
-LegacyPairingState::LegacyPairingState(Peer::WeakPtr peer,
+LegacyPairingState::LegacyPairingState(Peer::WeakPtrType peer,
                                        WeakPtr<hci::BrEdrConnection> link,
                                        bool outgoing_connection,
                                        fit::closure auth_cb,
@@ -45,7 +45,7 @@ LegacyPairingState::LegacyPairingState(Peer::WeakPtr peer,
       std::move(link), std::move(auth_cb), std::move(status_cb));
 }
 
-LegacyPairingState::LegacyPairingState(Peer::WeakPtr peer,
+LegacyPairingState::LegacyPairingState(Peer::WeakPtrType peer,
                                        bool outgoing_connection)
     : peer_id_(peer->identifier()),
       peer_(std::move(peer)),

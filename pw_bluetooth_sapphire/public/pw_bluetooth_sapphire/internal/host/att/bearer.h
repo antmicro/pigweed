@@ -51,7 +51,7 @@ class Bearer final {
  public:
   // Creates a new ATT Bearer. Returns nullptr if |chan| cannot be activated.
   // This can happen if the link is closed.
-  static std::unique_ptr<Bearer> Create(l2cap::Channel::WeakPtr chan,
+  static std::unique_ptr<Bearer> Create(l2cap::Channel::WeakPtrType chan,
                                         pw::async::Dispatcher& dispatcher);
 
   ~Bearer();
@@ -161,11 +161,11 @@ class Bearer final {
   // Ends a request transaction with an error response.
   bool ReplyWithError(TransactionId id, Handle handle, ErrorCode error_code);
 
-  using WeakPtr = WeakSelf<Bearer>::WeakPtr;
-  WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<Bearer>::WeakPtrType;
+  WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
-  explicit Bearer(l2cap::Channel::WeakPtr chan,
+  explicit Bearer(l2cap::Channel::WeakPtrType chan,
                   pw::async::Dispatcher& dispatcher);
 
   // Returns false if activation fails. This is called by the factory method.
@@ -228,7 +228,7 @@ class Bearer final {
 
     // Tries to initiate the next transaction. Sends the PDU over |chan| if
     // successful.
-    void TrySendNext(const l2cap::Channel::WeakPtr& chan,
+    void TrySendNext(const l2cap::Channel::WeakPtrType& chan,
                      pw::async::TaskFunction timeout_cb,
                      pw::chrono::SystemClock::duration timeout);
 

@@ -33,7 +33,7 @@ namespace bt::hci {
 Connection::Connection(hci_spec::ConnectionHandle handle,
                        const DeviceAddress& local_address,
                        const DeviceAddress& peer_address,
-                       Transport::WeakPtr hci,
+                       Transport::WeakPtrType hci,
                        fit::callback<void()> on_disconnection_complete)
     : handle_(handle),
       local_address_(local_address),
@@ -72,7 +72,7 @@ std::string Connection::ToString() const {
 }
 
 CommandChannel::EventCallbackResult Connection::OnDisconnectionComplete(
-    const WeakSelf<Connection>::WeakPtr& self,
+    const WeakSelf<Connection>::WeakPtrType& self,
     hci_spec::ConnectionHandle handle,
     const EmbossEventPacket& event,
     fit::callback<void()> on_disconnection_complete) {

@@ -260,7 +260,7 @@ class Channel : public WeakSelf<Channel> {
 namespace internal {
 
 class LogicalLink;
-using LogicalLinkWeakPtr = WeakSelf<LogicalLink>::WeakPtr;
+using LogicalLinkWeakPtr = WeakSelf<LogicalLink>::WeakPtrType;
 
 // Channel implementation used in production.
 class ChannelImpl : public Channel, public TxEngine::TxChannel {
@@ -277,7 +277,7 @@ class ChannelImpl : public Channel, public TxEngine::TxChannel {
       pw::async::Dispatcher& dispatcher,
       ChannelId id,
       internal::LogicalLinkWeakPtr link,
-      hci::CommandChannel::WeakPtr cmd_channel,
+      hci::CommandChannel::WeakPtrType cmd_channel,
       uint16_t max_acl_payload_size,
       A2dpOffloadManager& a2dp_offload_manager,
       uint16_t max_tx_queued = kDefaultTxMaxQueuedCount);
@@ -288,7 +288,7 @@ class ChannelImpl : public Channel, public TxEngine::TxChannel {
       ChannelId peer_id,
       internal::LogicalLinkWeakPtr link,
       ChannelInfo info,
-      hci::CommandChannel::WeakPtr cmd_channel,
+      hci::CommandChannel::WeakPtrType cmd_channel,
       uint16_t max_acl_payload_size,
       A2dpOffloadManager& a2dp_offload_manager,
       uint16_t max_tx_queued = kDefaultTxMaxQueuedCount);
@@ -334,8 +334,8 @@ class ChannelImpl : public Channel, public TxEngine::TxChannel {
                         hci::ResultCallback<> callback) override;
   void StopA2dpOffload(hci::ResultCallback<> callback) override;
 
-  using WeakPtr = WeakSelf<ChannelImpl>::WeakPtr;
-  WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<ChannelImpl>::WeakPtrType;
+  WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
   ChannelImpl(pw::async::Dispatcher& dispatcher,
@@ -343,7 +343,7 @@ class ChannelImpl : public Channel, public TxEngine::TxChannel {
               ChannelId remote_id,
               internal::LogicalLinkWeakPtr link,
               ChannelInfo info,
-              hci::CommandChannel::WeakPtr cmd_channel,
+              hci::CommandChannel::WeakPtrType cmd_channel,
               uint16_t max_acl_payload_size,
               A2dpOffloadManager& a2dp_offload_manager,
               uint16_t max_tx_queued);
@@ -374,7 +374,7 @@ class ChannelImpl : public Channel, public TxEngine::TxChannel {
 
   // Command channel used to transport A2DP offload configuration of vendor
   // extensions.
-  hci::CommandChannel::WeakPtr cmd_channel_;
+  hci::CommandChannel::WeakPtrType cmd_channel_;
 
   // The engine which processes received PDUs, and converts them to SDUs for
   // upper layers.

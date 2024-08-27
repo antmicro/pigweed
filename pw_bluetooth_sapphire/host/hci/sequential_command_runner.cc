@@ -20,7 +20,7 @@
 namespace bt::hci {
 
 SequentialCommandRunner::SequentialCommandRunner(
-    hci::CommandChannel::WeakPtr cmd_channel)
+    hci::CommandChannel::WeakPtrType cmd_channel)
     : cmd_(std::move(cmd_channel)),
       sequence_number_(0u),
       running_commands_(0u),

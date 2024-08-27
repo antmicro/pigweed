@@ -436,7 +436,7 @@ class DatabaseIteratorManyTest : public ::testing::Test {
     grp4->set_active(true);
   }
 
-  Database::WeakPtr db() const { return db_->GetWeakPtr(); }
+  Database::WeakPtrType db() const { return db_->GetWeakPtr(); }
 
  private:
   std::unique_ptr<Database> db_;
@@ -616,7 +616,7 @@ class DatabaseExecuteWriteQueueTest : public ::testing::Test {
     return pending_writes_;
   }
 
-  Database::WeakPtr db() { return db_->GetWeakPtr(); }
+  Database::WeakPtrType db() { return db_->GetWeakPtr(); }
 
  private:
   void WriteHandler(PeerId peer_id,

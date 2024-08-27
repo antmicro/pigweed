@@ -33,7 +33,7 @@ RemoteCharacteristic::PendingNotifyRequest::PendingNotifyRequest(
   BT_DEBUG_ASSERT(status_callback);
 }
 
-RemoteCharacteristic::RemoteCharacteristic(Client::WeakPtr client,
+RemoteCharacteristic::RemoteCharacteristic(Client::WeakPtrType client,
                                            const CharacteristicData& info)
     : info_(info),
       discovery_error_(false),

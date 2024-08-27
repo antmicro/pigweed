@@ -32,7 +32,7 @@ namespace bt::hci {
 // used as either a temporary or saved object.
 class CommandHandler {
  public:
-  explicit CommandHandler(CommandChannel::WeakPtr channel)
+  explicit CommandHandler(CommandChannel::WeakPtrType channel)
       : channel_(std::move(channel)) {}
 
   // Wrapper around CommandChannel::SendCommand that sends a CommandT and
@@ -167,7 +167,7 @@ class CommandHandler {
   }
 
  private:
-  CommandChannel::WeakPtr channel_;
+  CommandChannel::WeakPtrType channel_;
 };
 
 }  // namespace bt::hci

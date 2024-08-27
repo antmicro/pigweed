@@ -180,7 +180,7 @@ OpCode MatchingTransactionCode(OpCode transaction_end_code) {
 }  // namespace
 
 // static
-std::unique_ptr<Bearer> Bearer::Create(l2cap::Channel::WeakPtr chan,
+std::unique_ptr<Bearer> Bearer::Create(l2cap::Channel::WeakPtrType chan,
                                        pw::async::Dispatcher& dispatcher) {
   std::unique_ptr<Bearer> bearer(new Bearer(std::move(chan), dispatcher));
   return bearer->Activate() ? std::move(bearer) : nullptr;
@@ -224,7 +224,7 @@ void Bearer::TransactionQueue::Enqueue(PendingTransactionPtr transaction) {
 }
 
 void Bearer::TransactionQueue::TrySendNext(
-    const l2cap::Channel::WeakPtr& chan,
+    const l2cap::Channel::WeakPtrType& chan,
     pw::async::TaskFunction timeout_cb,
     pw::chrono::SystemClock::duration timeout) {
   BT_DEBUG_ASSERT(chan.is_alive());
@@ -288,7 +288,7 @@ void Bearer::TransactionQueue::InvokeErrorAll(Error error) {
   }
 }
 
-Bearer::Bearer(l2cap::Channel::WeakPtr chan, pw::async::Dispatcher& dispatcher)
+Bearer::Bearer(l2cap::Channel::WeakPtrType chan, pw::async::Dispatcher& dispatcher)
     : dispatcher_(dispatcher),
       chan_(std::move(chan)),
       request_queue_(dispatcher_),

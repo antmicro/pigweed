@@ -481,7 +481,7 @@ TEST_F(ScoConnectionManagerTest, HandleReuse) {
   RunUntilIdle();
   ASSERT_TRUE(conn_result.has_value());
   ASSERT_TRUE(conn_result->is_ok());
-  ScoConnection::WeakPtr conn = conn_result->value();
+  ScoConnection::WeakPtrType conn = conn_result->value();
   EXPECT_EQ(conn->handle(), kScoConnectionHandle);
 
   auto disconn_status_packet = testing::CommandStatusPacket(

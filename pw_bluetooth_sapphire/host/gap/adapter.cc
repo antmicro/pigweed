@@ -66,8 +66,8 @@ static constexpr const char* kInspectBrEdrDiscoveryManagerNodeName =
 class AdapterImpl final : public Adapter {
  public:
   explicit AdapterImpl(pw::async::Dispatcher& pw_dispatcher,
-                       hci::Transport::WeakPtr hci,
-                       gatt::GATT::WeakPtr gatt,
+                       hci::Transport::WeakPtrType hci,
+                       gatt::GATT::WeakPtrType gatt,
                        std::unique_ptr<l2cap::ChannelManager> l2cap);
   ~AdapterImpl() override;
 
@@ -343,7 +343,7 @@ class AdapterImpl final : public Adapter {
 
   bool AddBondedPeer(BondingData bonding_data) override;
 
-  void SetPairingDelegate(PairingDelegate::WeakPtr delegate) override;
+  void SetPairingDelegate(PairingDelegate::WeakPtrType delegate) override;
 
   bool IsDiscoverable() const override;
 
@@ -371,7 +371,7 @@ class AdapterImpl final : public Adapter {
 
   void AttachInspect(inspect::Node& parent, std::string name) override;
 
-  WeakSelf<Adapter>::WeakPtr AsWeakPtr() override {
+  WeakSelf<Adapter>::WeakPtrType AsWeakPtr() override {
     return weak_self_adapter_.GetWeakPtr();
   }
 
@@ -521,7 +521,7 @@ class AdapterImpl final : public Adapter {
   // Uniquely identifies this adapter on the current system.
   AdapterId identifier_;
 
-  hci::Transport::WeakPtr hci_;
+  hci::Transport::WeakPtrType hci_;
 
   // Callback invoked to notify clients when the underlying transport is closed.
   fit::closure transport_error_cb_;
@@ -557,7 +557,7 @@ class AdapterImpl final : public Adapter {
 
   // The GATT profile. We use this reference to add and remove data bearers and
   // for service discovery.
-  gatt::GATT::WeakPtr gatt_;
+  gatt::GATT::WeakPtrType gatt_;
 
   // Objects that abstract the controller for connection and advertising
   // procedures.
@@ -592,8 +592,8 @@ class AdapterImpl final : public Adapter {
 };
 
 AdapterImpl::AdapterImpl(pw::async::Dispatcher& pw_dispatcher,
-                         hci::Transport::WeakPtr hci,
-                         gatt::GATT::WeakPtr gatt,
+                         hci::Transport::WeakPtrType hci,
+                         gatt::GATT::WeakPtrType gatt,
                          std::unique_ptr<l2cap::ChannelManager> l2cap)
     : identifier_(Random<AdapterId>()),
       hci_(std::move(hci)),
@@ -707,7 +707,7 @@ bool AdapterImpl::AddBondedPeer(BondingData bonding_data) {
   return peer_cache()->AddBondedPeer(bonding_data);
 }
 
-void AdapterImpl::SetPairingDelegate(PairingDelegate::WeakPtr delegate) {
+void AdapterImpl::SetPairingDelegate(PairingDelegate::WeakPtrType delegate) {
   le_connection_manager_->SetPairingDelegate(delegate);
   bredr_connection_manager_->SetPairingDelegate(delegate);
 }
@@ -1791,8 +1791,8 @@ bool AdapterImpl::IsLeRandomAddressChangeAllowed() {
 
 std::unique_ptr<Adapter> Adapter::Create(
     pw::async::Dispatcher& pw_dispatcher,
-    hci::Transport::WeakPtr hci,
-    gatt::GATT::WeakPtr gatt,
+    hci::Transport::WeakPtrType hci,
+    gatt::GATT::WeakPtrType gatt,
     std::unique_ptr<l2cap::ChannelManager> l2cap) {
   return std::make_unique<AdapterImpl>(
       pw_dispatcher, hci, gatt, std::move(l2cap));

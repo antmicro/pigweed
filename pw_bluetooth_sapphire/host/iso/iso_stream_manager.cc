@@ -17,7 +17,7 @@
 namespace bt::iso {
 
 IsoStreamManager::IsoStreamManager(hci_spec::ConnectionHandle handle,
-                                   hci::CommandChannel::WeakPtr cmd_channel)
+                                   hci::CommandChannel::WeakPtrType cmd_channel)
     : acl_handle_(handle), cmd_(cmd_channel), weak_self_(this) {
   if (!cmd_.is_alive()) {
     return;

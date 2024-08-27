@@ -63,7 +63,7 @@ class AclConnection : public Connection {
                 const DeviceAddress& local_address,
                 const DeviceAddress& peer_address,
                 pw::bluetooth::emboss::ConnectionRole role,
-                const Transport::WeakPtr& hci);
+                const Transport::WeakPtrType& hci);
 
   void set_ltk(const hci_spec::LinkKey& link_key) { ltk_ = link_key; }
 
@@ -79,7 +79,7 @@ class AclConnection : public Connection {
   // This method must be static since it may be invoked after the connection
   // associated with it is destroyed.
   static void OnDisconnectionComplete(hci_spec::ConnectionHandle handle,
-                                      const Transport::WeakPtr& hci);
+                                      const Transport::WeakPtrType& hci);
 
   // HCI event handlers.
   CommandChannel::EventCallbackResult OnEncryptionChangeEvent(

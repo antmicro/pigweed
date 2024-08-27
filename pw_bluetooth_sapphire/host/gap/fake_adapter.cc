@@ -70,8 +70,8 @@ void FakeAdapter::FakeBrEdr::OpenL2capChannel(
       /*handle=*/1,
       bt::LinkType::kACL,
       info);
-  l2cap::testing::FakeChannel::WeakPtr weak_fake_channel = channel->AsWeakPtr();
-  l2cap::Channel::WeakPtr weak_channel = channel->GetWeakPtr();
+  l2cap::testing::FakeChannel::WeakPtrType weak_fake_channel = channel->AsWeakPtr();
+  l2cap::Channel::WeakPtrType weak_channel = channel->GetWeakPtr();
   channels_.emplace(local_id, std::move(channel));
   if (channel_cb_) {
     channel_cb_(weak_fake_channel);

@@ -48,8 +48,8 @@ class Phase3 final : public PairingPhase, public PairingChannelHandler {
   //     some keys to distribute if Phase3 exists - construction will panic if
   //     both the local & remote key_distribution fields of features are 0.
   //   - |le_sec|: The current security properties of key encrypting the link.
-  Phase3(PairingChannel::WeakPtr chan,
-         Listener::WeakPtr listener,
+  Phase3(PairingChannel::WeakPtrType chan,
+         Listener::WeakPtrType listener,
          Role role,
          PairingFeatures features,
          SecurityProperties le_sec,

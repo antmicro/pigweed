@@ -24,7 +24,7 @@
 namespace bt::gap {
 
 PairingStateManager::PairingStateManager(
-    Peer::WeakPtr peer,
+    Peer::WeakPtrType peer,
     WeakPtr<hci::BrEdrConnection> link,
     std::unique_ptr<LegacyPairingState> legacy_pairing_state,
     bool outgoing_connection,

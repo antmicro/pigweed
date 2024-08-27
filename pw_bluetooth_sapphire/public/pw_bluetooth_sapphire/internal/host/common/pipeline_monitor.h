@@ -104,10 +104,10 @@ class PipelineMonitor final {
 
    private:
     friend class PipelineMonitor;
-    Token(WeakSelf<PipelineMonitor>::WeakPtr parent, TokenId id)
+    Token(WeakSelf<PipelineMonitor>::WeakPtrType parent, TokenId id)
         : parent_(std::move(parent)), id_(id) {}
 
-    const WeakSelf<PipelineMonitor>::WeakPtr parent_;
+    const WeakSelf<PipelineMonitor>::WeakPtrType parent_;
     TokenId id_ = kInvalidTokenId;
   };
 

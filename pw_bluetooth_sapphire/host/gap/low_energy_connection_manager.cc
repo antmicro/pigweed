@@ -107,13 +107,13 @@ const char* kInspectDisconnectRemoteDisconnectionNodeName =
 }  // namespace
 
 LowEnergyConnectionManager::LowEnergyConnectionManager(
-    hci::CommandChannel::WeakPtr cmd_channel,
+    hci::CommandChannel::WeakPtrType cmd_channel,
     hci::LocalAddressDelegate* addr_delegate,
     hci::LowEnergyConnector* connector,
     PeerCache* peer_cache,
     l2cap::ChannelManager* l2cap,
-    gatt::GATT::WeakPtr gatt,
-    LowEnergyDiscoveryManager::WeakPtr discovery_manager,
+    gatt::GATT::WeakPtrType gatt,
+    LowEnergyDiscoveryManager::WeakPtrType discovery_manager,
     sm::SecurityManagerFactory sm_creator,
     const AdapterState& adapter_state,
     pw::async::Dispatcher& dispatcher)
@@ -450,7 +450,7 @@ void LowEnergyConnectionManager::RegisterRemoteInitiatedLink(
 }
 
 void LowEnergyConnectionManager::SetPairingDelegate(
-    const PairingDelegate::WeakPtr& delegate) {
+    const PairingDelegate::WeakPtrType& delegate) {
   // TODO(armansito): Add a test case for this once fxbug.dev/42169848 is done.
   pairing_delegate_ = delegate;
 

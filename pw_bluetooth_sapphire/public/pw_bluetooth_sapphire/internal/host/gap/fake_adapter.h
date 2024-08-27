@@ -172,7 +172,7 @@ class FakeAdapter final : public Adapter {
     // Called with a reference to the l2cap::FakeChannel created when a channel
     // is connected with Connect().
     using ChannelCallback =
-        fit::function<void(l2cap::testing::FakeChannel::WeakPtr)>;
+        fit::function<void(l2cap::testing::FakeChannel::WeakPtrType)>;
     void set_l2cap_channel_callback(ChannelCallback cb) {
       channel_cb_ = std::move(cb);
     }
@@ -293,7 +293,7 @@ class FakeAdapter final : public Adapter {
 
   bool AddBondedPeer(BondingData bonding_data) override { return true; }
 
-  void SetPairingDelegate(PairingDelegate::WeakPtr delegate) override {}
+  void SetPairingDelegate(PairingDelegate::WeakPtrType delegate) override {}
 
   bool IsDiscoverable() const override { return is_discoverable_; }
 
@@ -317,7 +317,7 @@ class FakeAdapter final : public Adapter {
 
   void AttachInspect(inspect::Node& parent, std::string name) override {}
 
-  Adapter::WeakPtr AsWeakPtr() override { return weak_self_.GetWeakPtr(); }
+  Adapter::WeakPtrType AsWeakPtr() override { return weak_self_.GetWeakPtr(); }
 
  private:
   enum InitState {

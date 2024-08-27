@@ -21,7 +21,7 @@ FakeLowEnergyConnection::FakeLowEnergyConnection(
     const DeviceAddress& local_address,
     const DeviceAddress& peer_address,
     pw::bluetooth::emboss::ConnectionRole role,
-    const hci::Transport::WeakPtr& hci)
+    const hci::Transport::WeakPtrType& hci)
     : LowEnergyConnection(handle,
                           local_address,
                           peer_address,

@@ -129,7 +129,7 @@ LogicalLink::~LogicalLink() {
   BT_ASSERT(closed_);
 }
 
-Channel::WeakPtr LogicalLink::OpenFixedChannel(ChannelId id) {
+Channel::WeakPtrType LogicalLink::OpenFixedChannel(ChannelId id) {
   BT_DEBUG_ASSERT(!closed_);
 
   TRACE_DURATION("bluetooth",
@@ -142,7 +142,7 @@ Channel::WeakPtr LogicalLink::OpenFixedChannel(ChannelId id) {
   // We currently only support the pre-defined fixed-channels.
   if (!AllowsFixedChannel(id)) {
     bt_log(ERROR, "l2cap", "cannot open fixed channel with id %#.4x", id);
-    return Channel::WeakPtr();
+    return Channel::WeakPtrType();
   }
 
   auto iter = channels_.find(id);
@@ -152,7 +152,7 @@ Channel::WeakPtr LogicalLink::OpenFixedChannel(ChannelId id) {
            "channel is already open! (id: %#.4x, handle: %#.4x)",
            id,
            handle_);
-    return Channel::WeakPtr();
+    return Channel::WeakPtrType();
   }
 
   std::unique_ptr<ChannelImpl> chan =
@@ -354,7 +354,7 @@ bool LogicalLink::IsNextPacketContinuingFragment() const {
 std::unique_ptr<hci::ACLDataPacket> LogicalLink::GetNextOutboundPacket() {
   for (size_t i = 0; i < channels_.size(); i++) {
     if (!IsNextPacketContinuingFragment()) {
-      current_pdus_channel_ = ChannelImpl::WeakPtr();
+      current_pdus_channel_ = ChannelImpl::WeakPtrType();
 
       // Go to next channel to try and get next packet to send
       RoundRobinChannels();
@@ -560,7 +560,7 @@ void LogicalLink::CompleteDynamicOpen(const DynamicChannel* dyn_chan,
   BT_DEBUG_ASSERT(!closed_);
 
   if (!dyn_chan) {
-    open_cb(Channel::WeakPtr());
+    open_cb(Channel::WeakPtrType());
     return;
   }
 
@@ -709,7 +709,7 @@ void LogicalLink::SendConnectionParameterUpdateRequest(
 }
 
 void LogicalLink::RequestAclPriority(
-    Channel::WeakPtr channel,
+    Channel::WeakPtrType channel,
     AclPriority priority,
     fit::callback<void(fit::result<fit::failed>)> callback) {
   BT_ASSERT(channel.is_alive());

@@ -104,7 +104,7 @@ class MockChannelTest : public pw::async::test::FakeDispatcherFixture {
 
   // Create a FakeChannel owned by this test fixture. Replaces any existing
   // channel.
-  FakeChannel::WeakPtr CreateFakeChannel(const ChannelOptions& options);
+  FakeChannel::WeakPtrType CreateFakeChannel(const ChannelOptions& options);
 
   using PacketCallback = fit::function<void(const ByteBuffer& packet)>;
   void SetPacketCallback(PacketCallback callback) {
@@ -113,7 +113,7 @@ class MockChannelTest : public pw::async::test::FakeDispatcherFixture {
 
   bool AllExpectedPacketsSent() const { return transactions_.empty(); }
 
-  FakeChannel::WeakPtr fake_chan() const { return fake_chan_->AsWeakPtr(); }
+  FakeChannel::WeakPtrType fake_chan() const { return fake_chan_->AsWeakPtr(); }
 
  private:
   void OnPacketSent(std::unique_ptr<ByteBuffer> packet);

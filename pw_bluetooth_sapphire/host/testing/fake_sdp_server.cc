@@ -23,7 +23,7 @@ FakeSdpServer::FakeSdpServer(pw::async::Dispatcher& pw_dispatcher)
       server_(l2cap_.get()) {}
 
 void FakeSdpServer::RegisterWithL2cap(FakeL2cap* l2cap) {
-  auto channel_cb = [this](FakeDynamicChannel::WeakPtr channel) {
+  auto channel_cb = [this](FakeDynamicChannel::WeakPtrType channel) {
     auto handle_sdu = [this, channel](auto& request) {
       if (channel.is_alive()) {
         HandleSdu(channel, request);
@@ -34,7 +34,7 @@ void FakeSdpServer::RegisterWithL2cap(FakeL2cap* l2cap) {
   l2cap->RegisterService(l2cap::kSDP, channel_cb);
 }
 
-void FakeSdpServer::HandleSdu(FakeDynamicChannel::WeakPtr channel,
+void FakeSdpServer::HandleSdu(FakeDynamicChannel::WeakPtrType channel,
                               const ByteBuffer& sdu) {
   BT_ASSERT(channel->opened());
   auto response = server()->HandleRequest(

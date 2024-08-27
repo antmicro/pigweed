@@ -41,13 +41,13 @@ class BrEdrConnection final {
   // authenticaion request HCI command. |disconnect_cb| is called when an error
   // occurs and the link should be disconnected. |on_peer_disconnect_cb| is
   // called when the peer disconnects and this connection should be destroyed.
-  BrEdrConnection(Peer::WeakPtr peer,
+  BrEdrConnection(Peer::WeakPtrType peer,
                   std::unique_ptr<hci::BrEdrConnection> link,
                   fit::closure send_auth_request_cb,
                   fit::callback<void()> disconnect_cb,
                   fit::closure on_peer_disconnect_cb,
                   l2cap::ChannelManager* l2cap,
-                  hci::Transport::WeakPtr transport,
+                  hci::Transport::WeakPtrType transport,
                   std::optional<BrEdrConnectionRequest> request,
                   pw::async::Dispatcher& pw_dispatcher);
 
@@ -122,7 +122,7 @@ class BrEdrConnection final {
   bool interrogation_complete() const { return !request_.has_value(); }
 
   PeerId peer_id_;
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
   std::unique_ptr<hci::BrEdrConnection> link_;
   std::optional<BrEdrConnectionRequest> request_;
   std::unique_ptr<PairingStateManager> pairing_state_manager_;

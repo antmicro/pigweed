@@ -134,31 +134,31 @@ l2cap::ChannelId FakeL2cap::FindAvailableDynamicChannelId(
   return l2cap::kInvalidChannelId;
 }
 
-FakeDynamicChannel::WeakPtr FakeL2cap::FindDynamicChannelByLocalId(
+FakeDynamicChannel::WeakPtrType FakeL2cap::FindDynamicChannelByLocalId(
     hci_spec::ConnectionHandle conn, l2cap::ChannelId local_cid) {
   auto channel_map = dynamic_channels_.find(conn);
   if (channel_map == dynamic_channels_.end()) {
-    return FakeDynamicChannel::WeakPtr();
+    return FakeDynamicChannel::WeakPtrType();
   }
   auto channel = channel_map->second.find(local_cid);
   if (channel == channel_map->second.end()) {
-    return FakeDynamicChannel::WeakPtr();
+    return FakeDynamicChannel::WeakPtrType();
   }
   return channel->second->AsWeakPtr();
 }
 
-FakeDynamicChannel::WeakPtr FakeL2cap::FindDynamicChannelByRemoteId(
+FakeDynamicChannel::WeakPtrType FakeL2cap::FindDynamicChannelByRemoteId(
     hci_spec::ConnectionHandle conn, l2cap::ChannelId remote_cid) {
   auto channel_map = dynamic_channels_.find(conn);
   if (channel_map == dynamic_channels_.end()) {
-    return FakeDynamicChannel::WeakPtr();
+    return FakeDynamicChannel::WeakPtrType();
   }
   for (auto& [id, channel_ptr] : channel_map->second) {
     if (channel_ptr->remote_cid() == remote_cid) {
       return channel_ptr->AsWeakPtr();
     }
   }
-  return FakeDynamicChannel::WeakPtr();
+  return FakeDynamicChannel::WeakPtrType();
 }
 
 void FakeL2cap::DeleteDynamicChannelByLocalId(hci_spec::ConnectionHandle conn,

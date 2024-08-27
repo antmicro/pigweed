@@ -33,8 +33,8 @@
 
 namespace bt::sm {
 
-Phase3::Phase3(PairingChannel::WeakPtr chan,
-               Listener::WeakPtr listener,
+Phase3::Phase3(PairingChannel::WeakPtrType chan,
+               Listener::WeakPtrType listener,
                Role role,
                PairingFeatures features,
                SecurityProperties le_sec,

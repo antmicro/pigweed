@@ -671,8 +671,8 @@ class Peer final {
     return last_updated_;
   }
 
-  using WeakPtr = WeakSelf<Peer>::WeakPtr;
-  Peer::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<Peer>::WeakPtrType;
+  Peer::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
   struct PeerName {

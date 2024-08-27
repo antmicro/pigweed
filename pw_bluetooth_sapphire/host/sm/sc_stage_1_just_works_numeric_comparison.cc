@@ -23,12 +23,12 @@
 namespace bt::sm {
 
 ScStage1JustWorksNumericComparison::ScStage1JustWorksNumericComparison(
-    PairingPhase::Listener::WeakPtr listener,
+    PairingPhase::Listener::WeakPtrType listener,
     Role role,
     UInt256 local_pub_key_x,
     UInt256 peer_pub_key_x,
     PairingMethod method,
-    PairingChannel::WeakPtr sm_chan,
+    PairingChannel::WeakPtrType sm_chan,
     Stage1CompleteCallback on_complete)
     : listener_(std::move(listener)),
       role_(role),

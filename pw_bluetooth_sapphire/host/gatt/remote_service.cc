@@ -56,7 +56,7 @@ CharacteristicMap CharacteristicsToCharacteristicMap(
 }  // namespace
 
 RemoteService::RemoteService(const ServiceData& service_data,
-                             Client::WeakPtr client)
+                             Client::WeakPtrType client)
     : service_data_(service_data),
       client_(std::move(client)),
       remaining_descriptor_requests_(kSentinel) {

@@ -37,9 +37,9 @@ class BrEdrInterrogator final {
   using ResultCallback = hci::ResultCallback<>;
 
   // |peer| must live longer than this object.
-  BrEdrInterrogator(Peer::WeakPtr peer,
+  BrEdrInterrogator(Peer::WeakPtrType peer,
                     hci_spec::ConnectionHandle handle,
-                    hci::CommandChannel::WeakPtr cmd_channel);
+                    hci::CommandChannel::WeakPtrType cmd_channel);
 
   // Cancels the pending interrogation without calling the result callback.
   ~BrEdrInterrogator() = default;
@@ -67,7 +67,7 @@ class BrEdrInterrogator final {
 
   void QueueReadRemoteVersionInformation();
 
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
   const PeerId peer_id_;
   const hci_spec::ConnectionHandle handle_;
 

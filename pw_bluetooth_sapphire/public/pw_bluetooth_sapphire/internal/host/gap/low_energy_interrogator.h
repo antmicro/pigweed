@@ -34,9 +34,9 @@ class LowEnergyInterrogator final {
   // |peer| must outlive this object.
   // |sca_supported| indicates that the controller supports interrogation of
   //  peer sleep clock accuracy.
-  LowEnergyInterrogator(Peer::WeakPtr peer,
+  LowEnergyInterrogator(Peer::WeakPtrType peer,
                         hci_spec::ConnectionHandle handle,
-                        hci::CommandChannel::WeakPtr hci,
+                        hci::CommandChannel::WeakPtrType hci,
                         bool sca_supported);
 
   // Destroying the LowEnergyInterrogator effectively abandons an in-flight
@@ -59,7 +59,7 @@ class LowEnergyInterrogator final {
   void QueueReadLERemoteFeatures();
   void QueueReadRemoteVersionInformation();
 
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
   // Cache of the PeerId to allow for debug logging even if the WeakPtr<Peer> is
   // invalidated
   const PeerId peer_id_;

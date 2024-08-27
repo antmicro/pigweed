@@ -31,7 +31,7 @@ class FunctionTester : public WeakSelf<FunctionTester> {
       : WeakSelf(this), value_(testval), heap_dispatcher_(pw_dispatcher) {}
 
   void callback_later_with_weak(
-      fit::function<void(FunctionTester::WeakPtr)> cb) {
+      fit::function<void(FunctionTester::WeakPtrType)> cb) {
     auto weak = GetWeakPtr();
     (void)heap_dispatcher_.Post(
         [self = std::move(weak), cb = std::move(cb)](pw::async::Context /*ctx*/,
@@ -51,7 +51,7 @@ class FunctionTester : public WeakSelf<FunctionTester> {
 
 TEST_F(WeakSelfTest, InvalidatingSelf) {
   bool called = false;
-  FunctionTester::WeakPtr ptr;
+  FunctionTester::WeakPtrType ptr;
 
   // Default-constructed weak pointers are not alive.
   EXPECT_FALSE(ptr.is_alive());
@@ -90,7 +90,7 @@ TEST_F(WeakSelfTest, InvalidatingSelf) {
 
 TEST_F(WeakSelfTest, InvalidatePtrs) {
   bool called = false;
-  FunctionTester::WeakPtr ptr;
+  FunctionTester::WeakPtrType ptr;
 
   // Default-constructed weak pointers are not alive.
   EXPECT_FALSE(ptr.is_alive());

@@ -40,7 +40,7 @@ class IsoStreamTest : public MockControllerTestBase {
         kCisHandleId,
         /*on_established_cb=*/
         [this](pw::bluetooth::emboss::StatusCode status,
-               std::optional<WeakSelf<IsoStream>::WeakPtr>,
+               std::optional<WeakSelf<IsoStream>::WeakPtrType>,
                const std::optional<CisEstablishedParameters>& parameters) {
           ASSERT_FALSE(establishment_status_.has_value());
           establishment_status_ = status;

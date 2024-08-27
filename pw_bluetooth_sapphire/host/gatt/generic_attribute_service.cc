@@ -22,7 +22,7 @@
 namespace bt::gatt {
 
 GenericAttributeService::GenericAttributeService(
-    LocalServiceManager::WeakPtr local_service_manager,
+    LocalServiceManager::WeakPtrType local_service_manager,
     SendIndicationCallback send_indication_callback)
     : local_service_manager_(std::move(local_service_manager)),
       send_indication_callback_(std::move(send_indication_callback)) {

@@ -23,7 +23,7 @@ namespace {
 template <CommandChannel::EventCallbackResult (
     AclConnection::* EventHandlerMethod)(const EventPacket&)>
 CommandChannel::EventCallback BindEventHandler(
-    const WeakSelf<AclConnection>::WeakPtr& conn) {
+    const WeakSelf<AclConnection>::WeakPtrType& conn) {
   return [conn](const EventPacket& event) {
     if (conn.is_alive()) {
       return (conn.get().*EventHandlerMethod)(event);
@@ -50,7 +50,7 @@ AclConnection::AclConnection(hci_spec::ConnectionHandle handle,
                              const DeviceAddress& local_address,
                              const DeviceAddress& peer_address,
                              pw::bluetooth::emboss::ConnectionRole role,
-                             const Transport::WeakPtr& hci)
+                             const Transport::WeakPtrType& hci)
     : Connection(handle,
                  local_address,
                  peer_address,
@@ -77,7 +77,7 @@ AclConnection::~AclConnection() {
 }
 
 void AclConnection::OnDisconnectionComplete(hci_spec::ConnectionHandle handle,
-                                            const Transport::WeakPtr& hci) {
+                                            const Transport::WeakPtrType& hci) {
   if (!hci.is_alive()) {
     return;
   }

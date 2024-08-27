@@ -65,15 +65,15 @@ class LowEnergyConnection final : public sm::Delegate {
       fit::callback<void(pw::bluetooth::emboss::StatusCode)>;
   using ErrorCallback = fit::callback<void()>;
   static std::unique_ptr<LowEnergyConnection> Create(
-      Peer::WeakPtr peer,
+      Peer::WeakPtrType peer,
       std::unique_ptr<hci::LowEnergyConnection> link,
       LowEnergyConnectionOptions connection_options,
       PeerDisconnectCallback peer_disconnect_cb,
       ErrorCallback error_cb,
-      WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+      WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
       l2cap::ChannelManager* l2cap,
-      gatt::GATT::WeakPtr gatt,
-      hci::CommandChannel::WeakPtr cmd_channel,
+      gatt::GATT::WeakPtrType gatt,
+      hci::CommandChannel::WeakPtrType cmd_channel,
       pw::async::Dispatcher& dispatcher);
 
   // Notifies request callbacks and connection refs of the disconnection.
@@ -149,20 +149,20 @@ class LowEnergyConnection final : public sm::Delegate {
 
   pw::bluetooth::emboss::ConnectionRole role() const { return link()->role(); }
 
-  using WeakPtr = WeakSelf<LowEnergyConnection>::WeakPtr;
-  LowEnergyConnection::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<LowEnergyConnection>::WeakPtrType;
+  LowEnergyConnection::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
-  LowEnergyConnection(Peer::WeakPtr peer,
+  LowEnergyConnection(Peer::WeakPtrType peer,
                       std::unique_ptr<hci::LowEnergyConnection> link,
                       LowEnergyConnectionOptions connection_options,
                       PeerDisconnectCallback peer_disconnect_cb,
                       ErrorCallback error_cb,
-                      WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr,
+                      WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr,
                       std::unique_ptr<iso::IsoStreamManager> iso_mgr,
                       l2cap::ChannelManager* l2cap,
-                      gatt::GATT::WeakPtr gatt,
-                      hci::CommandChannel::WeakPtr cmd_channel,
+                      gatt::GATT::WeakPtrType gatt,
+                      hci::CommandChannel::WeakPtrType cmd_channel,
                       pw::async::Dispatcher& dispatcher);
 
   // Registers this connection with L2CAP and initializes the fixed channel
@@ -190,8 +190,8 @@ class LowEnergyConnection final : public sm::Delegate {
   // Called by the L2CAP layer once the link has been registered and the fixed
   // channels have been opened. Returns false if GATT initialization fails.
   [[nodiscard]] bool OnL2capFixedChannelsOpened(
-      l2cap::Channel::WeakPtr att,
-      l2cap::Channel::WeakPtr smp,
+      l2cap::Channel::WeakPtrType att,
+      l2cap::Channel::WeakPtrType smp,
       LowEnergyConnectionOptions connection_options);
 
   // Called when the preferred connection parameters have been received for a LE
@@ -285,7 +285,7 @@ class LowEnergyConnection final : public sm::Delegate {
   // Registers the peer with GATT and initiates service discovery. If
   // |service_uuid| is specified, only discover the indicated service and the
   // GAP service. Returns true on success, false on failure.
-  bool InitializeGatt(l2cap::Channel::WeakPtr att,
+  bool InitializeGatt(l2cap::Channel::WeakPtrType att,
                       std::optional<UUID> service_uuid);
 
   // Called when service discovery completes. |services| will only include
@@ -314,10 +314,10 @@ class LowEnergyConnection final : public sm::Delegate {
   // that it is destroyed last.
   std::optional<Peer::ConnectionToken> peer_conn_token_;
 
-  Peer::WeakPtr peer_;
+  Peer::WeakPtrType peer_;
   std::unique_ptr<hci::LowEnergyConnection> link_;
   LowEnergyConnectionOptions connection_options_;
-  WeakSelf<LowEnergyConnectionManager>::WeakPtr conn_mgr_;
+  WeakSelf<LowEnergyConnectionManager>::WeakPtrType conn_mgr_;
 
   // Manages all Isochronous streams for this connection. If this connection is
   // operating as a Central, |iso_mgr_| is used to establish an outgoing
@@ -337,7 +337,7 @@ class LowEnergyConnection final : public sm::Delegate {
 
   // Reference to the GATT profile layer is used to initiate service discovery
   // and register the link.
-  gatt::GATT::WeakPtr gatt_;
+  gatt::GATT::WeakPtrType gatt_;
 
   // The ATT Bearer is owned by LowEnergyConnection but weak pointers are passed
   // to the GATT layer. As such, this connection must be unregistered from the
@@ -348,7 +348,7 @@ class LowEnergyConnection final : public sm::Delegate {
   // SMP pairing manager.
   std::unique_ptr<sm::SecurityManager> sm_;
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   // Called when the peer disconnects.
   PeerDisconnectCallback peer_disconnect_callback_;

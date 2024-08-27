@@ -205,7 +205,7 @@ class ChannelManagerMockControllerTest : public TestingBase {
         /*security_callback=*/[](auto, auto, auto) {});
   }
 
-  Channel::WeakPtr ActivateNewFixedChannel(
+  Channel::WeakPtrType ActivateNewFixedChannel(
       ChannelId id,
       hci_spec::ConnectionHandle conn_handle = 0x0001,
       Channel::ClosedCallback closed_cb = DoNothing,
@@ -213,7 +213,7 @@ class ChannelManagerMockControllerTest : public TestingBase {
     auto chan = chanmgr()->OpenFixedChannel(conn_handle, id);
     if (!chan.is_alive() ||
         !chan->Activate(std::move(rx_cb), std::move(closed_cb))) {
-      return Channel::WeakPtr();
+      return Channel::WeakPtrType();
     }
 
     return chan;

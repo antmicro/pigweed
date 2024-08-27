@@ -47,12 +47,12 @@ class Server {
   // outlive this Server.
   static std::unique_ptr<Server> Create(
       PeerId peer_id,
-      LocalServiceManager::WeakPtr local_services,
-      att::Bearer::WeakPtr bearer);
+      LocalServiceManager::WeakPtrType local_services,
+      att::Bearer::WeakPtrType bearer);
   // Servers can be constructed without production att::Bearers (e.g. for
   // testing), so the FactoryFunction type reflects that.
   using FactoryFunction = fit::function<std::unique_ptr<Server>(
-      PeerId, LocalServiceManager::WeakPtr)>;
+      PeerId, LocalServiceManager::WeakPtrType)>;
 
   virtual ~Server() = default;
 

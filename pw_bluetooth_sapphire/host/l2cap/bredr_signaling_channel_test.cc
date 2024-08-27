@@ -52,7 +52,7 @@ class BrEdrSignalingChannelTest : public testing::MockChannelTest {
   BrEdrSignalingChannel* sig() const { return sig_.get(); }
 
  private:
-  testing::FakeChannel::WeakPtr fake_chan_;
+  testing::FakeChannel::WeakPtrType fake_chan_;
   std::unique_ptr<BrEdrSignalingChannel> sig_;
 };
 

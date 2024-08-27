@@ -62,7 +62,7 @@ class Phase1Test : public l2cap::testing::MockChannelTest {
     options.link_type = ll_type;
 
     listener_ = std::make_unique<FakeListener>();
-    l2cap::testing::FakeChannel::WeakPtr fake_chan = CreateFakeChannel(options);
+    l2cap::testing::FakeChannel::WeakPtrType fake_chan = CreateFakeChannel(options);
     sm_chan_ = std::make_unique<PairingChannel>(fake_chan->GetWeakPtr());
     auto complete_cb = [this](PairingFeatures features,
                               PairingRequestParams preq,

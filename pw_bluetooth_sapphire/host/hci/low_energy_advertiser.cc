@@ -19,7 +19,7 @@
 namespace bt::hci {
 namespace pwemb = pw::bluetooth::emboss;
 
-LowEnergyAdvertiser::LowEnergyAdvertiser(hci::Transport::WeakPtr hci,
+LowEnergyAdvertiser::LowEnergyAdvertiser(hci::Transport::WeakPtrType hci,
                                          uint16_t max_advertising_data_length)
     : hci_(std::move(hci)),
       hci_cmd_runner_(std::make_unique<SequentialCommandRunner>(

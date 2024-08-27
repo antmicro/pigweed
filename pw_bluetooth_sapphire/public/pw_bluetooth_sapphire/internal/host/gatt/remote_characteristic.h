@@ -52,7 +52,7 @@ class RemoteCharacteristic final {
   // order
   using DescriptorMap = std::map<DescriptorHandle, DescriptorData>;
 
-  RemoteCharacteristic(Client::WeakPtr client, const CharacteristicData& info);
+  RemoteCharacteristic(Client::WeakPtrType client, const CharacteristicData& info);
   ~RemoteCharacteristic();
 
   // The properties for this characteristic.
@@ -146,7 +146,7 @@ class RemoteCharacteristic final {
   size_t next_notify_handler_id_;
 
   // The GATT client bearer used for ATT requests.
-  Client::WeakPtr client_;
+  Client::WeakPtrType client_;
 
   WeakSelf<RemoteCharacteristic> weak_self_;
 

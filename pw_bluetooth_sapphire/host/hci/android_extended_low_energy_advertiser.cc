@@ -33,7 +33,7 @@ namespace android_hci = hci_spec::vendor::android;
 namespace android_emb = pw::bluetooth::vendor::android_hci;
 
 AndroidExtendedLowEnergyAdvertiser::AndroidExtendedLowEnergyAdvertiser(
-    hci::Transport::WeakPtr hci_ptr, uint8_t max_advertisements)
+    hci::Transport::WeakPtrType hci_ptr, uint8_t max_advertisements)
     : LowEnergyAdvertiser(std::move(hci_ptr),
                           hci_spec::kMaxLEAdvertisingDataLength),
       advertising_handle_map_(max_advertisements) {

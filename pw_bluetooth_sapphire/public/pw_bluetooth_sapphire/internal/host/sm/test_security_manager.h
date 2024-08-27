@@ -51,15 +51,15 @@ class TestSecurityManager final : public SecurityManager {
     return last_requested_upgrade_;
   }
 
-  using WeakPtr = WeakSelf<TestSecurityManager>::WeakPtr;
-  WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<TestSecurityManager>::WeakPtrType;
+  WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
   friend class TestSecurityManagerFactory;
-  TestSecurityManager(hci::LowEnergyConnection::WeakPtr link,
-                      l2cap::Channel::WeakPtr smp,
+  TestSecurityManager(hci::LowEnergyConnection::WeakPtrType link,
+                      l2cap::Channel::WeakPtrType smp,
                       IOCapability io_capability,
-                      Delegate::WeakPtr delegate,
+                      Delegate::WeakPtrType delegate,
                       BondableMode bondable_mode,
                       gap::LESecurityMode security_mode);
   Role role_;
@@ -88,22 +88,22 @@ class TestSecurityManagerFactory {
   // (see v5.2, Vol. 3, Part C 9.4). |security_mode|: the security mode this
   // SecurityManager is in (see v5.2, Vol. 3, Part C 10.2).
   std::unique_ptr<SecurityManager> CreateSm(
-      hci::LowEnergyConnection::WeakPtr link,
-      l2cap::Channel::WeakPtr smp,
+      hci::LowEnergyConnection::WeakPtrType link,
+      l2cap::Channel::WeakPtrType smp,
       IOCapability io_capability,
-      Delegate::WeakPtr delegate,
+      Delegate::WeakPtrType delegate,
       BondableMode bondable_mode,
       gap::LESecurityMode security_mode,
       pw::async::Dispatcher& dispatcher);
 
   // Obtain a reference to the TestSecurityManager associated with
   // |conn_handle|'s connection for use in test code.
-  testing::TestSecurityManager::WeakPtr GetTestSm(
+  testing::TestSecurityManager::WeakPtrType GetTestSm(
       hci_spec::ConnectionHandle conn_handle);
 
  private:
   std::unordered_map<hci_spec::ConnectionHandle,
-                     testing::TestSecurityManager::WeakPtr>
+                     testing::TestSecurityManager::WeakPtrType>
       test_sms_;
 };
 

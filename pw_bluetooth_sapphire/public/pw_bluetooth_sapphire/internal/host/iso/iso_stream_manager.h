@@ -29,7 +29,7 @@ namespace bt::iso {
 class IsoStreamManager final {
  public:
   explicit IsoStreamManager(hci_spec::ConnectionHandle handle,
-                            hci::CommandChannel::WeakPtr cmd_channel);
+                            hci::CommandChannel::WeakPtrType cmd_channel);
   ~IsoStreamManager();
 
   // Start waiting on an incoming request to create an Isochronous channel for
@@ -47,8 +47,8 @@ class IsoStreamManager final {
     return accept_handlers_.count(id) != 0;
   }
 
-  using WeakPtr = WeakSelf<IsoStreamManager>::WeakPtr;
-  IsoStreamManager::WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<IsoStreamManager>::WeakPtrType;
+  IsoStreamManager::WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
   // Process an incoming CIS request. Currently rejects all requests.
@@ -67,7 +67,7 @@ class IsoStreamManager final {
   // LE event handler for incoming CIS requests
   hci::CommandChannel::EventHandlerId cis_request_handler_;
 
-  hci::CommandChannel::WeakPtr cmd_;
+  hci::CommandChannel::WeakPtrType cmd_;
 
   // The streams that we are currently waiting on, and the associated callback
   // when the connection is resolved (either accepted and established, or failed

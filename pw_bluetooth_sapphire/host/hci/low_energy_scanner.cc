@@ -79,7 +79,7 @@ LowEnergyScanner::PendingScanResult::PendingScanResult(
 }
 
 LowEnergyScanner::LowEnergyScanner(LocalAddressDelegate* local_addr_delegate,
-                                   hci::Transport::WeakPtr hci,
+                                   hci::Transport::WeakPtrType hci,
                                    pw::async::Dispatcher& pw_dispatcher)
     : pw_dispatcher_(pw_dispatcher),
       scan_timeout_task_(pw_dispatcher_),

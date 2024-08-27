@@ -49,7 +49,7 @@ class BearerTest : public l2cap::testing::MockChannelTest {
   void TearDown() override { bearer_ = nullptr; }
 
   Bearer* bearer() const { return bearer_.get(); }
-  l2cap::testing::FakeChannel::WeakPtr fake_att_chan() const {
+  l2cap::testing::FakeChannel::WeakPtrType fake_att_chan() const {
     return fake_chan();
   }
 

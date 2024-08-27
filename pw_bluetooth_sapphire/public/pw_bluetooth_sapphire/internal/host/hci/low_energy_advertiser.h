@@ -47,7 +47,7 @@ class AdvertisingIntervalRange final {
 
 class LowEnergyAdvertiser : public LocalAddressClient {
  public:
-  explicit LowEnergyAdvertiser(hci::Transport::WeakPtr hci,
+  explicit LowEnergyAdvertiser(hci::Transport::WeakPtrType hci,
                                uint16_t max_advertising_data_length);
   ~LowEnergyAdvertiser() override = default;
 
@@ -302,7 +302,7 @@ class LowEnergyAdvertiser : public LocalAddressClient {
       bool extended_pdu);
 
   SequentialCommandRunner& hci_cmd_runner() const { return *hci_cmd_runner_; }
-  hci::Transport::WeakPtr hci() const { return hci_; }
+  hci::Transport::WeakPtrType hci() const { return hci_; }
 
  private:
   struct StagedParameters {
@@ -331,7 +331,7 @@ class LowEnergyAdvertiser : public LocalAddressClient {
   bool EnqueueStopAdvertisingCommands(const DeviceAddress& address,
                                       bool extended_pdu);
 
-  hci::Transport::WeakPtr hci_;
+  hci::Transport::WeakPtrType hci_;
   std::unique_ptr<SequentialCommandRunner> hci_cmd_runner_;
   StagedParameters staged_parameters_;
 

@@ -113,7 +113,7 @@ class SignalingChannelInterface {
 // TODO(armansito): Implement flow control (RTX/ERTX timers).
 class SignalingChannel : public SignalingChannelInterface {
  public:
-  SignalingChannel(Channel::WeakPtr chan,
+  SignalingChannel(Channel::WeakPtrType chan,
                    pw::bluetooth::emboss::ConnectionRole role,
                    pw::async::Dispatcher& dispatcher);
   ~SignalingChannel() override = default;

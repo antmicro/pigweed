@@ -91,7 +91,7 @@ std::string ReasonAsString(DisconnectReason reason) {
 // BrEdrConnectionManager instance, which will begin to disable Page Scan as it
 // shuts down.
 void SetPageScanEnabled(bool enabled,
-                        hci::Transport::WeakPtr hci,
+                        hci::Transport::WeakPtrType hci,
                         hci::ResultFunction<> cb) {
   BT_DEBUG_ASSERT(cb);
   auto read_enable = hci::EmbossCommandPacket::New<
@@ -169,7 +169,7 @@ hci::CommandChannel::EventHandlerId BrEdrConnectionManager::AddEventHandler(
 }
 
 BrEdrConnectionManager::BrEdrConnectionManager(
-    hci::Transport::WeakPtr hci,
+    hci::Transport::WeakPtrType hci,
     PeerCache* peer_cache,
     DeviceAddress local_address,
     l2cap::ChannelManager* l2cap,
@@ -306,7 +306,7 @@ void BrEdrConnectionManager::SetConnectable(bool connectable,
 }
 
 void BrEdrConnectionManager::SetPairingDelegate(
-    PairingDelegate::WeakPtr delegate) {
+    PairingDelegate::WeakPtrType delegate) {
   pairing_delegate_ = std::move(delegate);
   for (auto& [handle, connection] : connections_) {
     connection.pairing_state_manager().SetPairingDelegate(pairing_delegate_);
@@ -366,7 +366,7 @@ void BrEdrConnectionManager::OpenL2capChannel(
            bt_str(peer_id));
     if (status.is_error() || !self.is_alive()) {
       // Report the failure to the user with a null channel.
-      cb(l2cap::Channel::WeakPtr());
+      cb(l2cap::Channel::WeakPtrType());
       return;
     }
 
@@ -376,7 +376,7 @@ void BrEdrConnectionManager::OpenL2capChannel(
              "gap-bredr",
              "can't open l2cap channel: connection not found (peer: %s)",
              bt_str(peer_id));
-      cb(l2cap::Channel::WeakPtr());
+      cb(l2cap::Channel::WeakPtrType());
       return;
     }
     auto& [handle, connection] = *conn_pair;
@@ -856,7 +856,7 @@ void BrEdrConnectionManager::InitializeConnection(
 
 // Finish connection setup after a successful interrogation.
 void BrEdrConnectionManager::CompleteConnectionSetup(
-    Peer::WeakPtr peer, hci_spec::ConnectionHandle handle) {
+    Peer::WeakPtrType peer, hci_spec::ConnectionHandle handle) {
   auto self = weak_self_.GetWeakPtr();
   auto peer_id = peer->identifier();
 

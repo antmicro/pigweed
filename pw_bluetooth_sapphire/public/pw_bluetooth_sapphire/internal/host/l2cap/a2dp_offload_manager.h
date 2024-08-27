@@ -43,7 +43,7 @@ class A2dpOffloadManager {
     StaticPacket<android_emb::AptxCodecInformationWriter> aptx_configuration;
   };
 
-  explicit A2dpOffloadManager(hci::CommandChannel::WeakPtr cmd_channel)
+  explicit A2dpOffloadManager(hci::CommandChannel::WeakPtrType cmd_channel)
       : cmd_channel_(std::move(cmd_channel)) {}
 
   // Request the start of A2DP source offloading. |callback| will be called with
@@ -74,7 +74,7 @@ class A2dpOffloadManager {
   WeakPtr<A2dpOffloadManager> GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
  private:
-  hci::CommandChannel::WeakPtr cmd_channel_;
+  hci::CommandChannel::WeakPtrType cmd_channel_;
 
   A2dpOffloadStatus a2dp_offload_status_ = A2dpOffloadStatus::kStopped;
 

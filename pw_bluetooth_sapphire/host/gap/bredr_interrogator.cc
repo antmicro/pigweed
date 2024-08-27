@@ -23,9 +23,9 @@
 
 namespace bt::gap {
 
-BrEdrInterrogator::BrEdrInterrogator(Peer::WeakPtr peer,
+BrEdrInterrogator::BrEdrInterrogator(Peer::WeakPtrType peer,
                                      hci_spec::ConnectionHandle handle,
-                                     hci::CommandChannel::WeakPtr cmd_channel)
+                                     hci::CommandChannel::WeakPtrType cmd_channel)
     : peer_(std::move(peer)),
       peer_id_(peer_->identifier()),
       handle_(handle),

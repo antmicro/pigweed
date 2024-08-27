@@ -253,7 +253,7 @@ class WeakSelf {
   explicit WeakSelf(T* self_ptr) : manager_(self_ptr) {}
   ~WeakSelf() = default;
 
-  using WeakPtr = WeakPtr<T, WeakPtrManager>;
+  using WeakPtrType = WeakPtr<T, WeakPtrManager>;
 
   // Invalidates all the WeakPtrs that have been vended before now (they will
   // return false for is_alive) and prevents any new pointers from being vended.
@@ -261,10 +261,10 @@ class WeakSelf {
   // early.
   void InvalidatePtrs() { manager_.InvalidateAll(); }
 
-  WeakPtr GetWeakPtr() {
+  WeakPtrType GetWeakPtr() {
     auto weak_ref = manager_.GetWeakRef();
     BT_ASSERT_MSG(weak_ref.has_value(), "weak pointer not available");
-    return WeakPtr(*std::move(weak_ref));
+    return WeakPtrType(*std::move(weak_ref));
   }
 
  private:

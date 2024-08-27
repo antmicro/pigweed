@@ -94,7 +94,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   // if a Channel for |channel_id| already exists.
   //
   // The link MUST not be closed when this is called.
-  Channel::WeakPtr OpenFixedChannel(ChannelId channel_id);
+  Channel::WeakPtrType OpenFixedChannel(ChannelId channel_id);
 
   // Opens a dynamic channel to the requested |psm| with the preferred
   // parameters |params| and returns a channel asynchronously via |callback|.
@@ -138,7 +138,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   // Requests are queued and handled sequentially in order to prevent race
   // conditions.
   void RequestAclPriority(
-      Channel::WeakPtr channel,
+      Channel::WeakPtrType channel,
       pw::bluetooth::AclPriority priority,
       fit::callback<void(fit::result<fit::failed>)> callback);
 
@@ -170,8 +170,8 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
 
   const sm::SecurityProperties security() { return security_; }
 
-  using WeakPtr = WeakSelf<LogicalLink>::WeakPtr;
-  WeakPtr GetWeakPtr() { return weak_self_.GetWeakPtr(); }
+  using WeakPtrType = WeakSelf<LogicalLink>::WeakPtrType;
+  WeakPtrType GetWeakPtr() { return weak_self_.GetWeakPtr(); }
 
   // ConnectionInterface overrides:
   hci_spec::ConnectionHandle handle() const override { return handle_; }
@@ -297,7 +297,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   ChannelMap::iterator current_channel_;
 
   // Channel that Logical Link is currently sending PDUs from
-  ChannelImpl::WeakPtr current_pdus_channel_;
+  ChannelImpl::WeakPtrType current_pdus_channel_;
 
   // Manages the L2CAP signaling channel on this logical link. Depending on
   // |type_| this will either implement the LE or BR/EDR signaling commands.
@@ -310,7 +310,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   PendingPduMap pending_pdus_;
 
   struct PendingAclRequest {
-    Channel::WeakPtr channel;
+    Channel::WeakPtrType channel;
     pw::bluetooth::AclPriority priority;
     fit::callback<void(fit::result<fit::failed>)> callback;
   };

@@ -47,8 +47,8 @@ class SecurityRequestPhase final : public PairingPhase,
   //   - |on_pairing_req|: Used to signal the owning class of an inbound Pairing
   //   Request triggered
   //                       by this Security Request.
-  SecurityRequestPhase(PairingChannel::WeakPtr chan,
-                       Listener::WeakPtr listener,
+  SecurityRequestPhase(PairingChannel::WeakPtrType chan,
+                       Listener::WeakPtrType listener,
                        SecurityLevel desired_level,
                        BondableMode bondable_mode,
                        PairingRequestCallback on_pairing_req);

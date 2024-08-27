@@ -49,8 +49,8 @@ class Phase2SecureConnections final : public PairingPhase,
   //                                     used for cryptographic hashing
   // |cb|: Callback used to notify when the Phase2 has negotiated a new
   // encryption key.
-  Phase2SecureConnections(PairingChannel::WeakPtr chan,
-                          Listener::WeakPtr listener,
+  Phase2SecureConnections(PairingChannel::WeakPtrType chan,
+                          Listener::WeakPtrType listener,
                           Role role,
                           PairingFeatures features,
                           PairingRequestParams preq,

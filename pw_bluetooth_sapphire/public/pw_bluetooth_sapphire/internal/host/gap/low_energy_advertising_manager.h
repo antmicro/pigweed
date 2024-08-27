@@ -58,12 +58,12 @@ class AdvertisementInstance final {
   friend class LowEnergyAdvertisingManager;
 
   AdvertisementInstance(AdvertisementId id,
-                        WeakSelf<LowEnergyAdvertisingManager>::WeakPtr owner);
+                        WeakSelf<LowEnergyAdvertisingManager>::WeakPtrType owner);
   void Move(AdvertisementInstance* other);
   void Reset();
 
   AdvertisementId id_;
-  WeakSelf<LowEnergyAdvertisingManager>::WeakPtr owner_;
+  WeakSelf<LowEnergyAdvertisingManager>::WeakPtrType owner_;
 
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(AdvertisementInstance);
 };

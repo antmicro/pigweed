@@ -65,7 +65,7 @@ class FakeL2cap final {
   // Each service that registers itself on a particular PSM provides a callback
   // that takes a pointer to the FakeDynamicChannel with its
   using FakeDynamicChannelCallback =
-      fit::function<void(FakeDynamicChannel::WeakPtr)>;
+      fit::function<void(FakeDynamicChannel::WeakPtrType)>;
 
   // Calls |send_frame_callback| to send packets through the device
   // instantiating the FakeL2cap instance.
@@ -146,13 +146,13 @@ class FakeL2cap final {
   // Find the FakeDynamicChannel object with the local channel ID |local_cid|
   // and connection handle |conn| in the dynamic_channels_ map. If there is no
   // channel registered with the |local_cid|, return a nullptr.
-  FakeDynamicChannel::WeakPtr FindDynamicChannelByLocalId(
+  FakeDynamicChannel::WeakPtrType FindDynamicChannelByLocalId(
       hci_spec::ConnectionHandle conn, l2cap::ChannelId local_cid);
 
   // Find the FakeDynamicChannel object with the connection handle |conn| and
   // local channel ID |remote_cid| in the dynamic_channels_ map. If there is
   // no channel registered with the |remote_cid|, return a nullptr.
-  FakeDynamicChannel::WeakPtr FindDynamicChannelByRemoteId(
+  FakeDynamicChannel::WeakPtrType FindDynamicChannelByRemoteId(
       hci_spec::ConnectionHandle conn, l2cap::ChannelId remote_cid);
 
   // Remove a dynamic channel associated with the connection handle |conn| and

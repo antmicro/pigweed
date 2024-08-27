@@ -49,7 +49,7 @@ hci::AdvertisingIntervalRange GetIntervalRange(AdvertisingInterval interval) {
 AdvertisementInstance::AdvertisementInstance() : id_(kInvalidAdvertisementId) {}
 
 AdvertisementInstance::AdvertisementInstance(
-    AdvertisementId id, WeakSelf<LowEnergyAdvertisingManager>::WeakPtr owner)
+    AdvertisementId id, WeakSelf<LowEnergyAdvertisingManager>::WeakPtrType owner)
     : id_(id), owner_(std::move(owner)) {
   BT_DEBUG_ASSERT(id_ != kInvalidAdvertisementId);
   BT_DEBUG_ASSERT(owner_.is_alive());

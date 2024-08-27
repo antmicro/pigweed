@@ -31,7 +31,7 @@ using TransportDeathTest = TransportTest;
 
 TEST_F(TransportTest,
        CommandChannelTimeoutShutsDownChannelAndNotifiesClosedCallback) {
-  CommandChannel::WeakPtr cmd_chan_weak = cmd_channel()->AsWeakPtr();
+  CommandChannel::WeakPtrType cmd_chan_weak = cmd_channel()->AsWeakPtr();
 
   size_t closed_cb_count = 0;
   transport()->SetTransportErrorCallback([&] { closed_cb_count++; });

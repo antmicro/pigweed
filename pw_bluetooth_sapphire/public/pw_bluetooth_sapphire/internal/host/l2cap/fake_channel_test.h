@@ -75,9 +75,9 @@ class FakeChannelTest : public pw::async::test::FakeDispatcherFixture {
   bool ReceiveAndExpect(const ByteBuffer& packet,
                         const ByteBuffer& expected_response);
 
-  FakeChannel::WeakPtr fake_chan() const { return fake_chan_; }
+  FakeChannel::WeakPtrType fake_chan() const { return fake_chan_; }
 
-  void set_fake_chan(FakeChannel::WeakPtr chan) { fake_chan_ = chan; }
+  void set_fake_chan(FakeChannel::WeakPtrType chan) { fake_chan_ = chan; }
 
  private:
   // Helper that sets a reception expectation callback with |expected| then
@@ -86,7 +86,7 @@ class FakeChannelTest : public pw::async::test::FakeDispatcherFixture {
   bool ExpectAfterMaybeReceiving(std::optional<BufferView> packet,
                                  const ByteBuffer& expected);
 
-  FakeChannel::WeakPtr fake_chan_;
+  FakeChannel::WeakPtrType fake_chan_;
 
   BT_DISALLOW_COPY_AND_ASSIGN_ALLOW_MOVE(FakeChannelTest);
 };

@@ -572,7 +572,7 @@ class ChannelManagerMockAclChannelTest : public TestingBase {
         fixed_channels_supported_id, kTestHandle1, channels));
   }
 
-  Channel::WeakPtr ActivateNewFixedChannel(
+  Channel::WeakPtrType ActivateNewFixedChannel(
       ChannelId id,
       hci_spec::ConnectionHandle conn_handle = kTestHandle1,
       Channel::ClosedCallback closed_cb = DoNothing,
@@ -580,7 +580,7 @@ class ChannelManagerMockAclChannelTest : public TestingBase {
     auto chan = chanmgr()->OpenFixedChannel(conn_handle, id);
     if (!chan.is_alive() ||
         !chan->Activate(std::move(rx_cb), std::move(closed_cb))) {
-      return Channel::WeakPtr();
+      return Channel::WeakPtrType();
     }
 
     return chan;
@@ -601,7 +601,7 @@ class ChannelManagerMockAclChannelTest : public TestingBase {
                                    std::move(closed_cb)](auto chan) mutable {
       if (!chan.is_alive() ||
           !chan->Activate(std::move(rx_cb), std::move(closed_cb))) {
-        activated_cb(Channel::WeakPtr());
+        activated_cb(Channel::WeakPtrType());
       } else {
         activated_cb(std::move(chan));
       }
@@ -615,7 +615,7 @@ class ChannelManagerMockAclChannelTest : public TestingBase {
       ChannelId remote_id,
       Channel::ClosedCallback closed_cb,
       ChannelParameters channel_params,
-      fit::function<void(Channel::WeakPtr)> channel_cb) {
+      fit::function<void(Channel::WeakPtrType)> channel_cb) {
     const auto conn_req_id = NextCommandId();
     const auto config_req_id = NextCommandId();
     EXPECT_ACL_PACKET_OUT_(testing::AclConnectionReq(
@@ -648,13 +648,13 @@ class ChannelManagerMockAclChannelTest : public TestingBase {
     EXPECT_TRUE(AllExpectedPacketsSent());
   }
 
-  Channel::WeakPtr SetUpOutboundChannel(
+  Channel::WeakPtrType SetUpOutboundChannel(
       ChannelId local_id = kLocalId,
       ChannelId remote_id = kRemoteId,
       Channel::ClosedCallback closed_cb = DoNothing,
       ChannelParameters channel_params = kChannelParams) {
-    Channel::WeakPtr channel;
-    auto channel_cb = [&channel](l2cap::Channel::WeakPtr activated_chan) {
+    Channel::WeakPtrType channel;
+    auto channel_cb = [&channel](l2cap::Channel::WeakPtrType activated_chan) {
       channel = std::move(activated_chan);
     };
 
@@ -812,8 +812,8 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };
@@ -1164,7 +1164,7 @@ TEST_F(ChannelManagerMockAclChannelTest, ReceiveDataBeforeRegisteringLink) {
       0x06,
       0x00));
 
-  Channel::WeakPtr att_chan, smp_chan;
+  Channel::WeakPtrType att_chan, smp_chan;
 
   // Run the loop so all packets are received.
   RunUntilIdle();
@@ -1468,7 +1468,7 @@ TEST_F(ChannelManagerRealAclChannelTest, SendBREDRFragmentedSDUs) {
       pw::bluetooth::emboss::ConnectionRole::CENTRAL,
       /*link_error_callback=*/[]() {},
       /*security_callback=*/[](auto, auto, auto) {});
-  Channel::WeakPtr sm_chan = std::move(fixed_channels.smp);
+  Channel::WeakPtrType sm_chan = std::move(fixed_channels.smp);
   sm_chan->Activate(NopRxCallback, DoNothing);
   ASSERT_TRUE(sm_chan.is_alive());
 
@@ -1532,7 +1532,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  l2cap::Channel::WeakPtr channel0;
+  l2cap::Channel::WeakPtrType channel0;
   auto chan_cb0 = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel0 = std::move(activated_chan);
@@ -1545,7 +1545,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   ASSERT_TRUE(channel0.is_alive());
   ASSERT_TRUE(channel0->Activate(NopRxCallback, DoNothing));
 
-  l2cap::Channel::WeakPtr channel1;
+  l2cap::Channel::WeakPtrType channel1;
   auto chan_cb1 = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel1 = std::move(activated_chan);
@@ -1577,7 +1577,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   // Fill up BR/EDR controller buffer then queue 3 additional packets (which
   // will be later fragmented to form 6 packets)
   for (size_t i = 0; i < kBufferMaxNumPackets / 2 + num_queued_packets; i++) {
-    Channel::WeakPtr channel = (i % 2) ? channel1 : channel0;
+    Channel::WeakPtrType channel = (i % 2) ? channel1 : channel0;
     ChannelId channel_id = (i % 2) ? kRemoteId1 : kRemoteId0;
 
     const StaticByteBuffer kPacket0(
@@ -1757,8 +1757,8 @@ TEST_F(ChannelManagerMockAclChannelTest, SignalLinkErrorDisconnectsChannels) {
   EXPECT_ACL_PACKET_OUT_(OutboundConfigurationResponse(kPeerConfigRequestId),
                          kHighPriority);
 
-  Channel::WeakPtr dynamic_channel;
-  auto channel_cb = [&dynamic_channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType dynamic_channel;
+  auto channel_cb = [&dynamic_channel](l2cap::Channel::WeakPtrType activated_chan) {
     dynamic_channel = std::move(activated_chan);
   };
 
@@ -1871,8 +1871,8 @@ TEST_F(ChannelManagerMockAclChannelTest,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
   RunUntilIdle();
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType activated_chan) {
     channel = std::move(activated_chan);
   };
 
@@ -1968,8 +1968,8 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };
@@ -2047,8 +2047,8 @@ TEST_F(ChannelManagerMockAclChannelTest,
   QueueRegisterACL(kTestHandle1,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType activated_chan) {
     channel = std::move(activated_chan);
   };
 
@@ -2136,7 +2136,7 @@ TEST_F(ChannelManagerMockAclChannelTest,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
   bool channel_cb_called = false;
-  auto channel_cb = [&channel_cb_called](l2cap::Channel::WeakPtr channel) {
+  auto channel_cb = [&channel_cb_called](l2cap::Channel::WeakPtrType channel) {
     channel_cb_called = true;
     EXPECT_FALSE(channel.is_alive());
   };
@@ -2170,7 +2170,7 @@ TEST_F(ChannelManagerMockAclChannelTest,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
   bool channel_cb_called = false;
-  auto channel_cb = [&channel_cb_called](l2cap::Channel::WeakPtr channel) {
+  auto channel_cb = [&channel_cb_called](l2cap::Channel::WeakPtrType channel) {
     channel_cb_called = true;
     EXPECT_FALSE(channel.is_alive());
   };
@@ -2229,9 +2229,9 @@ TEST_F(ChannelManagerMockAclChannelTest,
   bool dynamic_channel_closed = false;
   auto closed_cb = [&dynamic_channel_closed] { dynamic_channel_closed = true; };
 
-  Channel::WeakPtr channel;
+  Channel::WeakPtrType channel;
   auto channel_cb = [&channel, closed_cb = std::move(closed_cb)](
-                        l2cap::Channel::WeakPtr opened_chan) {
+                        l2cap::Channel::WeakPtrType opened_chan) {
     channel = std::move(opened_chan);
     EXPECT_TRUE(channel->Activate(NopRxCallback, std::move(closed_cb)));
   };
@@ -2384,7 +2384,7 @@ TEST_F(ChannelManagerMockAclChannelTest, UpgradeSecurity) {
                  DoNothing,
                  NopLeConnParamCallback,
                  std::move(security_handler));
-  l2cap::Channel::WeakPtr att = std::move(fixed_channels.att);
+  l2cap::Channel::WeakPtrType att = std::move(fixed_channels.att);
   ASSERT_TRUE(att->Activate(NopRxCallback, DoNothing));
 
   // Requesting security at or below the current level should succeed without
@@ -2418,8 +2418,8 @@ TEST_F(ChannelManagerMockAclChannelTest, MtuOutboundChannelConfiguration) {
   QueueRegisterACL(kTestHandle1,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType activated_chan) {
     channel = std::move(activated_chan);
   };
 
@@ -2457,8 +2457,8 @@ TEST_F(ChannelManagerMockAclChannelTest, MtuInboundChannelConfiguration) {
   QueueRegisterACL(kTestHandle1,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr opened_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType opened_chan) {
     channel = std::move(opened_chan);
     EXPECT_TRUE(channel->Activate(NopRxCallback, DoNothing));
   };
@@ -2504,8 +2504,8 @@ TEST_F(ChannelManagerMockAclChannelTest,
       kTestHandle1,
       kExtendedFeaturesBitEnhancedRetransmission));
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](Channel::WeakPtrType activated_chan) {
     channel = std::move(activated_chan);
   };
 
@@ -2572,8 +2572,8 @@ TEST_F(ChannelManagerMockAclChannelTest,
       cmd_ids.extended_features_id,
       kTestHandle1,
       kExtendedFeaturesBitEnhancedRetransmission));
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr opened_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType opened_chan) {
     channel = std::move(opened_chan);
     EXPECT_TRUE(channel->Activate(NopRxCallback, DoNothing));
   };
@@ -2644,8 +2644,8 @@ TEST_F(
   QueueRegisterACL(kTestHandle1,
                    pw::bluetooth::emboss::ConnectionRole::CENTRAL);
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr opened_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType opened_chan) {
     channel = std::move(opened_chan);
     EXPECT_TRUE(channel->Activate(NopRxCallback, DoNothing));
   };
@@ -3060,7 +3060,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
 
   // If the above fails, check if the channel was holding a strong reference to
   // the link.
-  chan = Channel::WeakPtr();
+  chan = Channel::WeakPtrType();
   RunUntilIdle();
   EXPECT_TRUE(closed);
   EXPECT_FALSE(link.is_alive());
@@ -3553,8 +3553,8 @@ TEST_F(ChannelManagerMockAclChannelTest, InspectHierarchy) {
                          kHighPriority);
   EXPECT_ACL_PACKET_OUT_(OutboundConfigurationResponse(kPeerConfigRequestId),
                          kHighPriority);
-  Channel::WeakPtr dynamic_channel;
-  auto channel_cb = [&dynamic_channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType dynamic_channel;
+  auto channel_cb = [&dynamic_channel](l2cap::Channel::WeakPtrType activated_chan) {
     dynamic_channel = std::move(activated_chan);
   };
   ActivateOutboundChannel(
@@ -3620,8 +3620,8 @@ TEST_F(
   ChannelParameters chan_params;
   chan_params.flush_timeout = kFlushTimeout;
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType activated_chan) {
     channel = std::move(activated_chan);
   };
   SetUpOutboundChannelWithCallback(
@@ -3720,8 +3720,8 @@ TEST_F(ChannelManagerMockAclChannelTest,
   ChannelParameters chan_params;
   chan_params.flush_timeout = kFlushTimeout;
 
-  Channel::WeakPtr channel;
-  auto channel_cb = [&channel](l2cap::Channel::WeakPtr opened_chan) {
+  Channel::WeakPtrType channel;
+  auto channel_cb = [&channel](l2cap::Channel::WeakPtrType opened_chan) {
     channel = std::move(opened_chan);
     EXPECT_TRUE(channel->Activate(NopRxCallback, DoNothing));
   };
@@ -3875,7 +3875,7 @@ TEST_F(ChannelManagerMockAclChannelTest, StartAndStopA2dpOffloadSuccess) {
   RunUntilIdle();
 
   A2dpOffloadManager::Configuration config = BuildConfiguration();
-  Channel::WeakPtr channel = SetUpOutboundChannel();
+  Channel::WeakPtrType channel = SetUpOutboundChannel();
 
   const auto command_complete =
       CommandCompletePacket(android_hci::kA2dpOffloadCommand,
@@ -3939,7 +3939,7 @@ TEST_F(ChannelManagerMockAclChannelTest,
   RunUntilIdle();
 
   A2dpOffloadManager::Configuration config = BuildConfiguration();
-  Channel::WeakPtr channel = SetUpOutboundChannel();
+  Channel::WeakPtrType channel = SetUpOutboundChannel();
 
   const auto command_complete =
       CommandCompletePacket(android_hci::kA2dpOffloadCommand,
@@ -3982,7 +3982,7 @@ TEST_F(ChannelManagerMockAclChannelTest,
   RunUntilIdle();
 
   A2dpOffloadManager::Configuration config = BuildConfiguration();
-  Channel::WeakPtr channel = SetUpOutboundChannel();
+  Channel::WeakPtrType channel = SetUpOutboundChannel();
 
   const auto command_complete =
       CommandCompletePacket(android_hci::kA2dpOffloadCommand,
@@ -4107,8 +4107,8 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };
@@ -4192,8 +4192,8 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };
@@ -4227,8 +4227,8 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };
@@ -4324,7 +4324,7 @@ TEST_F(ChannelManagerRealAclChannelTest, SignalingChannelAndOneDynamicChannel) {
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  l2cap::Channel::WeakPtr channel;
+  l2cap::Channel::WeakPtrType channel;
   auto chan_cb = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
@@ -4406,7 +4406,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  l2cap::Channel::WeakPtr channel0;
+  l2cap::Channel::WeakPtrType channel0;
   auto chan_cb0 = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel0 = std::move(activated_chan);
@@ -4419,7 +4419,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   ASSERT_TRUE(channel0.is_alive());
   ASSERT_TRUE(channel0->Activate(NopRxCallback, DoNothing));
 
-  l2cap::Channel::WeakPtr channel1;
+  l2cap::Channel::WeakPtrType channel1;
   auto chan_cb1 = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel1 = std::move(activated_chan);
@@ -4450,7 +4450,7 @@ TEST_F(ChannelManagerRealAclChannelTest,
   // Queue 15 packets in total, distributed between the two channels
   // Fill up BR/EDR controller buffer then queue 5 additional packets
   for (size_t i = 0; i < kBufferMaxNumPackets + num_queued_packets; i++) {
-    Channel::WeakPtr channel = (i % 2) ? channel1 : channel0;
+    Channel::WeakPtrType channel = (i % 2) ? channel1 : channel0;
     ChannelId channel_id = (i % 2) ? kRemoteId1 : kRemoteId0;
 
     const StaticByteBuffer kPacket(
@@ -4492,7 +4492,7 @@ TEST_F(ChannelManagerRealAclChannelTest, ChannelMaximumQueueSize) {
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  l2cap::Channel::WeakPtr channel;
+  l2cap::Channel::WeakPtrType channel;
   auto chan_cb = [&](auto activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
@@ -4592,8 +4592,8 @@ TEST_P(AclPriorityTest, OutboundConnectAndSetPriority) {
   RunUntilIdle();
   EXPECT_TRUE(test_device()->AllExpectedDataPacketsSent());
 
-  Channel::WeakPtr channel;
-  auto chan_cb = [&](l2cap::Channel::WeakPtr activated_chan) {
+  Channel::WeakPtrType channel;
+  auto chan_cb = [&](l2cap::Channel::WeakPtrType activated_chan) {
     EXPECT_EQ(kTestHandle1, activated_chan->link_handle());
     channel = std::move(activated_chan);
   };

@@ -33,7 +33,7 @@ using pw::bluetooth::emboss::MakeLEExtendedAdvertisingReportDataView;
 
 ExtendedLowEnergyScanner::ExtendedLowEnergyScanner(
     LocalAddressDelegate* local_addr_delegate,
-    Transport::WeakPtr transport,
+    Transport::WeakPtrType transport,
     pw::async::Dispatcher& pw_dispatcher)
     : LowEnergyScanner(
           local_addr_delegate, std::move(transport), pw_dispatcher) {

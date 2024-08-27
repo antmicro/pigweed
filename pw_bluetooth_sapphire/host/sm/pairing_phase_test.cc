@@ -33,8 +33,8 @@ using PairingChannelHandler = PairingChannel::Handler;
 
 class ConcretePairingPhase : public PairingPhase, public PairingChannelHandler {
  public:
-  ConcretePairingPhase(PairingChannel::WeakPtr chan,
-                       Listener::WeakPtr listener,
+  ConcretePairingPhase(PairingChannel::WeakPtrType chan,
+                       Listener::WeakPtrType listener,
                        Role role,
                        size_t max_packet_size = sizeof(PairingPublicKeyParams))
       : PairingPhase(std::move(chan), std::move(listener), role),
