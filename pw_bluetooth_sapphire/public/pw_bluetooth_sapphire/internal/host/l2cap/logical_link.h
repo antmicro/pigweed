@@ -55,7 +55,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   // service identified by |psm| on a given connection identified by |handle|,
   // or nullptr if there is no service registered for that PSM.
   using QueryServiceCallback =
-      fit::function<std::optional<ChannelManager::ServiceInfo>(
+      fit::function<std::optional<ChannelManager::ServiceInfoType>(
           hci_spec::ConnectionHandle handle, Psm psm)>;
 
   // Constructs a new LogicalLink and initializes the signaling fixed channel.
@@ -199,7 +199,7 @@ class LogicalLink : public hci::AclDataChannel::ConnectionInterface {
   // return nullptr.
   //
   // This MUST not be called on a closed link.
-  std::optional<DynamicChannelRegistry::ServiceInfo> OnServiceRequest(Psm psm);
+  std::optional<DynamicChannelRegistry::ServiceInfoType> OnServiceRequest(Psm psm);
 
   // Called by |dynamic_registry_| when the peer requests the closure of a
   // dynamic channel using a signaling PDU.

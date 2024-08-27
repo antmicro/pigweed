@@ -102,12 +102,12 @@ class ChannelManagerImpl final : public ChannelManager {
       size_t max_payload_size);
 
   // If a service (identified by |psm|) requested has been registered, return a
-  // ServiceInfo object containing preferred channel parameters and a callback
+  // ServiceInfoType object containing preferred channel parameters and a callback
   // that passes an inbound channel to the registrant. The callback may be
   // called repeatedly to pass multiple channels for |psm|, but should not be
   // stored because the service may be unregistered at a later time. Calls for
   // unregistered services return null.
-  std::optional<ServiceInfo> QueryService(hci_spec::ConnectionHandle handle,
+  std::optional<ServiceInfoType> QueryService(hci_spec::ConnectionHandle handle,
                                           Psm psm);
 
   pw::async::Dispatcher& pw_dispatcher_;
@@ -137,7 +137,7 @@ class ChannelManagerImpl final : public ChannelManager {
   // hosted services.
   struct ServiceData {
     void AttachInspect(inspect::Node& parent);
-    ServiceInfo info;
+    ServiceInfoType info;
     Psm psm;
     inspect::Node node;
     inspect::StringProperty psm_property;
@@ -310,7 +310,7 @@ bool ChannelManagerImpl::RegisterService(Psm psm,
     return false;
   }
 
-  ServiceData service{.info = ServiceInfo(params, std::move(cb)),
+  ServiceData service{.info = ServiceInfoType(params, std::move(cb)),
                       .psm = psm,
                       .node = {},
                       .psm_property = {}};
@@ -454,7 +454,7 @@ internal::LogicalLink* ChannelManagerImpl::RegisterInternal(
   return ll_raw;
 }
 
-std::optional<ChannelManager::ServiceInfo> ChannelManagerImpl::QueryService(
+std::optional<ChannelManager::ServiceInfoType> ChannelManagerImpl::QueryService(
     hci_spec::ConnectionHandle handle, Psm psm) {
   auto iter = services_.find(psm);
   if (iter == services_.end()) {
@@ -464,7 +464,7 @@ std::optional<ChannelManager::ServiceInfo> ChannelManagerImpl::QueryService(
   // |channel_cb| will be called in LogicalLink. Each callback in |services_|
   // already trampolines to the appropriate dispatcher (passed to
   // RegisterService).
-  return ServiceInfo(iter->second.info.channel_params,
+  return ServiceInfoType(iter->second.info.channel_params,
                      iter->second.info.channel_cb.share());
 }
 

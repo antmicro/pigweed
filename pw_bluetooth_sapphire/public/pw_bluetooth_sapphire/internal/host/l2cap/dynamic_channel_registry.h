@@ -42,13 +42,13 @@ class DynamicChannelRegistry : public WeakSelf<DynamicChannelRegistry> {
   // by the registry and should not be retained by the callee.
   using DynamicChannelCallback =
       fit::function<void(const DynamicChannel* channel)>;
-  using ServiceInfo = ServiceInfo<DynamicChannelCallback>;
+  using ServiceInfoType = ServiceInfo<DynamicChannelCallback>;
 
   // Used to query the upper layers for the presence of a service that is
   // accepting channels. If the service exists, it should return a callback
   // that accepts the inbound dynamic channel opened.
   using ServiceRequestCallback =
-      fit::function<std::optional<ServiceInfo>(Psm psm)>;
+      fit::function<std::optional<ServiceInfoType>(Psm psm)>;
 
   virtual ~DynamicChannelRegistry() = default;
 

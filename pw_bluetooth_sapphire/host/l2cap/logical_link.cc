@@ -513,7 +513,7 @@ void LogicalLink::Close() {
   dynamic_registry_.reset();
 }
 
-std::optional<DynamicChannelRegistry::ServiceInfo>
+std::optional<DynamicChannelRegistry::ServiceInfoType>
 LogicalLink::OnServiceRequest(Psm psm) {
   BT_DEBUG_ASSERT(!closed_);
 
@@ -527,7 +527,7 @@ LogicalLink::OnServiceRequest(Psm psm) {
                         const DynamicChannel* dyn_chan) mutable {
     CompleteDynamicOpen(dyn_chan, std::move(chan_cb));
   };
-  return DynamicChannelRegistry::ServiceInfo(result->channel_params,
+  return DynamicChannelRegistry::ServiceInfoType(result->channel_params,
                                              std::move(channel_cb));
 }
 

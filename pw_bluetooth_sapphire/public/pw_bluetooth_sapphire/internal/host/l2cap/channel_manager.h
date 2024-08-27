@@ -45,7 +45,7 @@ class ChannelManager {
  public:
   // Information stored and returned for registered services that is needed to
   // configure and forward new channels for this service.
-  using ServiceInfo = ServiceInfo<ChannelCallback>;
+  using ServiceInfoType = ServiceInfo<ChannelCallback>;
 
   struct LEFixedChannels {
     l2cap::Channel::WeakPtrType att;

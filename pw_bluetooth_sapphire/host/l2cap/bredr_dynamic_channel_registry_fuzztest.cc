@@ -68,12 +68,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     // Reject some PSMs.
     if (provider.ConsumeBool()) {
       return std::optional<
-          bt::l2cap::internal::DynamicChannelRegistry::ServiceInfo>();
+          bt::l2cap::internal::DynamicChannelRegistry::ServiceInfoType>();
     }
 
     auto params = ConsumeChannelParameters(provider);
     return std::optional(
-        bt::l2cap::internal::DynamicChannelRegistry::ServiceInfo(
+        bt::l2cap::internal::DynamicChannelRegistry::ServiceInfoType(
             params, service_chan_cb));
   };
   bt::l2cap::internal::BrEdrDynamicChannelRegistry registry(

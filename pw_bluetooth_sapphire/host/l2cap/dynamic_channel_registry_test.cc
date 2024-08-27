@@ -159,7 +159,7 @@ class TestDynamicChannelRegistry final : public DynamicChannelRegistry {
 void DoNothing(const DynamicChannel* channel) {}
 
 // ServiceRequestCallback static handler
-std::optional<DynamicChannelRegistry::ServiceInfo> RejectAllServices(
+std::optional<DynamicChannelRegistry::ServiceInfoType> RejectAllServices(
     Psm /*psm*/) {
   return std::nullopt;
 }
@@ -278,7 +278,7 @@ TEST(DynamicChannelRegistryTest, AcceptServiceRequestThenOpenOk) {
     EXPECT_FALSE(service_request_cb_called);
     EXPECT_EQ(kPsm, psm);
     service_request_cb_called = true;
-    return DynamicChannelRegistry::ServiceInfo{ChannelParameters(),
+    return DynamicChannelRegistry::ServiceInfoType{ChannelParameters(),
                                                open_result_cb.share()};
   };
 
@@ -314,7 +314,7 @@ TEST(DynamicChannelRegistryTest, AcceptServiceRequestThenOpenFails) {
     EXPECT_FALSE(service_request_cb_called);
     EXPECT_EQ(kPsm, psm);
     service_request_cb_called = true;
-    return DynamicChannelRegistry::ServiceInfo{ChannelParameters(),
+    return DynamicChannelRegistry::ServiceInfoType{ChannelParameters(),
                                                open_result_cb.share()};
   };
 

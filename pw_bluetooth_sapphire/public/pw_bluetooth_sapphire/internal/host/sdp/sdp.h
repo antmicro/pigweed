@@ -241,7 +241,7 @@ using LanguageBaseAttributeIdListValueType = std::vector<DataElement>;
 // unchanged.
 constexpr AttributeId kServiceInfoTimeToLive = 0x0007;
 
-using ServiceInfoTimeToLiveValueType = uint32_t;
+using ServiceInfoTypeTimeToLiveValueType = uint32_t;
 
 // Service Availability
 // Represents the relative ability of the service to accept additional clients.
