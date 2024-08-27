@@ -105,11 +105,11 @@ pw_source_set("dispatcher") {
     "$dir_pw_sync:timed_thread_notification",
     "$dir_pw_thread:thread_core",
   ]
-  visibility = [
-                 ":*",
-                 "$dir_pw_grpc/*",
-                 "size_report:*",
-               ] + pw_async_EXPERIMENTAL_MODULE_VISIBILITY
+    #visibility = [
+    #               ":*",
+    #               "$dir_pw_grpc/*",
+    #               "size_report:*",
+    #             ] + pw_async_EXPERIMENTAL_MODULE_VISIBILITY
 }
 
 pw_test("dispatcher_test") {
