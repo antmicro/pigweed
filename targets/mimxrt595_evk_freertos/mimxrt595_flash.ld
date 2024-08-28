@@ -103,12 +103,25 @@ MEMORY
    */
 }
 
+/* NOTE: The last LITTLEFS_REGION_SIZE Flash( in range (FLASH_start + FLASH_size) ~ (FLASH_start + FLASH_size + LITTLEFS_REGION_SIZE -1)) is reserved for litteFS data */
+
+LITTLEFS_REGION_SIZE = 0x00800000;
+
+/*** littleFS configuration Start ***/
+EDGEFAST_BT_LITTLEFS_STORAGE_START_ADDRESS = PW_BOOT_FLASH_BEGIN + PW_BOOT_FLASH_SIZE;
+EDGEFAST_BT_LITTLEFS_STORAGE_SECTOR_SIZE   = 0x1000;  /* 4k flash sector size */
+EDGEFAST_BT_LITTLEFS_STORAGE_MAX_SECTORS   = LITTLEFS_REGION_SIZE / EDGEFAST_BT_LITTLEFS_STORAGE_SECTOR_SIZE;
+/*** littleFS configuration End ***/
+
+
 SECTIONS
 {
   .flash_config :
   {
     . = ALIGN(4);
+    __FLASH_BASE = .;
     KEEP(*(.flash_conf))
+    . = ALIGN(4);
   } >FLASH_CONFIG
 
   /* This is the link-time vector table. If used, the VTOR (Vector Table Offset
@@ -125,8 +138,11 @@ SECTIONS
    */
   .vector_table : ALIGN(512)
   {
+    . = ALIGN(4);
+    __VECTOR_TABLE = .;
     pw_boot_vector_table_addr = .;
     KEEP(*(.vector_table))
+    . = ALIGN(4);
   } >VECTOR_TABLE
 
   /* Represents unused space in the VECTOR_TABLE segment. This MUST be the last
@@ -142,12 +158,18 @@ SECTIONS
   {
     . = ALIGN(4);
     /* Application code. */
-    *(.text)
-    *(.text*)
-    KEEP(*(.init))
-    KEEP(*(.fini))
-
-    . = ALIGN(4);
+    *(EXCLUDE_FILE(
+        /* Exclude flash and frequently executed functions from XIP */
+        */fsl_adapter_flexspi_nor_flash.c.obj
+        */mflash_drv.c.obj
+        */fsl_flexspi.c.obj
+    ) .text)                 /* .text sections (code) */
+    *(EXCLUDE_FILE(
+        /* Exclude flash and frequently executed functions from XIP */
+        */fsl_adapter_flexspi_nor_flash.c.obj
+        */mflash_drv.c.obj
+        */fsl_flexspi.c.obj
+    ) .text*)                /* .text* sections (code) */
     /* Constants.*/
     *(.rodata)
     *(.rodata*)
@@ -158,34 +180,10 @@ SECTIONS
 
     /* Exception handling frame */
     *(.eh_frame)
+    KEEP(*(.init))
+    KEEP(*(.fini))
 
-    /* .preinit_array, .init_array, .fini_array are used by libc.
-     * Each section is a list of function pointers that are called pre-main and
-     * post-exit for object initialization and tear-down.
-     * Since the region isn't explicitly referenced, specify KEEP to prevent
-     * link-time garbage collection. SORT is used for sections that have strict
-     * init/de-init ordering requirements. */
     . = ALIGN(4);
-    PROVIDE_HIDDEN(__preinit_array_start = .);
-    KEEP(*(.preinit_array*))
-    PROVIDE_HIDDEN(__preinit_array_end = .);
-
-    PROVIDE_HIDDEN(__init_array_start = .);
-    KEEP(*(SORT(.init_array.*)))
-    KEEP(*(.init_array*))
-    PROVIDE_HIDDEN(__init_array_end = .);
-
-    PROVIDE_HIDDEN(__fini_array_start = .);
-    KEEP(*(SORT(.fini_array.*)))
-    KEEP(*(.fini_array*))
-    PROVIDE_HIDDEN(__fini_array_end = .);
-  } >FLASH
-
-  /* Used by unwind-arm/ */
-  .ARM : ALIGN(4) {
-    __exidx_start = .;
-    *(.ARM.exidx*)
-    __exidx_end = .;
   } >FLASH
 
   ._bt_settings_area :
@@ -242,13 +240,94 @@ SECTIONS
     . = ALIGN(4);
   } > FLASH
 
+  .ARM.extab :
+  {
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+  } > FLASH
+  /* Used by unwind-arm/ */
+  .ARM : ALIGN(4) {
+    __exidx_start = .;
+    *(.ARM.exidx*)
+    __exidx_end = .;
+  } >FLASH
+
+ .ctors :
+  {
+    __CTOR_LIST__ = .;
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
+    KEEP (*crtbegin.o(.ctors))
+    KEEP (*crtbegin?.o(.ctors))
+    /* We don't want to include the .ctor section from
+       from the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
+    KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors))
+    KEEP (*(SORT(.ctors.*)))
+    KEEP (*(.ctors))
+    __CTOR_END__ = .;
+  } > FLASH
+
+  .dtors :
+  {
+    __DTOR_LIST__ = .;
+    KEEP (*crtbegin.o(.dtors))
+    KEEP (*crtbegin?.o(.dtors))
+    KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors))
+    KEEP (*(SORT(.dtors.*)))
+    KEEP (*(.dtors))
+    __DTOR_END__ = .;
+  } > FLASH
+
+  .preinit_array :
+  {
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    KEEP (*(.preinit_array*))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+  } > FLASH
+
+  .init_array :
+  {
+    PROVIDE_HIDDEN (__init_array_start = .);
+    KEEP (*(SORT(.init_array.*)))
+    KEEP (*(.init_array*))
+    PROVIDE_HIDDEN (__init_array_end = .);
+  } > FLASH
+
+  .fini_array :
+  {
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    KEEP (*(SORT(.fini_array.*)))
+    KEEP (*(.fini_array*))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+  } > FLASH
+
   /* Explicitly initialized global and static data. (.data)*/
   .static_init_ram : ALIGN(4)
   {
     *(CodeQuickAccess)
     *(DataQuickAccess)
+    *(m_usb_dma_init_data)
+    /* Explicit placement of flash and frequently executed functions in RAM */
+    */fsl_adapter_flexspi_nor_flash.c.obj
+    */mflash_drv.c.obj
+    */fsl_flexspi.c.obj
     *(.data)
     *(.data*)
+    . = ALIGN(4);
+    _k_mem_slab_list_start = .;
+    KEEP(*(SORT(._k_mem_slab*)))
+    _k_mem_slab_list_end = .;
+    . = ALIGN(4);
+    _net_buf_pool_list = .;
+    KEEP(*(SORT(._net_buf_pool*)))
     . = ALIGN(4);
   } >RAM AT> FLASH
 
@@ -274,25 +353,29 @@ SECTIONS
    */
   .zero_init_ram (NOLOAD) : ALIGN(4)
   {
+    . = ALIGN(4);
+    __START_BSS = .;
+    __bss_start__ = .;
     *(.bss)
     *(.bss*)
     *(COMMON)
     . = ALIGN(4);
+    __bss_end__ = .;
+    __END_BSS = .;
   } >RAM
 
   .heap (NOLOAD) : ALIGN(4)
   {
+    . = ALIGN(8);
+    __end__ = .;
+    PROVIDE(end = .);
+    __HeapBase = .;
     pw_boot_heap_low_addr = .;
     . = . + PW_BOOT_HEAP_SIZE;
     . = ALIGN(4);
     pw_boot_heap_high_addr = .;
-  } >RAM
-
-  .net_buf (NOLOAD) : ALIGN(4)
-  {
-     _net_buf_pool_list = .;
-     KEEP(*(SORT(._net_buf_pool*)))
-     . = ALIGN(4);
+    __HeapLimit = .;
+    __heap_limit = .; /* Add for _sbrk */
   } >RAM
 
   /* Link-time check for stack overlaps.
