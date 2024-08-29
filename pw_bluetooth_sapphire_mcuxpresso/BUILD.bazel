@@ -1,0 +1,56 @@
+# Copyright 2025 The Pigweed Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+label_flag(
+    name = "config",
+    build_setting_default = ":default_config",
+)
+
+cc_library(
+    name = "default_config",
+)
+
+cc_library(
+    name = "bluetooth_sapphire_mcuxpresso",
+    srcs = [
+        "controller.cc",
+    ],
+    hdrs = [
+        "public/pw_bluetooth_sapphire_mcuxpresso/config.h",
+        "public/pw_bluetooth_sapphire_mcuxpresso/controller.h",
+    ],
+    local_defines = [
+        "PW_LOG_MODULE_NAME=\\\"hci-uart\\\"",
+    ],
+    strip_include_prefix = "public",
+    deps = [
+        ":config",
+        "@pigweed//pw_bluetooth",
+        "@pigweed//pw_bluetooth:hci_util",
+        "@pigweed//pw_bluetooth_hci",
+        "@pigweed//pw_bluetooth_sapphire/host:stack",
+        "@pigweed//pw_containers:inline_queue",
+        "@pigweed//pw_containers:vector",
+        "@pigweed//pw_hex_dump:log_bytes",
+        "@pigweed//pw_ring_buffer",
+        "@pigweed//pw_span:cast",
+        "@pigweed//pw_sync:interrupt_spin_lock",
+        "@pigweed//pw_sync:thread_notification",
+        "@pigweed//pw_thread:thread",
+        "@pigweed//targets:mcuxpresso_sdk",
+    ],
+)
