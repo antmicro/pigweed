@@ -19,12 +19,13 @@ import pathlib
 import sys
 
 try:
-    from pw_build_mcuxpresso import bazel, components, gn
+    from pw_build_mcuxpresso import bazel, components, gn, west
 except ImportError:
     # Load from this directory if pw_build_mcuxpresso is not available.
     import components  # type: ignore
     import bazel  # type: ignore
     import gn  # type: ignore
+    import west # type: ignore
 
 
 def _parse_args() -> argparse.Namespace:
@@ -39,6 +40,7 @@ def _parse_args() -> argparse.Namespace:
         'gn', help='output components of an MCUXpresso project as GN scope'
     )
     subparser.add_argument('manifest_filename', type=pathlib.Path)
+    subparser.add_argument('--west', type=pathlib.Path)
     subparser.add_argument('--include', type=str, action='append')
     subparser.add_argument('--exclude', type=str, action='append')
     subparser.add_argument('--device-core', type=str)
@@ -48,11 +50,15 @@ def _parse_args() -> argparse.Namespace:
         'bazel', help='output an MCUXpresso project as a bazel target'
     )
     subparser.add_argument('manifest_filename', type=pathlib.Path)
-    subparser.add_argument('--name', dest='bazel_name', type=str, required=True)
+    subparser.add_argument('--params_file', type=pathlib.Path)
     subparser.add_argument('--include', type=str, action='append')
     subparser.add_argument('--exclude', type=str, action='append')
     subparser.add_argument('--device-core', type=str)
-    subparser.add_argument('--prefix', dest='path_prefix', type=str)
+    subparser.add_argument('--output_file', type=pathlib.Path)
+    subparser.add_argument('--output_path', type=pathlib.Path)
+    subparser.add_argument('--mcuxpresso_repo', type=pathlib.Path)
+    subparser.add_argument('--library', type=pathlib.Path, action='append')
+
 
     return parser.parse_args()
 
@@ -61,8 +67,11 @@ def main():
     """Main command line function."""
     args = _parse_args()
 
+    output_path = args.output_path
+    west.west_manifest(args.mcuxpresso_repo, output_path)
+
     project = components.Project.from_file(
-        args.manifest_filename,
+        output_path / args.manifest_filename,
         include=args.include,
         exclude=args.exclude,
         device_core=args.device_core,
@@ -72,7 +81,8 @@ def main():
         gn.gn_output(project, path_prefix=args.path_prefix)
     if args.command == 'bazel':
         bazel.bazel_output(
-            project, name=args.bazel_name, path_prefix=args.path_prefix
+            project, output_file=args.output_file,
+            params_output_file=args.params_file, libraries=args.library
         )
 
     sys.exit(0)

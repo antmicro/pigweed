@@ -28,3 +28,5 @@ psutil==5.9.4
 robotframework==6.0.2
 # RP2040 utils.
 pyusb==1.2.1
+# mcuxpresso SDK generator requirements
+west==1.2.0

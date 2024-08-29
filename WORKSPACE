@@ -200,3 +200,10 @@ git_repository(
     tag = "v2024.0809.170004",
     # LINT.ThenChange(/pw_package/py/pw_package/packages/emboss.py:emboss)
 )
+
+git_repository(
+    name = "mcuxpresso",
+    commit = "6f3fd257cdcf978a4d26e7d6e9eed9240037422b",
+    remote = "https://github.com/nxp-mcuxpresso/mcux-sdk",
+    build_file = "@pigweed//third_party/mcuxpresso:BUILD_sdk.bazel",
+)
