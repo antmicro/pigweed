@@ -1,0 +1,25 @@
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "bluetooth_sapphire_mcuxpresso",
+    srcs = [
+        "controller.cc",
+    ],
+    hdrs = [
+        "public/pw_bluetooth_sapphire_mcuxpresso/controller.h",
+    ],
+    includes = [
+        "public",
+    ],
+    deps = [
+        "@pigweed//pw_containers:vector",
+        "@pigweed//pw_containers:inline_queue",
+        "@pigweed//pw_thread:thread",
+        "@pigweed//pw_sync:interrupt_spin_lock",
+        "@pigweed//pw_sync:thread_notification",
+        "@pigweed//pw_bluetooth:pw_bluetooth",
+        "@pigweed//pw_bluetooth_sapphire/host:stack",
+        "@pigweed//targets:mcuxpresso_sdk",
+    ],
+)
