@@ -1,4 +1,4 @@
-# Copyright 2022 The Pigweed Authors
+# Copyright 2024 The Pigweed Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -11,18 +11,22 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+"""Common constant values for generated SDK"""
 
-# Pigweed upstream specific dependencies:
-# pigweed.dev Sphinx themes
-sphinx-copybutton==0.5.1
-breathe==4.35.0
-pydata-sphinx-theme==0.15.4
-sphinx-reredirects==0.1.3
-# Renode requirements
-robotframework==6.0.2
-# RP2040 utils.
-pyusb==1.2.1
-# python DAP implementation to ease VS Code python debugging
-debugpy==1.8.5
-# mcuxpresso SDK generator requirements
-west==1.2.0
+SDK_USER_CONFIG_NAME = "user_config"
+SDK_COMMONS_NAME = "commons"
+
+# TODO(krakoczy): Ideally this should be silenced by the downstream project
+# revisit this in the future
+SDK_DEFAULT_COPTS = [
+    "-Wno-cast-qual",
+    "-Wno-error=strict-prototypes",
+    "-Wno-redundant-decls",
+    "-Wno-shadow",
+    "-Wno-sign-compare",
+    "-Wno-type-limits",
+    "-Wno-undef",
+    "-Wno-unused-function",
+    "-Wno-unused-parameter",
+    "-Wno-unused-variable",
+]

@@ -13,111 +13,336 @@
 # the License.
 """Bazel output support."""
 
-from typing import Any
-
-import pathlib
+import collections
+from dataclasses import asdict, dataclass
+from itertools import chain
+from pathlib import Path
+from typing import Any, Iterable, Iterator
 
 try:
-    from pw_build_mcuxpresso.components import Project
+    from pw_build_mcuxpresso.components import Component, Project
+    from pw_build_mcuxpresso.consts import (
+        SDK_USER_CONFIG_NAME,
+        SDK_DEFAULT_COPTS,
+        SDK_COMMONS_NAME,
+    )
 except ImportError:
     # Load from this directory if pw_build_mcuxpresso is not available.
-    from components import Project  # type: ignore
+    from components import Component, Project  # type: ignore
+    from consts import SDK_USER_CONFIG_NAME  # type: ignore
+    from consts import SDK_DEFAULT_COPTS  # type: ignore
+    from consts import SDK_COMMONS_NAME  # type: ignore
 
 
-def _bazel_bool_out(name: str, val: bool, indent: int = 0) -> None:
-    """Outputs boolean in Bazel format."""
-    print('    ' * indent + f'{name} = "{val}",')
+@dataclass
+class BazelVariable:
+    """Representation of Bazel variable"""
+
+    name: str
+    value: Any
+
+    def __str__(self) -> str:
+        return f"{self.name} = {self.value}"
 
 
-def _bazel_int_out(name: str, val: int, indent: int = 0) -> None:
-    """Outputs integer in Bazel format."""
-    print('    ' * indent + f'{name} = "{val}",')
+@dataclass
+class BazelTarget:
+    """Representation of single Bazel build target.
+    Target's attributes can be represented as dictionary in which
+    the keys are strings (attribute names) and values are either
+    strings, lists, integers or booleans.
+
+    Properties:
+        target_type: name of rule to instantiate
+        attrs: target attributes
+    """
+
+    target_type: str
+    attrs: dict[str, Any]
+
+    def format(self, indent: int = 4) -> str:
+        """Generates string representation of the target
+
+        Args:
+            indent: specifies amount of indentation added for each nesting level
+        """
+        text = f"{self.target_type}(\n"
+
+        for key, value in sorted(self.attrs.items(), key=lambda kv: kv[0]):
+            # Handle formatting for specific types
+            if isinstance(value, str):
+                # Wrap string in quotes and escape inner ones
+                value = '"{}"'.format(value.replace('"', r'\"'))
+            elif isinstance(value, list):
+                # Skip printing empty arrays
+                if len(value) == 0:
+                    continue
+                for i, v in enumerate(value):
+                    if isinstance(v, BazelTarget):
+                        value[i] = v.label()
+            elif isinstance(value, BazelVariable):
+                # Print variable's name
+                value = value.name
+
+            # otherwise, use default string conversion
+            text += f'{" " * indent}{key} = {value},\n'
+
+        text += ")"
+        return text
+
+    def name(self) -> str:
+        """Returns name of this target"""
+        if self.attrs.get("name") is None:
+            raise KeyError('Target with empty "name" attribute')
+        return self.attrs["name"]
+
+    def label(self) -> str:
+        """Returns string representation of this target's label."""
+        return f":{self.name()}"
+
+    def __lt__(self, other) -> bool:
+        return self.label() < other.label()
+
+    def __str__(self) -> str:
+        return self.label()
 
 
-def _bazel_str(val: Any) -> str:
-    """Returns string in Bazel format with correct escaping."""
-    return str(val).replace('"', r'\"').replace('$', r'\$')
+SHARED_BAZEL_COPTS = BazelVariable("COPTS", SDK_DEFAULT_COPTS)
+
+# pylint: disable=line-too-long
+BUILDFILE_HEADER = rf'''### This file was auto generated. Do not edit manually. ###
+package(default_visibility = ["//visibility:public"])
+{SHARED_BAZEL_COPTS}
+'''
+# pylint: enable=line-too-long
+
+USER_CONFIG_TARGET = BazelTarget(
+    "label_flag",
+    {
+        "name": SDK_USER_CONFIG_NAME,
+        "build_setting_default": "@pigweed//pw_build:empty_cc_library",
+    },
+)
 
 
-def _bazel_str_out(name: str, val: Any, indent: int = 0) -> None:
-    """Outputs string in Bazel format with correct escaping."""
-    print('    ' * indent + f'{name} = "{_bazel_str(val)}",')
+def _normalize_path_list(targets: list[Path]) -> list[str]:
+    """Converts given paths to their string representation
+    using '/' as a path separator
+    """
+    return [target.as_posix() for target in targets]
 
 
-def _bazel_str_list_out(name: str, vals: list[Any], indent: int = 0) -> None:
-    """Outputs list of strings in Bazel format with correct escaping."""
-    if not vals:
-        return
-
-    print('    ' * indent + f'{name} = [')
-    for val in vals:
-        print('    ' * (indent + 1) + f'"{_bazel_str(val)}",')
-    print('    ' * indent + '],')
+def _path_to_component_id(target: Path | str) -> str:
+    """Converts path to component id by replacing '/' with '.'"""
+    if isinstance(target, Path):
+        target = target.as_posix()
+    return target.replace("/", ".")
 
 
-def _bazel_path_list_out(
-    name: str,
-    vals: list[pathlib.Path],
-    path_prefix: str | None = None,
-    indent: int = 0,
-) -> None:
-    """Outputs list of paths in Bazel format with common prefix."""
-    if path_prefix is not None:
-        str_vals = [f'{path_prefix}{str(val)}' for val in vals]
-    else:
-        str_vals = [str(f) for f in vals]
-
-    _bazel_str_list_out(name, sorted(set(str_vals)), indent=indent)
-
-
-def bazel_output(
-    project: Project,
-    name: str,
-    path_prefix: str | None = None,
-    extra_args: dict[str, Any] | None = None,
-):
-    """Output Bazel target for a project with the specified components.
+def _resolve_component_dep_cycles(project: Project) -> dict[str, Component]:
+    """Resolves dependency cycles between components
 
     Args:
-        project: MCUXpresso project to output.
-        name: target name to output.
-        path_prefix: string prefix to prepend to all paths.
-        extra_args: Dictionary of additional arguments to generated target.
+        project: mcuxpresso project
+    Returns:
+        mapping of component ids to components without dependency cycles
     """
-    print('cc_library(')
-    _bazel_str_out('name', name, indent=1)
-    _bazel_path_list_out(
-        'srcs',
-        project.sources + project.libs,
-        path_prefix=path_prefix,
-        indent=1,
+
+    components = {
+        c.id: Component(**asdict(c)) for c in project.components.values()
+    }
+    extracted_common_components = dict()
+
+    dependencies: collections.deque[str] = collections.deque()
+    for component in components.values():
+        checked = {component.id}
+        dependencies.extend(component.dependencies)
+
+        while len(dependencies) > 0:
+            dep_id = dependencies.popleft()
+            dep = components.get(dep_id)
+            if dep is None:
+                continue
+
+            if component.id in dep.dependencies:
+                # Workaround for bug in serial_manager_uart component from
+                # manifest. It has circular dependency with serial_manager
+                # component as both serial_manager has dependency on
+                # serial_manager_uart and vice versa. Fix this by extracting
+                # common dependencies using serial_manager_uart as base
+                # component
+                if component.id == "component.serial_manager_uart.MIMXRT595S":
+                    c = component.extract_common(dep)
+                else:
+                    c = dep.extract_common(component)
+                extracted_common_components[c.id] = c
+
+            dependencies.extend(dep.dependencies.difference(checked))
+            checked.update(dep.dependencies)
+
+    return dict(chain(components.items(), extracted_common_components.items()))
+
+
+def headers_cc_library(project: Project) -> BazelTarget:
+    """Generates common headers Bazel cc_library target
+
+    Args:
+        project: mcuxpresso project
+        output_path: path to output directory
+    """
+    deduplicate_chain = lambda it: sorted(set(chain.from_iterable(it)))
+
+    components = project.components.values()
+
+    defines = deduplicate_chain(component.defines for component in components)
+
+    headers = deduplicate_chain(component.headers for component in components)
+    headers = _normalize_path_list(headers)
+
+    includes = deduplicate_chain(
+        component.include_dirs for component in components
     )
-    _bazel_path_list_out(
-        'hdrs', project.headers, path_prefix=path_prefix, indent=1
-    )
-    _bazel_str_list_out('defines', project.defines, indent=1)
-    _bazel_path_list_out(
-        'includes', project.include_dirs, path_prefix=path_prefix, indent=1
+    includes = _normalize_path_list(includes)
+
+    return BazelTarget(
+        "cc_library",
+        {
+            "name": SDK_COMMONS_NAME,
+            "deps": [USER_CONFIG_TARGET],
+            "defines": defines,
+            "hdrs": headers,
+            "includes": includes,
+            "copts": SHARED_BAZEL_COPTS,
+        },
     )
 
-    for arg_name, arg_value in (extra_args or {}).items():
-        if isinstance(arg_value, bool):
-            _bazel_bool_out(arg_name, arg_value, indent=1)
-        elif isinstance(arg_value, int):
-            _bazel_int_out(arg_name, arg_value, indent=1)
-        elif isinstance(arg_value, str):
-            _bazel_str_out(arg_name, arg_value, indent=1)
-        elif isinstance(arg_value, list):
-            if all(isinstance(x, str) for x in arg_value):
-                _bazel_str_list_out(arg_name, arg_value, indent=1)
-            else:
-                raise TypeError(
-                    f"Can't handle extra arg {arg_name!r}: "
-                    f"a list of {type(arg_value[0])}"
-                )
-        else:
-            raise TypeError(
-                f"Can't handle extra arg {arg_name!r}: {type(arg_value)}"
+
+def import_targets(libraries: Iterable[Path]) -> list[BazelTarget]:
+    """Generates Bazel cc_import targets for static libraries
+
+    Args:
+        libraries: paths to '.a' library files
+    """
+
+    return sorted(
+        (
+            BazelTarget(
+                "cc_import",
+                {
+                    "name": _path_to_component_id(library),
+                    "static_library": library.as_posix(),
+                },
             )
+            for library in libraries
+        ),
+    )
 
-    print(')')
+
+def component_targets(
+    components: dict[str, Component],
+    imports: list[BazelTarget],
+    commons: BazelTarget,
+) -> list[BazelTarget]:
+    """Returns Bazel cc_library targets representing SDK components
+
+    Args:
+        components: mapping of component ids to SDK components
+        imports: list of import targets
+        commons: target containing common definitions
+    """
+
+    libraries = {target.name(): target for target in imports}
+    parsed: dict[str, BazelTarget] = dict()
+
+    def component_target(component: Component) -> BazelTarget:
+        if component.id in parsed.keys():
+            return parsed[component.id]
+
+        libs = [libraries[_path_to_component_id(lib)] for lib in component.libs]
+
+        deps = sorted(
+            chain(
+                [commons],
+                libs,
+                map(
+                    lambda dep_id: component_target(components[dep_id])
+                    if dep_id not in parsed.keys()
+                    else parsed[dep_id],
+                    component.dependencies,
+                ),
+            ),
+        )
+
+        sources = _normalize_path_list(component.sources)
+
+        attrs: dict[str, Any] = {
+            "name": component.id,
+            "srcs": sources,
+            "deps": deps,
+            "copts": SHARED_BAZEL_COPTS,
+        }
+
+        if component.private:
+            attrs["visibility"] = ["//visibility:private"]
+
+        if component.alwayslink:
+            attrs["alwayslink"] = True
+
+        target = BazelTarget("cc_library", attrs)
+        parsed[component.id] = target
+
+        return target
+
+    for component in components.values():
+        component_target(component)
+
+    return sorted(parsed.values())
+
+
+def generate_project_targets(project: Project) -> Iterator[BazelTarget]:
+    """Generates Bazel targets for a project
+
+    Args:
+        project: MCUXpresso project to output
+        output_path: Path to output directory
+    """
+    components = _resolve_component_dep_cycles(project)
+    libraries = set(
+        chain.from_iterable(component.libs for component in components.values())
+    )
+
+    commons = headers_cc_library(project)
+    imports = import_targets(libraries)
+
+    return chain(
+        [USER_CONFIG_TARGET, commons],
+        imports,
+        component_targets(components, imports, commons),
+    )
+
+
+def generate_bazel_files(
+    project: Project,
+    output_path: Path,
+):
+    """Generates Bazel files for a project in specified output directory.
+
+    Args:
+        project: MCUXpresso project to output
+        output_path: Path to output directory
+    """
+    print("# Generating bazel files... ")
+
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    module_file = output_path / "MODULE.bazel"
+    module_file.touch()
+
+    build_file = output_path / "BUILD.bazel"
+    with open(build_file, "w") as f:
+        f.write(BUILDFILE_HEADER)
+
+        for target in generate_project_targets(project):
+            f.write(f"{target.format()}\n")
+
+        print(f"Generated targets for {len(project.components)} components")

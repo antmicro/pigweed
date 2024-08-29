@@ -156,37 +156,92 @@ The ``--prefix`` option specifies the GN location of the SDK files.
 ---------------
 The Bazel build
 ---------------
-To use an MCUxpresso SDK within a Pigweed project that uses tha Bazel build
-system, you must use the ``mcuxpresso_builder`` tool directly and place its
-output in ``BUILD`` or ``BUILD.bazel`` files yourself.
+Using an MCUxpresso SDK within a Pigweed project that uses the Bazel build
+system involves the creation of one or more ``cc_library`` targets you can
+depend on in your executable targets.
 
-Provide the path to the manifest XML, the ``--name`` of the ``cc_library`` to
-create, along with the names of the components you wish to ``--include`` or
-``--exclude``.
+This targets should select required components from SDK using pre-generated
+BUILD.bazel file created from SDK manifest.
+
+Out of the box, Pigweed provides rules for basic components from
+MCUXpresso SDK. You can list those components out by running
+
+.. code-block:: sh
+
+   bazelisk query @mcuxpresso//...
+
+
+To use those components, simply specify them as deps in your code
+
+.. code-block: text
+
+  cc_library(
+    name = "mcuxpresso_sdk",
+    target_compatible_with = [
+      "@platforms//cpu:armv8-m",
+    ],
+    deps = [
+      "@mcuxpresso//:component.serial_manager_uart.MIMXRT595S",
+      "@mcuxpresso//:utility.debug_console.MIMXRT595S",
+    ],
+  )
+
+In addition, you might want to pass some additional configuration
+to SDK rules. You can do that by overriding the `user_config`
+option to point to your custom rule
+
+.. code-block:: text
+
+   config_setting(
+      name = "debug",
+      flag_values = {"@mcuxpresso//:user_config": "//:my_sdk_config"}
+   )
+
+   cc_library(
+      name = "my_sdk_config",
+      defines = [
+         "CPU_MIMXRT595SFFOC_cm33",
+          "SDK_DEBUGCONSOLE=1",
+      ],
+   )
+
+
+Generating SDK
+==============
+If your use case requires you to use components that are not provided
+by Pigweed, you will have to use the ``mcuxpresso_builder`` script
+to generate additional targets for this components.
+
+Provide the path to the manifest XML, url to MCUxpresso SDK repository
+along with the names of the components you wish to
+``--include`` or ``--exclude``.
 
 .. code-block:: bash
 
    mcuxpresso_builder bazel /path/to/manifest.xml \
-       --name example_sdk \
-       --include project_template.evkmimxrt595.MIMXRT595S \
-       --include utility.debug_console.MIMXRT595S \
-       --include component.serial_manager_uart.MIMXRT595S \
-       --exclude middleware.freertos-kernel.MIMXRT595S \
-       --device-core cm33_MIMXRT595S
+       --mcuxpresso-repo=https://github.com/nxp-mcuxpresso/mcux-sdk.git \
+       --device-core cm33_MIMXRT595S \
+       --include \
+       project_template.evkmimxrt595.MIMXRT595S \
+       utility.debug_console.MIMXRT595S \
+       component.serial_manager_uart.MIMXRT595S \
+       --exclude \
+       middleware.freertos-kernel.MIMXRT595S
 
 
-Place the resulting output in a ``BUILD`` file, and then modify your
-``WORKSPACE`` to associate this build file with the path to the MCUxpresso SDK
-checkout.
+This will generate new SDK together with Bazel build file containing rules
+for each of the specified components (and their dependencies) and
+a ``README.md`` file with additional information.
+
+After that, update ``MODULE.bazel`` to point to your
+generated SDK.
 
 .. code-block:: python
 
-   new_local_repository(
-       name = "mcuxpresso_sdk",
-       build_file = "//third_party/mcuxpresso_sdk/BUILD",
-       path = "third_party/evkmimxrt595/sdk",
+   new_git_repository(
+       name = "mcuxpresso",
+       commit = "your_commit_sha",
+       remote = "your_remote",
    )
 
-To add other dependencies, compiler definitions, etc. it is recommended that
-you do so by creating a new target, and add a dependency to it, rather than
-modifying the generated targets.
+Directly modifying generated SDK is not recommended.
