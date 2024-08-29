@@ -200,3 +200,38 @@ git_repository(
     tag = "v2024.0809.170004",
     # LINT.ThenChange(/pw_package/py/pw_package/packages/emboss.py:emboss)
 )
+
+git_repository(
+    name = "mcuxpresso",
+    commit = "5d978a8f88d947b8158b21557b7f997e092f79ac",
+    remote = "https://github.com/nxp-mcuxpresso/mcux-sdk",
+    build_file = "@pigweed//third_party/mcuxpresso:BUILD_sdk.bazel",
+)
+
+load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
+
+py_repositories()
+
+python_register_toolchains(
+    name = "python_3_9",
+    python_version = "3.9.13",
+)
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+pip_parse(
+    name = "pypi",
+
+    # Here, we use the interpreter constant that resolves to the host interpreter from the default Python toolchain.
+    python_interpreter_target = "@python_3_9_host//:python",
+
+    # (Optional) You can set quiet to False if you want to see pip output.
+    #quiet = False,
+    requirements_lock = "//pw_build_mcuxpresso/py:requirements_lock.txt",
+    requirements_windows = "//pw_build_mcuxpresso/py:requirements_windows.txt",
+)
+
+load("@pypi//:requirements.bzl", "install_deps")
+
+# Initialize repositories for all packages in requirements_lock.txt.
+install_deps()

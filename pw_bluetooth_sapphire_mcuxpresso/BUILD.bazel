@@ -18,6 +18,6 @@ cc_library(
     deps = [
         "@pigweed//pw_bluetooth:pw_bluetooth",
         "@pigweed//pw_bluetooth_sapphire/host:stack",
-        "@mcuxpresso_sdk//:sdk",
+        "//targets:mcuxpresso_sdk",
     ],
 )

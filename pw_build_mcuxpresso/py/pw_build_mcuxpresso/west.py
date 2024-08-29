@@ -1,4 +1,4 @@
-# Copyright 2021 The Pigweed Authors
+# Copyright 2024 The Pigweed Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -11,15 +11,18 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+"""West manifest output support."""
 
-package(default_visibility = ["//visibility:public"])
+import os
+from pathlib import Path
 
-label_flag(
-    name = "mcuxpresso_sdk",
-    build_setting_default = "//third_party/mcuxpresso:mcuxpresso_sdk",
-)
+from west.app.main import WestApp
 
-label_flag(
-    name = "target_rtos",
-    build_setting_default = "//pw_build/constraints/rtos:none",
-)
+def west_manifest(output_path: Path,):
+    old_dir = os.getcwd()
+    os.makedirs(output_path, exist_ok=True)
+    os.chdir(output_path)
+    app = WestApp()
+    app.run(['init', '-m', "https://github.com/nxp-mcuxpresso/mcux-sdk.git", "--mr", "MCUX_2.16.000"])
+    app.run(['update', '-o=--depth=1'])
+    os.chdir(old_dir)

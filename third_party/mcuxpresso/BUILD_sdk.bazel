@@ -1,0 +1,11 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["west.yml"])
+exports_files(["manifests/EVK-MIMXRT595_manifest_v3_14.xml"])
+
+filegroup(
+    name = "mcuxpresso",
+    srcs = glob([
+        "**",
+    ])
+)

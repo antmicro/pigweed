@@ -13,11 +13,11 @@
 # the License.
 """Finds components for a given manifest."""
 
+import os
 import pathlib
 import sys
-from typing import Collection, Container
+from typing import Collection, Container, List
 import xml.etree.ElementTree
-
 
 def _element_is_compatible_with_device_core(
     element: xml.etree.ElementTree.Element, device_core: str | None
@@ -129,7 +129,7 @@ def _parse_define(define: xml.etree.ElementTree.Element) -> str:
 
 
 def parse_include_paths(
-    root: xml.etree.ElementTree.Element,
+    root: tuple[xml.etree.ElementTree.Element, pathlib.Path],
     component_id: str,
     device_core: str | None = None,
 ) -> list[pathlib.Path]:
@@ -151,16 +151,24 @@ def parse_include_paths(
     Returns:
         list of include directories for the component.
     """
-    (component, base_path) = get_component(root, component_id)
+    (component, base_path) = get_component(root[0], component_id)
     if component is None:
         return []
+
+    execroot = pathlib.Path(os.getcwd())
+    while execroot.parts[-2] != "execroot":
+        execroot = (execroot / "..").resolve()
 
     include_paths: list[pathlib.Path] = []
     for include_type in ('c_include', 'asm_include'):
         include_xpath = f'./include_paths/include_path[@type="{include_type}"]'
+        try:
+            parent = root[1].parents[0]
+        except IndexError:
+            parent = root[1]
 
         include_paths.extend(
-            _parse_include_path(include_path, base_path)
+            (parent / _parse_include_path(include_path, base_path)).absolute().resolve().relative_to(execroot)
             for include_path in component.findall(include_xpath)
             if _element_is_compatible_with_device_core(
                 include_path, device_core
@@ -186,13 +194,16 @@ def _parse_include_path(
         Path, prefixed with `base_path`.
     """
     path = pathlib.Path(include_path.attrib['relative_path'])
+    # workaround for bug in mcux-sdk-middleware-edgefast-bluetooth manifest
+    if base_path is not None and base_path == pathlib.Path("../../wireless/ethermind"):
+        path = pathlib.Path(*path.parts[3:])
     if base_path is None:
         return path
     return base_path / path
 
 
 def parse_headers(
-    root: xml.etree.ElementTree.Element,
+    root: tuple[xml.etree.ElementTree.Element, pathlib.Path],
     component_id: str,
     device_core: str | None = None,
 ) -> list[pathlib.Path]:
@@ -220,7 +231,7 @@ def parse_headers(
 
 
 def parse_sources(
-    root: xml.etree.ElementTree.Element,
+    root: tuple[xml.etree.ElementTree.Element, pathlib.Path],
     component_id: str,
     device_core: str | None = None,
     exclude: Container[str] | None = None,
@@ -254,7 +265,7 @@ def parse_sources(
 
 
 def parse_libs(
-    root: xml.etree.ElementTree.Element,
+    root: tuple[xml.etree.ElementTree.Element, pathlib.Path],
     component_id: str,
     device_core: str | None = None,
 ) -> list[pathlib.Path]:
@@ -279,7 +290,7 @@ def parse_libs(
 
 
 def _parse_sources(
-    root: xml.etree.ElementTree.Element,
+    root: tuple[xml.etree.ElementTree.Element, pathlib.Path],
     component_id: str,
     source_type: str,
     device_core: str | None = None,
@@ -304,7 +315,7 @@ def _parse_sources(
     Returns:
         list of source files for the component.
     """
-    (component, base_path) = get_component(root, component_id)
+    (component, base_path) = get_component(root[0], component_id)
     if component is None:
         return []
 
@@ -324,14 +335,31 @@ def _parse_sources(
         if toolchain is not None and "mcuxpresso" in toolchain:
             continue
         relative_path = pathlib.Path(source.attrib['relative_path'])
+        # workaround for bug in mcux-sdk-middleware-edgefast-bluetooth manifest
+        if base_path is not None and base_path == pathlib.Path("../../wireless/ethermind"):
+            if component_id == "middleware.edgefast_bluetooth.ble.ethermind.lib.cm33.MIMXRT595S":
+                relative_path = pathlib.Path(*relative_path.parts[3:])
+            else:
+                relative_path = pathlib.Path(source.attrib['project_relative_path'])
         if base_path is not None:
             relative_path = base_path / relative_path
 
+        try:
+            parent = root[1].parents[0]
+        except IndexError:
+            parent = root[1]
+
+
+        execroot = pathlib.Path(os.getcwd())
+        while execroot.parts[-2] != "execroot":
+            execroot = (execroot / "..").resolve()
         for file in source.findall('./files'):
             filename = pathlib.Path(file.attrib['mask'])
+
             # Skip linker scripts, pigweed uses its own linker script.
             if filename.suffix != ".ldt":
-                sources.append(relative_path / filename)
+                source_absolute = (parent / relative_path / filename).absolute().resolve()
+                sources.append(source_absolute.relative_to(execroot))
     return sources
 
 
@@ -404,7 +432,7 @@ def _parse_dependency(dependency: xml.etree.ElementTree.Element) -> list[str]:
 
 
 def check_dependencies(
-    root: xml.etree.ElementTree.Element,
+    roots: List[tuple[xml.etree.ElementTree.Element, pathlib.Path]],
     component_id: str,
     include: Collection[str],
     exclude: Container[str] | None = None,
@@ -416,7 +444,7 @@ def check_dependencies(
     components listed in `include` or `exclude`.
 
     Args:
-        root: root of element tree.
+        root: list of root of element trees.
         component_id: id of component to check.
         include: collection of component ids included in the project.
         exclude: optional container of component ids explicitly excluded from
@@ -427,11 +455,12 @@ def check_dependencies(
         True if dependencies are satisfied, False if not.
     """
     xpath = f'./components/component[@id="{component_id}"]/dependencies/*'
-    for dependency in root.findall(xpath):
-        if not _check_dependency(
-            dependency, include, exclude=exclude, device_core=device_core
-        ):
-            return False
+    for root in roots:
+        for dependency in root[0].findall(xpath):
+            if not _check_dependency(
+                dependency, include, exclude=exclude, device_core=device_core
+            ):
+                return False
     return True
 
 
@@ -484,7 +513,7 @@ def _check_dependency(
 
 
 def create_project(
-    root: xml.etree.ElementTree.Element,
+    roots: List[tuple[xml.etree.ElementTree.Element, pathlib.Path]],
     include: Collection[str],
     exclude: Container[str] | None = None,
     device_core: str | None = None,
@@ -499,7 +528,7 @@ def create_project(
     """Create a project from a list of specified components.
 
     Args:
-        root: root of element tree.
+        roots: list of root of element trees.
         include: collection of component ids included in the project.
         exclude: container of component ids excluded from the project.
         device_core: name of core to filter sources for.
@@ -520,42 +549,43 @@ def create_project(
             continue
 
         project_list.append(component_id)
-        pending_list.extend(parse_dependencies(root, component_id))
+        for root in roots:
+            pending_list.extend(parse_dependencies(root[0], component_id))
 
     return (
         project_list,
         sum(
             (
-                parse_defines(root, component_id, device_core=device_core)
-                for component_id in project_list
+                parse_defines(root[0], component_id, device_core=device_core)
+                for component_id in project_list for root in roots
             ),
             [],
         ),
         sum(
             (
                 parse_include_paths(root, component_id, device_core=device_core)
-                for component_id in project_list
+                for component_id in project_list for root in roots
             ),
             [],
         ),
         sum(
             (
                 parse_headers(root, component_id, device_core=device_core)
-                for component_id in project_list
+                for component_id in project_list for root in roots
             ),
             [],
         ),
         sum(
             (
                 parse_sources(root, component_id, device_core=device_core, exclude=exclude)
-                for component_id in project_list
+                for component_id in project_list for root in roots
             ),
             [],
         ),
         sum(
             (
                 parse_libs(root, component_id, device_core=device_core)
-                for component_id in project_list
+                for component_id in project_list for root in roots
             ),
             [],
         ),
@@ -592,14 +622,25 @@ class Project:
             device_core: name of core to filter sources for.
         """
         tree = xml.etree.ElementTree.parse(manifest_path)
-        root = tree.getroot()
-        return cls(
-            root, include=include, exclude=exclude, device_core=device_core
+
+        # paths in the manifest are relative paths from manifest folder
+        old_dir = os.getcwd()
+        os.chdir(manifest_path.parents[0])
+        roots = [(tree.getroot(), pathlib.Path("."))]
+
+        xpath = "./manifest_includes/*"
+        roots.extend([(xml.etree.ElementTree.parse(manifest_include.attrib["path"]).getroot(), pathlib.Path(manifest_include.attrib["path"])) for manifest_include in roots[0][0].findall(xpath)])
+
+        result = cls(
+            roots, include=include, exclude=exclude, device_core=device_core
         )
+        os.chdir(old_dir)
+
+        return result
 
     def __init__(
         self,
-        manifest: xml.etree.ElementTree.Element,
+        manifest: List[tuple[xml.etree.ElementTree.Element, pathlib.Path]],
         include: Collection[str],
         exclude: Container[str] | None = None,
         device_core: str | None = None,
@@ -607,7 +648,7 @@ class Project:
         """Create a self-contained project with the specified components.
 
         Args:
-            manifest: parsed manifest XML.
+            manifest: list of parsed manifest XMLs.
             include: collection of component ids included in the project.
             exclude: container of component ids excluded from the project.
             device_core: name of core to filter sources for.
