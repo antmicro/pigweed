@@ -1,0 +1,40 @@
+
+import("//build_overrides/pigweed.gni")
+
+import("$dir_pw_build/target_types.gni")
+import("$dir_pw_docgen/docs.gni")
+import("$dir_pw_third_party/mcuxpresso/mcuxpresso.gni")
+import("$dir_pw_unit_test/test.gni")
+
+config("default_config") {
+  include_dirs = [ "public" ]
+}
+
+if (pw_third_party_mcuxpresso_SDK != "") {
+  pw_source_set("bluetooth_sapphire_mcuxpresso") {
+    public_configs = [ ":default_config" ]
+    public = [ 
+        "public/pw_bluetooth_sapphire_mcuxpresso/controller.h",
+        "public/pw_bluetooth_sapphire_mcuxpresso/low_energy_advertiser.h",
+        "public/pw_bluetooth_sapphire_mcuxpresso/edgefast_bluetooth_config.h",
+    ]
+    public_deps = [
+      "$dir_pw_bluetooth:pw_bluetooth",
+      "$dir_pw_bluetooth_sapphire:host",
+    ]
+    deps = [
+      "$pw_third_party_mcuxpresso_SDK",
+    ]
+    sources = [
+        "controller.cc",
+        "low_energy_advertiser.cc",
+    ]
+  }
+}
+
+#pw_doc_group("docs") {
+#  sources = [ "docs.rst" ]
+#}
+
+pw_test_group("tests") {
+}
