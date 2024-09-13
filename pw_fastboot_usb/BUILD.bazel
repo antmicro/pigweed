@@ -1,0 +1,25 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "pw_fastboot_usb",
+    srcs = [
+        "transport.cc",
+    ],
+    hdrs = [
+        "public/pw_fastboot_usb/packet.h",
+        "public/pw_fastboot_usb/ring_buffer.h",
+        "public/pw_fastboot_usb/transport.h",
+    ],
+    includes = [
+        "public/",
+    ],
+    deps = [
+        "//pw_fastboot",
+        "//pw_function",
+        "//pw_log",
+        "//pw_ring_buffer",
+        "//pw_sync:counting_semaphore",
+        "//pw_sync:interrupt_spin_lock",
+        "//pw_sync:thread_notification",
+    ],
+)
