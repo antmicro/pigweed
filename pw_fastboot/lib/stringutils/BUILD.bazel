@@ -1,0 +1,17 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "stringutils",
+    srcs = [
+        "strings.cc",
+    ],
+    hdrs = [
+        "public/stringutils/strings.h",
+    ],
+    includes = [
+        "public/",
+    ],
+    deps = [
+        "@pigweed//pw_assert",
+    ],
+)

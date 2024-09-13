@@ -1,0 +1,26 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "pw_fastboot",
+    srcs = [
+        "commands.cc",
+        "device_variable.cc",
+        "fastboot_device.cc",
+        "private/pw_fastboot/command_handlers.h",
+    ],
+    hdrs = [
+        "public/pw_fastboot/commands.h",
+        "public/pw_fastboot/constants.h",
+        "public/pw_fastboot/device_hal.h",
+        "public/pw_fastboot/device_variable.h",
+        "public/pw_fastboot/fastboot_device.h",
+        "public/pw_fastboot/transport.h",
+    ],
+    includes = [
+        "public/",
+    ],
+    deps = [
+        "//pw_fastboot/lib/stringutils",
+        "//pw_log",
+    ],
+)
