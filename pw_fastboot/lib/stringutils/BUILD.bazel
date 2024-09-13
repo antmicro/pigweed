@@ -1,0 +1,20 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "stringutils",
+    hdrs = [
+        "public/stringutils/strings.h",
+    ],
+    includes = [
+        "public/",
+    ],
+    deps = [
+        "@pigweed//pw_assert",
+        "@pigweed//pw_span",
+        "@pigweed//pw_status",
+        # pw_bluetooth_sapphire has the AOSP-style std::string printf utilities
+        # in an internal library along with tests; use it instead of rolling our
+        # own variant.
+        "@pigweed//pw_bluetooth_sapphire/lib/cpp-string",
+    ],
+)

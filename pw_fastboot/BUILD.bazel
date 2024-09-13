@@ -1,0 +1,80 @@
+load("//pw_build:compatibility.bzl", "incompatible_with_mcu")
+load(
+    "//pw_build:pigweed.bzl",
+    "pw_cc_test",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+label_flag(
+    name = "config_override",
+    build_setting_default = "//pw_build:default_module_config",
+)
+
+cc_library(
+    name = "pw_fastboot",
+    srcs = [
+        "commands.cc",
+        "device_variable.cc",
+        "fastboot_device.cc",
+        "private/pw_fastboot/command_handlers.h",
+    ],
+    hdrs = [
+        "public/pw_fastboot/commands.h",
+        "public/pw_fastboot/config.h",
+        "public/pw_fastboot/constants.h",
+        "public/pw_fastboot/device_hal.h",
+        "public/pw_fastboot/device_variable.h",
+        "public/pw_fastboot/fastboot_device.h",
+        "public/pw_fastboot/transport.h",
+    ],
+    includes = [
+        "public/",
+    ],
+    deps = [
+        ":config_override",
+        "//pw_containers:vector",
+        "//pw_fastboot/lib/stringutils",
+        "//pw_log",
+    ],
+)
+
+pw_cc_test(
+    name = "device_variable_test",
+    srcs = [
+        "device_variable_test.cc",
+    ],
+    deps = [
+        ":pw_fastboot",
+        "//pw_log",
+        "//pw_unit_test",
+    ],
+)
+
+pw_cc_test(
+    name = "fastboot_device_test",
+    srcs = [
+        "fastboot_device_test.cc",
+        "private/pw_fastboot/tests/mock_device.h",
+        "private/pw_fastboot/tests/mock_hal.h",
+        "private/pw_fastboot/tests/mock_transport.h",
+    ],
+    includes = [
+        "private/",
+    ],
+    # utilizes gMock, which is not available on MCU
+    target_compatible_with = incompatible_with_mcu() + select({
+        "//pw_unit_test:gtest_setting": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":pw_fastboot",
+        "//pw_chrono:system_timer",
+        "//pw_fastboot/lib/stringutils",
+        "//pw_log",
+        "//pw_sync:mutex",
+        "//pw_sync:thread_notification",
+        "//pw_thread:thread",
+        "//pw_unit_test",
+    ],
+)
