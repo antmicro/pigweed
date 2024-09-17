@@ -85,4 +85,6 @@ bool ParseUint(const char* s, T* out, T max = std::numeric_limits<T>::max()) {
 std::string StringPrintf(const char* fmt, ...)
     __attribute__((__format__(FORMAT_ARCHETYPE, 1, 2)));
 
+bool StartsWith(std::string_view s, std::string_view prefix);
+
 }  // namespace stringutils

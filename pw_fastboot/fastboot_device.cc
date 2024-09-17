@@ -109,10 +109,10 @@ bool Device::HandleData(bool read, char* data, size_t size) {
     return false;
   }
   if (static_cast<size_t>(read_write_data_size) != size) {
-    PW_LOG_ERROR("%s expected %lu bytes, got %u",
+    PW_LOG_ERROR("%s expected %zu bytes, got %zu",
                  (read ? "read" : "write"),
-                 (long unsigned int)size,
-                 read_write_data_size);
+                 static_cast<size_t>(size),
+                 static_cast<size_t>(read_write_data_size));
     return false;
   }
   return true;
@@ -137,7 +137,7 @@ void Device::ExecuteCommands() {
 
     std::vector<std::string> args;
     std::string cmd_name;
-    if (cmd_name.starts_with("oem ")) {
+    if (stringutils::StartsWith(cmd_name, "oem ")) {
       args = {command};
       cmd_name = FB_CMD_OEM;
     } else {

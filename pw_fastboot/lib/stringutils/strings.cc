@@ -92,4 +92,8 @@ void StringAppendF(std::string* dst, const char* format, ...) {
   va_end(ap);
 }
 
+bool StartsWith(std::string_view s, std::string_view prefix) {
+  return s.substr(0, prefix.size()) == prefix;
+}
+
 }  // namespace stringutils
