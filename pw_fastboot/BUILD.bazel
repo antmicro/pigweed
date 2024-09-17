@@ -1,3 +1,4 @@
+load("//pw_build:compatibility.bzl", "incompatible_with_mcu")
 load(
     "//pw_build:pigweed.bzl",
     "pw_cc_test",
@@ -38,6 +39,34 @@ pw_cc_test(
     deps = [
         ":pw_fastboot",
         "//pw_log",
+        "//pw_unit_test",
+    ],
+)
+
+pw_cc_test(
+    name = "fastboot_device_test",
+    srcs = [
+        "fastboot_device_test.cc",
+        "private/pw_fastboot/tests/mock_device.h",
+        "private/pw_fastboot/tests/mock_hal.h",
+        "private/pw_fastboot/tests/mock_transport.h",
+    ],
+    includes = [
+        "private/",
+    ],
+    # utilizes gMock, which is not available on MCU
+    target_compatible_with = incompatible_with_mcu() + select({
+        "//pw_unit_test:gtest_setting": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":pw_fastboot",
+        "//pw_chrono:system_timer",
+        "//pw_fastboot/lib/stringutils",
+        "//pw_log",
+        "//pw_sync:mutex",
+        "//pw_sync:thread_notification",
+        "//pw_thread:thread",
         "//pw_unit_test",
     ],
 )
