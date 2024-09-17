@@ -1,3 +1,8 @@
+load(
+    "//pw_build:pigweed.bzl",
+    "pw_cc_test",
+)
+
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
@@ -22,5 +27,17 @@ cc_library(
     deps = [
         "//pw_fastboot/lib/stringutils",
         "//pw_log",
+    ],
+)
+
+pw_cc_test(
+    name = "device_variable_test",
+    srcs = [
+        "device_variable_test.cc",
+    ],
+    deps = [
+        ":pw_fastboot",
+        "//pw_log",
+        "//pw_unit_test",
     ],
 )
