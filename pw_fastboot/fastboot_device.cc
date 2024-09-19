@@ -137,7 +137,7 @@ void Device::ExecuteCommands() {
 
     std::vector<std::string> args;
     std::string cmd_name;
-    if (stringutils::StartsWith(cmd_name, "oem ")) {
+    if (stringutils::StartsWith(command, "oem ")) {
       args = {command};
       cmd_name = FB_CMD_OEM;
     } else {
