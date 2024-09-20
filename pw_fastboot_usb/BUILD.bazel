@@ -1,3 +1,9 @@
+load("//pw_build:compatibility.bzl", "incompatible_with_mcu")
+load(
+    "//pw_build:pigweed.bzl",
+    "pw_cc_test",
+)
+
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
@@ -21,5 +27,24 @@ cc_library(
         "//pw_sync:counting_semaphore",
         "//pw_sync:interrupt_spin_lock",
         "//pw_sync:thread_notification",
+    ],
+)
+
+pw_cc_test(
+    name = "transport_test",
+    srcs = [
+        "private/pw_fastboot_usb/tests/mock_packet_interface.h",
+        "transport_test.cc",
+    ],
+    includes = [
+        "private/",
+    ],
+    # utilizes gMock, which is not available on MCU
+    target_compatible_with = incompatible_with_mcu() + select({
+        "//pw_unit_test:gtest_setting": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":pw_fastboot_usb",
     ],
 )
