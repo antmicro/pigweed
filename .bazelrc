@@ -187,6 +187,12 @@ build:lm3s6965evb --platforms=//targets/lm3s6965evb
 # Config for the microbit platform, used to build pw_rust/examples.
 build:microbit --platforms=//targets/microbit
 
+# Config for the mimxrt595_evk_freertos freertos platform.
+build:mimxrt595_evk_freertos --platforms=//targets/mimxrt595_evk_freertos:platform
+build:mimxrt595_evk_freertos --//targets:mcuxpresso_sdk=//targets/mimxrt595_evk_freertos:mcuxpresso_sdk
+build:mimxrt595_evk_freertos --@mcuxpresso//:user_config=//targets/mimxrt595_evk_freertos/config
+build:mimxrt595_evk_freertos --@mcuxpresso//:user_defines=//targets/mimxrt595_evk_freertos:mcuxpresso_sdk_componenets_defines
+
 # GoogleTest config
 # =================
 # This config can be used to build and run host tests using GoogleTest instead
