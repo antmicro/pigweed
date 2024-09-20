@@ -242,6 +242,33 @@ build:microbit --platforms=//pw_build/platforms:lm3s6965evb
 build:microbit --//pw_log/rust:pw_log_backend=//pw_rust/examples/tokenized_logging:pw_log_backend
 build:microbit --//pw_sys_io:backend=//pw_sys_io_baremetal_lm3s6965evb
 
+# Config for the mimxrt595_evk_freertos freertos platform.
+build:mimxrt595_evk_freertos --platforms=@pigweed//targets/mimxrt595_evk_freertos:platform
+build:mimxrt595_evk_freertos --@pigweed//pw_assert:assert_backend=@pigweed//pw_assert_basic
+build:mimxrt595_evk_freertos --@pigweed//pw_assert:assert_backend_impl=@pigweed//pw_assert_basic:impl
+build:mimxrt595_evk_freertos --@pigweed//pw_assert:check_backend=@pigweed//pw_assert_basic
+build:mimxrt595_evk_freertos --@pigweed//pw_assert:check_backend_impl=@pigweed//pw_assert_basic:impl
+build:mimxrt595_evk_freertos --@freertos//:freertos_config=@pigweed//targets/mimxrt595_evk_freertos:freertos_config
+build:mimxrt595_evk_freertos --@pigweed//pw_log:backend=@pigweed//pw_log_basic
+build:mimxrt595_evk_freertos --@pigweed//pw_log:backend_impl=@pigweed//pw_log_basic:impl
+build:mimxrt595_evk_freertos --@pigweed//pw_sys_io:backend=@pigweed//pw_sys_io_mcuxpresso
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:binary_semaphore_backend=@pigweed//pw_sync_freertos:binary_semaphore
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:counting_semaphore_backend=@pigweed//pw_sync_freertos:counting_semaphore
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:interrupt_spin_lock_backend=@pigweed//pw_sync_freertos:interrupt_spin_lock
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:mutex_backend=@pigweed//pw_sync_freertos:mutex
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:thread_notification_backend=@pigweed//pw_sync_freertos:thread_notification
+build:mimxrt595_evk_freertos --@pigweed//pw_sync:timed_thread_notification_backend=@pigweed//pw_sync_freertos:timed_thread_notification
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:id_backend=@pigweed//pw_thread_freertos:id
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:iteration_backend=@pigweed//pw_thread_freertos:thread_iteration
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:sleep_backend=@pigweed//pw_thread_freertos:sleep
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:test_thread_context_backend=@pigweed//pw_thread_freertos:test_thread_context
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:thread_backend=@pigweed//pw_thread_freertos:thread
+build:mimxrt595_evk_freertos --@pigweed//pw_thread:yield_backend=@pigweed//pw_thread_freertos:yield
+build:mimxrt595_evk_freertos --@pigweed//pw_boot:backend=@pigweed//pw_boot_cortex_m:armv8m
+build:mimxrt595_evk_freertos --@pigweed//pw_system:extra_platform_libs=@pigweed//targets/mimxrt595_evk_freertos:extra_platform_libs
+build:mimxrt595_evk_freertos --@pigweed//pw_chrono:system_clock_backend=@pigweed//pw_chrono_freertos:system_clock
+build:mimxrt595_evk_freertos --@pigweed//pw_chrono:system_timer_backend=@pigweed//pw_chrono_freertos:system_timer
+
 # For some platforms i.e. google/oss-fuzz we need to use the system provided
 # rather than the hermetic toolchains. This allows oss-fuzz to override the
 # build with specialised compilers that are tightly coupled to the fuzzing
