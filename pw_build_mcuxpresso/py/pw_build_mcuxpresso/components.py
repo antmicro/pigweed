@@ -337,10 +337,12 @@ def _parse_sources(
         relative_path = pathlib.Path(source.attrib['relative_path'])
         # workaround for bug in mcux-sdk-middleware-edgefast-bluetooth manifest
         # in this manifest, relative path to ethermind isn't from base path, but from manifest path.
-        # In case of libraries, project relative path points to not existing file, but in case of other
+        # In case of some components, project relative path points to not existing file, but in case of other
         # files, it is correct.
+        fixup_component_ids = ["middleware.edgefast_bluetooth.ble.ethermind.lib.cm33.MIMXRT595S",
+                           "middleware.edgefast_bluetooth.config.ethermind.MIMXRT595S"]
         if base_path is not None and base_path == pathlib.Path("../../wireless/ethermind"):
-            if component_id == "middleware.edgefast_bluetooth.ble.ethermind.lib.cm33.MIMXRT595S":
+            if component_id in fixup_component_ids:
                 relative_path = pathlib.Path(*relative_path.parts[3:])
             else:
                 relative_path = pathlib.Path(source.attrib['project_relative_path'])

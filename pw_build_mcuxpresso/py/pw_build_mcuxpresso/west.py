@@ -21,9 +21,9 @@ from west.app.main import WestApp
 
 def west_manifest(
         mcuxpresso_repo: Path,
-        output_path: Path,):
+        output_path: Path,) -> Path:
 
-    out_mcuxpresso_repo = output_path / 'external' / 'mcuxpresso'
+    out_mcuxpresso_repo = output_path / 'external' / 'core'
     shutil.copytree(mcuxpresso_repo, out_mcuxpresso_repo)
     # west changes current working directory
     # save and restore it after running to so other relative paths will work 
@@ -32,3 +32,4 @@ def west_manifest(
     app.run(['init', '-l', f'{out_mcuxpresso_repo}'])
     app.run(['update', '-o=--depth=1'])
     os.chdir(current_dir)
+    return out_mcuxpresso_repo

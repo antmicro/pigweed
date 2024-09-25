@@ -97,14 +97,14 @@ def _mcuxpresso_sdk_impl(ctx):
     result_sdk_library = ctx.actions.declare_file(ctx.label.name + ".a")
     # this file contains the parameters used to build SDK
     sdk_library_params_file = ctx.actions.declare_file(ctx.label.name + ".inc")
-    manifest_path = ctx.file.manifest.path
+    manifest_basename = ctx.file.manifest.basename
     sdk_build_script = ctx.actions.declare_file(ctx.label.name + ".py")
     dependencies_directory = ctx.actions.declare_directory("external")
 
     required_libs = [ctx.actions.declare_file(library) for library in ctx.attr._libraries]
 
     builder_args = ctx.actions.args()
-    builder_args.add_all(["bazel", manifest_path])
+    builder_args.add_all(["bazel", manifest_basename])
     builder_args.add_all(ctx.attr.include, before_each = "--include")
     builder_args.add_all(ctx.attr.exclude, before_each = "--exclude")
     builder_args.add_all(["--device-core", ctx.attr.device_core])

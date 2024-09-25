@@ -68,10 +68,10 @@ def main():
     args = _parse_args()
 
     output_path = args.output_path
-    west.west_manifest(args.mcuxpresso_repo, output_path)
+    output_path = west.west_manifest(args.mcuxpresso_repo, output_path)
 
     project = components.Project.from_file(
-        output_path / args.manifest_filename,
+        output_path / "manifests" / args.manifest_filename,
         include=args.include,
         exclude=args.exclude,
         device_core=args.device_core,
@@ -82,7 +82,7 @@ def main():
     if args.command == 'bazel':
         bazel.bazel_output(
             project, output_file=args.output_file,
-            params_output_file=args.params_file, libraries=args.library
+            params_output_file=args.params_file, mcuxpresso_repo=args.output_path, libraries=args.library,
         )
 
     sys.exit(0)

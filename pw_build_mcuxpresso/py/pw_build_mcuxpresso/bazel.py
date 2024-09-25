@@ -15,6 +15,7 @@
 
 from typing import Any
 from pathlib import Path
+from glob import glob
 
 import os
 import pathlib
@@ -61,6 +62,7 @@ def bazel_output(
     project: Project,
     output_file: Path,
     params_output_file: Path,
+    mcuxpresso_repo: Path,
     libraries: list[pathlib.Path] | None = None,
 ):
     """Output shell script for Bazel rule for a project with the specified components.
@@ -70,6 +72,12 @@ def bazel_output(
     """
     os.makedirs(output_file.parents[0], exist_ok=True)
     os.makedirs(params_output_file.parents[0], exist_ok=True)
+    sources_resolved = [src.absolute().resolve().relative_to(pathlib.Path.cwd()) for src in project.sources]
+    headers_resolved = [hdr.absolute().resolve().relative_to(pathlib.Path.cwd()) for hdr in project.headers]
+    include_dirs_resolved = [inc_dir.absolute().resolve().relative_to(pathlib.Path.cwd()) for inc_dir in project.include_dirs]
+    project.sources = sources_resolved
+    project.headers = headers_resolved
+    project.include_dirs = include_dirs_resolved
     with open(params_output_file, 'w') as f:
         with redirect_stdout(f):
             print(_bazel_str_list_defines_out(project.defines) + " " +
@@ -92,3 +100,26 @@ def bazel_output(
                             copy_list.append((lib, src_lib))
             for copy in copy_list:
                 shutil.copy(copy[1], copy[0])
+
+    libs_name = [lib.name for lib in project.libs]
+    sources_abs = [src.absolute() for src in project.sources]
+    headers_abs = [hdr.absolute() for hdr in project.headers]
+    # Use glob as pathlib doesn't work with symlinks
+    for file in glob(f"{mcuxpresso_repo}/**", recursive=True):
+        file = pathlib.Path(file).absolute()
+        if file.is_dir():
+            continue
+        if file in sources_abs:
+            continue
+        if file in headers_abs:
+            continue
+        if file.name in libs_name:
+            continue
+        try:
+            file.unlink()
+        except FileNotFoundError:
+            # it is probably a symlink, pathlib doesn't support removing symlinks
+            try:
+                os.unlink(file)
+            except FileNotFoundError:
+                pass
