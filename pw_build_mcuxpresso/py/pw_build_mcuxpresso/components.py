@@ -160,12 +160,6 @@ def parse_include_paths(
         include_xpath = f'./include_paths/include_path[@type="{include_type}"]'
         parent = root[1].parent
 
-        # workaround for hard-coded name of NXP SDK repository
-        # `west` assumes that main NXP SDK repository will be cloned to `core` folder,
-        # and clones CMSIS repository there, but in bazel, user chooses the name of the repository.
-        # This workaround is needed to find the correct path to CMSIS repository.
-        if base_path == pathlib.Path("../CMSIS/Core/Include"):
-            base_path = pathlib.Path("../../core/CMSIS/Core/Include")
         include_paths.extend(
             parent / _parse_include_path(include_path, base_path)
             for include_path in component.findall(include_xpath)
