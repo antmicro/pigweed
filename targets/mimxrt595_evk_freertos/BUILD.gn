@@ -188,7 +188,7 @@ if (pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk_freertos:sdk") {
       ":freertos_config_public_includes",
     ]
     public_deps = [ "$dir_pw_third_party/freertos:config_assert" ]
-    public = [ "FreeRTOSConfig.h" ]
+    public = [ "config_freertos/FreeRTOSConfig.h" ]
   }
 
   # Project-specific FreeRTOS port.
@@ -218,6 +218,31 @@ if (pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk_freertos:sdk") {
   }
 }
 
+pw_source_set("unit_test_app") {
+  sources = [ "unit_test_app.cc" ]
+  deps = [
+    "$dir_pw_status",
+    "$dir_pw_system",
+    "$dir_pw_unit_test",
+    "$dir_pw_unit_test:logging_event_handler",
+  ]
+}
+
 pw_doc_group("target_docs") {
   sources = [ "target_docs.rst" ]
+}
+
+# Satisfies source_is_in_gn_build lint, which doesn't know about the BUILD.gn
+# files in nested directories.
+pw_source_set("_config") {
+  sources = [
+    "config/clock_config.cc",
+    "config/peripherals.cc",
+    "config/pin_mux.cc",
+  ]
+  public = [
+    "config/clock_config.h",
+    "config/peripherals.h",
+    "config/pin_mux.h",
+  ]
 }

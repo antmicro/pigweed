@@ -91,6 +91,7 @@ if (pw_third_party_mcuxpresso_SDK != "") {
       "$dir_pw_boot_cortex_m",
       "$dir_pw_preprocessor",
       "$dir_pw_sys_io_mcuxpresso",
+      "//targets/mimxrt595_evk/config:config",
       pw_third_party_mcuxpresso_SDK,
     ]
     if (pw_malloc_BACKEND != "") {
@@ -123,4 +124,19 @@ if (pw_third_party_mcuxpresso_SDK == "//targets/mimxrt595_evk:sample_sdk") {
 
 pw_doc_group("target_docs") {
   sources = [ "target_docs.rst" ]
+}
+
+# Satisfies source_is_in_gn_build lint, which doesn't know about the BUILD.gn
+# files in nested directories.
+pw_source_set("_config") {
+  sources = [
+    "config/clock_config.cc",
+    "config/peripherals.cc",
+    "config/pin_mux.cc",
+  ]
+  public = [
+    "config/clock_config.h",
+    "config/peripherals.h",
+    "config/pin_mux.h",
+  ]
 }
