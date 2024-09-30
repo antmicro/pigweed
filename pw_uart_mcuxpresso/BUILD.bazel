@@ -45,7 +45,7 @@ pw_cc_test(
     target_compatible_with = [
         "//pw_build/constraints/board:mimxrt595_evk",
     ],
-    deps = [":pw_uart_mcuxpresso"],
+    deps = [":dma_uart"],
 )
 
 sphinx_docs_library(
