@@ -902,9 +902,9 @@ inline constexpr pw::chrono::SystemClock::duration kMaxAutomaticFlushTimeoutDura
 
 // Page Timeout = N * 0.625 ms (Core Spec v5.2, Vol 4, Part E, Sec 7.3.16).
 // The default is 5.12 sec.
-inline constexpr pw::chrono::SystemClock::duration kDurationPerPageTimeoutUnit = std::chrono::duration_cast<pw::chrono::SystemClock::duration>(std::chrono::microseconds(625));
-inline constexpr pw::chrono::SystemClock::duration kMinPageTimeoutDuration = kDurationPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::MIN);
-inline constexpr pw::chrono::SystemClock::duration kDefaultPageTimeoutDuration = kDurationPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::DEFAULT);
-inline constexpr pw::chrono::SystemClock::duration kMaxPageTimeoutDuration = kDurationPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::MAX);
+inline constexpr std::chrono::microseconds kPerPageTimeoutUnit = std::chrono::microseconds(625);
+inline constexpr pw::chrono::SystemClock::duration kMinPageTimeoutDuration = std::chrono::duration_cast<pw::chrono::SystemClock::duration>(kPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::MIN));
+inline constexpr pw::chrono::SystemClock::duration kDefaultPageTimeoutDuration = std::chrono::duration_cast<pw::chrono::SystemClock::duration>(kPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::DEFAULT));
+inline constexpr pw::chrono::SystemClock::duration kMaxPageTimeoutDuration = std::chrono::duration_cast<pw::chrono::SystemClock::duration>(kPerPageTimeoutUnit * static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::MAX));
 
 }  // namespace bt::hci_spec

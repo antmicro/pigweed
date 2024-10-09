@@ -616,8 +616,7 @@ void BrEdrConnectionManager::WritePageTimeout(
   PW_CHECK(page_timeout >= hci_spec::kMinPageTimeoutDuration);
   PW_CHECK(page_timeout <= hci_spec::kMaxPageTimeoutDuration);
 
-  const int64_t raw_page_timeout =
-      page_timeout / hci_spec::kDurationPerPageTimeoutUnit;
+  const int64_t raw_page_timeout = page_timeout / hci_spec::kPerPageTimeoutUnit;
   PW_CHECK(raw_page_timeout >=
            static_cast<uint16_t>(pw::bluetooth::emboss::PageTimeout::MIN));
   PW_CHECK(raw_page_timeout <=
