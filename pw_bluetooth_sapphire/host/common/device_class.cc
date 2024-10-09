@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <climits>
+#include <cstdint>
 
 #include "pw_bluetooth_sapphire/internal/host/common/assert.h"
 

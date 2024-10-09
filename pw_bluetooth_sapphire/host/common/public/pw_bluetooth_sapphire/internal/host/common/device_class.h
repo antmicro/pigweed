@@ -17,6 +17,7 @@
 #include <initializer_list>
 #include <string>
 #include <unordered_set>
+#include <cstdint>
 
 namespace bt {
 
