@@ -608,6 +608,7 @@ void BrEdrConnectionManager::WritePageTimeout(
     pw::chrono::SystemClock::duration page_timeout, hci::ResultFunction<> cb) {
   PW_CHECK(page_timeout >= hci_spec::kMinPageTimeoutDuration);
   PW_CHECK(page_timeout <= hci_spec::kMaxPageTimeoutDuration);
+  PW_CHECK(hci_spec::kDurationPerPageTimeoutUnit != pw::chrono::SystemClock::duration(0));
 
   const int64_t raw_page_timeout =
       page_timeout / hci_spec::kDurationPerPageTimeoutUnit;
