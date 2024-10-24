@@ -282,6 +282,9 @@ def get_parser() -> argparse.ArgumentParser:
         subparser.add_argument(
             '--args',
             '-a',
+            action='extend',
+            type=str,
+            nargs='+',
             help='Options to pass to the emulator',
         )
         subparser.add_argument(
@@ -316,7 +319,10 @@ def get_parser() -> argparse.ArgumentParser:
     run.add_argument(
         '--args',
         '-a',
-        help='Options to pass to the emulator',
+        action='extend',
+        type=str,
+        nargs='+',
+        help='Option to pass to the emulator',
     )
     run.add_argument(
         '--channel',

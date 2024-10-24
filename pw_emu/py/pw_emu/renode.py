@@ -130,6 +130,9 @@ class RenodeLauncher(Launcher):
         if file:
             self._start_cmd.extend(['--execute', f'sysbus LoadELF @{file}'])
 
+        if args:
+            self._start_cmd.extend(args)
+
         if not pause:
             self._start_cmd.extend(['--execute', 'start'])
 

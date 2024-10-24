@@ -1,0 +1,20 @@
+{
+  "targets": {
+    "renode-mimxrt595_evk": {
+      "gdb": [
+        "arm-none-eabi-gdb"
+      ],
+      "renode": {
+        "executable": "renode",
+        "machine": "platforms/cpus/imxrt500.repl",
+        "channels": {
+          "terminals": {
+            "serial0": {
+              "device-path": "sysbus.flexcomm0"
+            }
+          }
+        }
+      }
+    }
+  }
+}
