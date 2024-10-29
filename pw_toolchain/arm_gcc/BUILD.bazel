@@ -59,6 +59,16 @@ cc_args(
 )
 
 cc_args(
+    name = "permissive",
+    actions = [
+        "@pw_toolchain//actions:all_cpp_compiler_actions",
+    ],
+    args = [
+        "-fpermissive",
+    ],
+)
+
+cc_args(
     name = "thumb_abi",
     actions = [
         "@rules_cc//cc/toolchains/actions:assembly_actions",
@@ -267,6 +277,7 @@ cc_toolchain(
         # TODO(b/353576440): Enable unified assembly syntax.
         # ":unified_asm_syntax",
         ":cortex_common",
+        ":permissive",
         ":cortex_common_link",
         ":no_canonical_system_headers",
         ":warnings",
