@@ -426,6 +426,11 @@
           "local_config_apple_cc": {
             "repoRuleId": "@@apple_support+//crosstool:setup.bzl%_apple_cc_autoconf",
             "attributes": {}
+          },
+          "local_config_apple_cc_toolchains": {
+            "bzlFile": "@@apple_support+//crosstool:setup.bzl",
+            "ruleClassName": "_apple_cc_autoconf_toolchains",
+            "attributes": {}
           }
         },
         "recordedRepoMappingEntries": [

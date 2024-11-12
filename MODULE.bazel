@@ -50,6 +50,7 @@ bazel_dep(name = "rules_rust", version = "0.54.1")
 # LINT.IfChange(emboss)
 bazel_dep(name = "emboss", version = "2024.1017.203246", repo_name = "com_google_emboss")
 # LINT.ThenChange(/pw_package/py/pw_package/packages/emboss.py:emboss)
+bazel_dep(name = "zlib", version = "1.3.1.bcr.3")
 
 bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 bazel_dep(name = "rules_doxygen", version = "2.0.0", dev_dependency = True)
@@ -399,4 +400,11 @@ new_git_repository(
     commit = "74a51c6ab3c9c674a62bf02c904f12e5109761b8",
     remote = "https://boringssl.googlesource.com/boringssl",
     build_file = "@pigweed//third_party/boringssl:BUILD.bazel",
+)
+
+new_git_repository(
+    name = "aosp-core",
+    commit = "7adba5989cf88d4c4cad8b1e91d447251998b4a8",
+    remote = "https://android.googlesource.com/platform/system/core",
+    build_file = "@pigweed//third_party/aosp:core.BUILD.bazel",
 )

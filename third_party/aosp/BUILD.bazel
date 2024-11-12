@@ -1,0 +1,35 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "aosp_polyfill",
+    hdrs = [
+        "public/android-base/mapped_file.h",
+        "public/android-base/stringprintf.h",
+    ],
+    includes = ["public/"],
+    deps = [
+        "@pigweed//pw_assert",
+        # pw_bluetooth_sapphire has the AOSP-style std::string printf utilities
+        # in an internal library along with tests; use it instead of rolling our
+        # own variant.
+        "@pigweed//pw_bluetooth_sapphire/lib/cpp-string",
+    ],
+)
+
+cc_library(
+    name = "libsparse_wrap_unsupported",
+    srcs = [
+        "wrap.cc",
+    ],
+    linkopts = [
+        "-Wl,--wrap=sparse_file_add_file",
+        "-Wl,--wrap=sparse_file_add_fd",
+        "-Wl,--wrap=sparse_file_write",
+        "-Wl,--wrap=sparse_file_read",
+        "-Wl,--wrap=sparse_file_import",
+        "-Wl,--wrap=sparse_file_import_auto",
+    ],
+    deps = [
+        "@pigweed//pw_assert",
+    ],
+)

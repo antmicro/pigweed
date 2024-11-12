@@ -1,0 +1,45 @@
+""" Build file for AOSP ``core`` """
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "sparse",
+    srcs = [
+        "libsparse/backed_block.cpp",
+        "libsparse/output_file.cpp",
+        "libsparse/sparse.cpp",
+        "libsparse/sparse_crc32.cpp",
+        "libsparse/sparse_err.cpp",
+        "libsparse/sparse_read.cpp",
+        "libsparse/backed_block.h",
+        "libsparse/defs.h",
+        "libsparse/output_file.h",
+        "libsparse/sparse_crc32.h",
+        "libsparse/sparse_defs.h",
+        "libsparse/sparse_file.h",
+        "libsparse/sparse_format.h",
+    ],
+    local_defines = [
+        # FIXME: This should only be applied on MCUs by checking for
+        # `@platforms//os:none`. mimxrt595_evk_freertos target sets
+        # it to `linux` incorrectly, as we need it to build
+        # pw_bluetooth_sapphire.
+
+        # Provides strdup on non-POSIX platforms (e.g MCUs)
+        "_POSIX_C_SOURCE=200809L",
+        # Replace POSIX functions, they must never be reached
+        "lseek64=lseek",
+        "ftruncate64=ftruncate",
+        "off64_t=off_t",
+    ],
+    hdrs = [
+        "libsparse/include/sparse/sparse.h",
+    ],
+    includes = [
+        "libsparse/include/",
+    ],
+    deps = [
+        "@pigweed//third_party/aosp:aosp_polyfill",
+        "@pigweed//third_party/aosp:libsparse_wrap_unsupported",
+        "@zlib//:zlib",
+    ],
+)
