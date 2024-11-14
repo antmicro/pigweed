@@ -1,0 +1,19 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "pw_flash_mcuxpresso",
+    srcs = [
+        "flash_mcuxpresso.cc",
+    ],
+    hdrs = [
+        "public/pw_flash_mcuxpresso/flash.h",
+    ],
+    includes = ["public/"],
+    deps = [
+        "//pw_flash",
+        "@pigweed//pw_bytes",
+        "@pigweed//pw_preprocessor",
+        "@pigweed//pw_status",
+        "@pigweed//targets:mcuxpresso_sdk",
+    ],
+)
