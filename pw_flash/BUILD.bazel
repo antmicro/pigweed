@@ -1,0 +1,14 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "pw_flash",
+    srcs = [],
+    hdrs = [
+        "public/pw_flash/flash.h",
+    ],
+    includes = ["public/"],
+    deps = [
+        "@pigweed//pw_bytes",
+        "@pigweed//pw_status",
+    ],
+)
