@@ -143,6 +143,28 @@ void pw_boot_Entry(void) {
 
       "ldr r0, =pw_boot_stack_low_addr   \n"
       "msr msplim, r0                    \n"
+
+      // Ensure SP actually points to MSP by explicitly clearing SPSEL.
+      //
+      // While the processor is in Thread mode, the current stack pointer will
+      // be aliased to point to the MSP or PSP registers, depending on the state
+      // of the CONTROL.SPSEL bit:
+      //
+      //   SPSEL == 0 => SP is MSP
+      //   SPSEL == 1 => SP is PSP
+      //
+      // If pw_boot_Entry is executed while the processor is in Thread mode,
+      // simply assigning the MSP to configure the stack may not be enough as
+      // SPSEL may have been set by a previous boot stage, making the processor
+      // use PSP as the SP alias instead of MSP that we configured above.
+      //
+      // Don't take any chances and explicitly clear SPSEL on entry to ensure
+      // the stack points to the MSP. In Handler mode this is a no-op, as
+      // CONTROL.SPSEL is ignored entirely and SP always points to MSP.
+      "mrs r0, control                   \n"
+      "bic r0, #2                        \n"
+      "msr control, r0                   \n"
+
 #endif  // _PW_ARCH_ARM_V8M_MAINLINE || _PW_ARCH_ARM_V8_1M_MAINLINE
 
       // We have a stack; proceed to actual C code.
