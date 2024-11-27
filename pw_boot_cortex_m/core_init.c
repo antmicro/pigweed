@@ -167,6 +167,39 @@ void pw_boot_Entry(void) {
 
 #endif  // _PW_ARCH_ARM_V8M_MAINLINE || _PW_ARCH_ARM_V8_1M_MAINLINE
 
+#if _PW_ARCH_ARM_V7M || _PW_ARCH_ARM_V7EM || _PW_ARCH_ARM_V8M_MAINLINE || \
+    _PW_ARCH_ARM_V8_1M_MAINLINE
+      // Ensure the FPCCR.LSPACT bit is cleared to prevent memory corruption due
+      // to unrestored stale FPU state.
+      //
+      // Cortex-M processors support Lazy floating-point state preservation,
+      // which aims to reduce exception latency by only pushing FPU register
+      // state on exception entry when strictly necessary. This is tracked by
+      // the processor in the FPCCR.LSPACT bit, which indicates that FPU
+      // registers have not been pushed to the stack yet.
+      //
+      // If the previous boot stage left this feature active, but did not finish
+      // the exception completely which caused the state save, pw_boot_Entry
+      // will be running with FPCCR.LSPACT=1. This is problematic, as the very
+      // first FPU instruction to be executed afterwards will invoke an implicit
+      // FPU state restore by pushing the preserved FPU state under the address
+      // found in FPCAR. This results in a random portion of memory being
+      // overwritten once an FPU instruction is executed. This can happen very
+      // early, during static constructor initialization, due to the usage of
+      // FPU extension registers for optimized memory loads/stores.
+      //
+      // This explicitly clears the LSPACT bit to invalidate the lazy floating
+      // point state, so the first FPU instruction to be executed does not
+      // silently corrupt random portions of memory.
+      //
+      // See also:
+      //    https://developer.arm.com/documentation/107706/0100/Floating-point-and-MVE-support/Floating-point-context-handling-mechanisms/Lazy-floating-point-state-preservation
+      "ldr r0, =0xE000EF34               \n"
+      "ldr r1, [r0]                      \n"
+      "bic r1, #1                        \n"
+      "str r1, [r0]                      \n"
+#endif
+
       // We have a stack; proceed to actual C code.
       "b _pw_boot_Entry                  \n");
 }
