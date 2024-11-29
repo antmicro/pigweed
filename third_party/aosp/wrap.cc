@@ -27,3 +27,11 @@ extern "C" [[noreturn]] void __wrap_sparse_file_import() {
 extern "C" [[noreturn]] void __wrap_sparse_file_import_auto() {
   PW_CRASH(CRASH_STRING);
 }
+
+extern "C" [[noreturn]] void __wrap_open() {
+  PW_CRASH(CRASH_STRING);
+}
+
+extern "C" [[noreturn]] void __wrap_close() {
+  PW_CRASH(CRASH_STRING);
+}

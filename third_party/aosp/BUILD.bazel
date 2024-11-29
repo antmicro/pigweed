@@ -28,6 +28,8 @@ cc_library(
         "-Wl,--wrap=sparse_file_read",
         "-Wl,--wrap=sparse_file_import",
         "-Wl,--wrap=sparse_file_import_auto",
+        "-Wl,--wrap=open",
+        "-Wl,--wrap=close",
     ],
     deps = [
         "@pigweed//pw_assert",
