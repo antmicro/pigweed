@@ -137,3 +137,45 @@ pw_elf_to_dump = rule(
     toolchains = use_cpp_toolchain(),
     fragments = ["cpp"],
 )
+
+def _pw_pad_binary_impl(ctx):
+    args = ctx.actions.args()
+    args.add("--input={}".format(ctx.file.bin_input.path))
+    args.add("--output={}".format(ctx.outputs.bin_out.path))
+    if ctx.attr.pad_to_size > 0:
+        args.add("--pad-to-size={}".format(ctx.attr.pad_to_size))
+    if ctx.attr.pad_to_alignment > 0:
+        args.add("--pad-to-alignment={}".format(ctx.attr.pad_to_alignment))
+    args.add("--pad-byte={}".format(ctx.attr.pad_byte))
+
+    ctx.actions.run(
+        inputs = [ctx.file.bin_input],
+        outputs = [ctx.outputs.bin_out],
+        tools = [
+            ctx.executable._pad_binary,
+        ],
+        executable = ctx.executable._pad_binary,
+        arguments = [args],
+    )
+    return DefaultInfo(
+        files = depset([ctx.outputs.bin_out]),
+    )
+
+pw_pad_binary = rule(
+    implementation = _pw_pad_binary_impl,
+    doc = """Takes in a binary file and appends additional padding to it.
+    """,
+    attrs = {
+        "bin_out": attr.output(mandatory = True),
+        "bin_input": attr.label(mandatory = True, allow_single_file = True),
+        "pad_to_size": attr.int(),
+        "pad_to_alignment": attr.int(),
+        "pad_byte": attr.int(),
+        "_pad_binary": attr.label(
+            default = "@pigweed//pw_build/py:pad_binary",
+            executable = True,
+            cfg = "exec",
+        ),
+    },
+    provides = [DefaultInfo],
+)

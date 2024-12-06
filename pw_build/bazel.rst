@@ -345,6 +345,38 @@ this type of file is booting directly on hardware with no bootloader.
      ],
    )
 
+.. _module-pw_build-bazel-pw_pad_binary:
+
+pw_pad_binary
+-------------
+The ``pw_pad_binary`` rule takes in a file target and produces a padded binary
+file. The binary can be padded to a certain size in bytes, to a specified
+alignment or both (where size padding is applied first, followed by the
+alignment padding). The binary is padded by repeatedly appending bytes at the
+end of the input file until the desired size/alignment is reached.
+
+.. code-block:: python
+
+   load("@pigweed//pw_build:binary_tools.bzl", "pw_pad_binary")
+
+   # Padding a binary file to a multiple of 4096 with 0xFF bytes
+   pw_pad_binary(
+     name = "padded_main",
+     bin_input = ":main.bin",
+     bin_out = "padded_main.bin",
+     pad_to_alignment = 4096,
+     pad_byte = 0xFF,
+   )
+
+   # Padding a binary file to a known-size with 0xFF bytes
+   pw_pad_binary(
+     name = "padded_data",
+     bin_input = ":data.bin",
+     bin_out = "padded_data.bin",
+     pad_to_size = 65536,
+     pad_byte = 0xFF,
+   )
+
 .. _module-pw_build-bazel-pw_elf_to_dump:
 
 pw_elf_to_dump

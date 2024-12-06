@@ -111,6 +111,11 @@ pw_py_binary(
     ],
 )
 
+pw_py_binary(
+    name = "pad_binary",
+    srcs = ["pw_build/pad_binary.py"],
+)
+
 pw_py_test(
     name = "bazel_query_test",
     size = "small",
