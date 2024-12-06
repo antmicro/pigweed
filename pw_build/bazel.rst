@@ -334,6 +334,17 @@ this type of file is booting directly on hardware with no bootloader.
      bin_out = "main.bin",
    )
 
+   # Optionally, you can pass names of the corresponding ELF sections that
+   # should be removed from the output file.
+   pw_elf_to_bin(
+     name = "trimmed",
+     elf_input = ":main",
+     bin_out = "main.bin",
+     remove_sections = [
+       ".flash_config",
+     ],
+   )
+
 .. _module-pw_build-bazel-pw_elf_to_dump:
 
 pw_elf_to_dump

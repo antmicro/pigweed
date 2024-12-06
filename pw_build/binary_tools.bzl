@@ -61,13 +61,21 @@ def _run_action_on_executable(
     )
 
 def _pw_elf_to_bin_impl(ctx):
+    def _make_objcopy_args(remove_sections):
+        output = [
+            "-Obinary",
+        ]
+        for name in remove_sections:
+            output.extend(["-R", name])
+        return output
+
     return _run_action_on_executable(
         ctx = ctx,
         # TODO: https://github.com/bazelbuild/rules_cc/issues/292 - Add a helper
         # to rules cc to make it possible to get this from ctx.attr._objcopy.
         action_name = ACTION_NAMES.objcopy_embed_data,
         action_args = "{args} {input} {output}".format(
-            args = "-Obinary",
+            args = " ".join(_make_objcopy_args(ctx.attr.remove_sections)),
             input = ctx.executable.elf_input.path,
             output = ctx.outputs.bin_out.path,
         ),
@@ -86,6 +94,9 @@ pw_elf_to_bin = rule(
     attrs = {
         "bin_out": attr.output(mandatory = True),
         "elf_input": attr.label(mandatory = True, executable = True, cfg = "target"),
+        "remove_sections": attr.string_list(
+            doc = "Remove sections that match the provided patterns from the resulting binary.",
+        ),
         "_objcopy": attr.label(
             default = "@rules_cc//cc/toolchains/actions:objcopy_embed_data",
         ),
