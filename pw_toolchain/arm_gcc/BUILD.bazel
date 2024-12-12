@@ -61,7 +61,7 @@ cc_args(
 cc_args(
     name = "permissive",
     actions = [
-        "@pw_toolchain//actions:all_cpp_compiler_actions",
+        "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
     ],
     args = [
         "-fpermissive",
