@@ -35,3 +35,25 @@ cc_library(
         "@pigweed//pw_assert",
     ],
 )
+
+# Default configuration for libsparse, optimized for MCUs with low memory.
+cc_library(
+    name = "libsparse_default_config",
+    defines = [
+        'PW_LIBSPARSE_FILL_BUF_SIZE="(4096)"',
+        'PW_LIBSPARSE_COPY_BUF_SIZE="(4096)"',
+    ],
+)
+
+label_flag(
+    name = "libsparse_config_override",
+    build_setting_default = ":libsparse_default_config",
+)
+
+# ``@aosp-core`` is injected with a custom build file, as it is not available in
+# BCR. This alias exposes the cc_library to Pigweed dependents without requiring
+# them to duplicate the git_override in their MODULE.bazel.
+alias(
+    name = "libsparse",
+    actual = "@aosp-core//:sparse",
+)

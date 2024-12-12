@@ -1,0 +1,38 @@
+# Copyright 2024 The Pigweed Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+diff --git a/libsparse/output_file.cpp b/libsparse/output_file.cpp
+--- a/libsparse/output_file.cpp
++++ b/libsparse/output_file.cpp
+@@ -54,7 +54,7 @@
+ #define SPARSE_HEADER_LEN (sizeof(sparse_header_t))
+ #define CHUNK_HEADER_LEN (sizeof(chunk_header_t))
+ 
+-#define FILL_ZERO_BUFSIZE (2 * 1024 * 1024)
++#define FILL_ZERO_BUFSIZE (PW_LIBSPARSE_FILL_BUF_SIZE)
+ 
+ #define container_of(inner, outer_t, elem) ((outer_t*)((char*)(inner)-offsetof(outer_t, elem)))
+ 
+diff --git a/libsparse/sparse_read.cpp b/libsparse/sparse_read.cpp
+--- a/libsparse/sparse_read.cpp
++++ b/libsparse/sparse_read.cpp
+@@ -46,7 +46,7 @@
+ #define SPARSE_HEADER_LEN (sizeof(sparse_header_t))
+ #define CHUNK_HEADER_LEN (sizeof(chunk_header_t))
+ 
+-static constexpr int64_t COPY_BUF_SIZE = 1024 * 1024;
++static constexpr int64_t COPY_BUF_SIZE = (PW_LIBSPARSE_COPY_BUF_SIZE);
+ static char* copybuf;
+ 
+ static std::string ErrorString(int err) {
+

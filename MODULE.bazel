@@ -407,4 +407,6 @@ new_git_repository(
     commit = "7adba5989cf88d4c4cad8b1e91d447251998b4a8",
     remote = "https://android.googlesource.com/platform/system/core",
     build_file = "@pigweed//third_party/aosp:core.BUILD.bazel",
+    patches = ["@pigweed//third_party/aosp:libsparse_configurable_buffer_size.patch"],
+    patch_args = ["--strip=1"],
 )

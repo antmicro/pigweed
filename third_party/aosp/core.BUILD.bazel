@@ -40,6 +40,7 @@ cc_library(
     deps = [
         "@pigweed//third_party/aosp:aosp_polyfill",
         "@pigweed//third_party/aosp:libsparse_wrap_unsupported",
+        "@pigweed//third_party/aosp:libsparse_config_override",
         "@zlib//:zlib",
     ],
 )
