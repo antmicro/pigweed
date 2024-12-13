@@ -32,9 +32,9 @@ if (pw_third_party_mcuxpresso_SDK != "") {
   }
 }
 
-#pw_doc_group("docs") {
-#  sources = [ "docs.rst" ]
-#}
+pw_doc_group("docs") {
+  sources = [ "docs.rst" ]
+}
 
 pw_test_group("tests") {
 }

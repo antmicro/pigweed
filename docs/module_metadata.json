@@ -158,6 +158,13 @@
       "C++17"
     ]
   },
+  "pw_bluetooth_sapphire_mcuxpresso": {
+    "tagline": "Bluetooth controller implementation using MCUxpresso SDK to be used with bluetooth sapphire",
+    "status": "unstable",
+    "languages": [
+      "C++17"
+    ]
+  },
   "pw_boot": {
     "tagline": "Simplified booting for C++ targets",
     "status": "stable",

@@ -29,6 +29,7 @@ Modules
    pw_bluetooth_proxy/docs
    pw_bluetooth_profiles/docs
    pw_bluetooth_sapphire/docs
+   pw_bluetooth_sapphire_mcuxpresso/docs
    pw_boot/docs
    pw_build/docs
    pw_build_android/docs

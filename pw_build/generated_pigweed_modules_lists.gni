@@ -56,6 +56,8 @@ declare_args() {
   dir_pw_bluetooth_proxy = get_path_info("../pw_bluetooth_proxy", "abspath")
   dir_pw_bluetooth_sapphire =
       get_path_info("../pw_bluetooth_sapphire", "abspath")
+  dir_pw_bluetooth_sapphire_mcuxpresso =
+      get_path_info("../pw_bluetooth_sapphire_mcuxpresso", "abspath")
   dir_pw_boot = get_path_info("../pw_boot", "abspath")
   dir_pw_boot_cortex_m = get_path_info("../pw_boot_cortex_m", "abspath")
   dir_pw_build = get_path_info("../pw_build", "abspath")
@@ -259,6 +261,7 @@ declare_args() {
     dir_pw_bluetooth_profiles,
     dir_pw_bluetooth_proxy,
     dir_pw_bluetooth_sapphire,
+    dir_pw_bluetooth_sapphire_mcuxpresso,
     dir_pw_boot,
     dir_pw_boot_cortex_m,
     dir_pw_build,
@@ -631,6 +634,7 @@ declare_args() {
     "$dir_pw_bluetooth_profiles:docs",
     "$dir_pw_bluetooth_proxy:docs",
     "$dir_pw_bluetooth_sapphire:docs",
+    "$dir_pw_bluetooth_sapphire_mcuxpresso:docs",
     "$dir_pw_boot:docs",
     "$dir_pw_boot_cortex_m:docs",
     "$dir_pw_build:docs",
