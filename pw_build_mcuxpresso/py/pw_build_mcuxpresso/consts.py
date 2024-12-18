@@ -14,6 +14,7 @@
 """Common constant values for generated SDK"""
 
 SDK_USER_CONFIG_NAME = "user_config"
+SDK_APP_INCLUDE_NAME = "app_include"
 SDK_COMMONS_NAME = "commons"
 
 # TODO(krakoczy): Ideally this should be silenced by the downstream project

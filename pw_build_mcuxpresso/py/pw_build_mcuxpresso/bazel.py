@@ -23,6 +23,7 @@ try:
     from pw_build_mcuxpresso.components import Component, Project
     from pw_build_mcuxpresso.consts import (
         SDK_USER_CONFIG_NAME,
+        SDK_APP_INCLUDE_NAME,
         SDK_DEFAULT_COPTS,
         SDK_COMMONS_NAME,
     )
@@ -30,6 +31,7 @@ except ImportError:
     # Load from this directory if pw_build_mcuxpresso is not available.
     from components import Component, Project  # type: ignore
     from consts import SDK_USER_CONFIG_NAME  # type: ignore
+    from consts import SDK_APP_INCLUDE_NAME # type: ignore
     from consts import SDK_DEFAULT_COPTS  # type: ignore
     from consts import SDK_COMMONS_NAME  # type: ignore
 
@@ -107,12 +109,23 @@ class BazelTarget:
         return self.label()
 
 
-SHARED_BAZEL_COPTS = BazelVariable("COPTS", SDK_DEFAULT_COPTS)
+APP_INCLUDE_TARGET = BazelTarget(
+    "label_flag",
+    {
+        "name": SDK_APP_INCLUDE_NAME,
+        "build_setting_default": ":empty.h",
+    },
+)
+
+SHARED_BAZEL_COPTS = BazelVariable("COPTS", SDK_DEFAULT_COPTS + [f"-include $(location {APP_INCLUDE_TARGET.label()})"])
 
 # pylint: disable=line-too-long
 BUILDFILE_HEADER = rf'''### This file was auto generated. Do not edit manually. ###
 package(default_visibility = ["//visibility:public"])
 {SHARED_BAZEL_COPTS}
+
+exports_files(["empty.h"])
+
 '''
 # pylint: enable=line-too-long
 
@@ -211,6 +224,7 @@ def headers_cc_library(project: Project) -> BazelTarget:
             "deps": [USER_CONFIG_TARGET],
             "defines": defines,
             "hdrs": headers,
+            "srcs": [APP_INCLUDE_TARGET],
             "includes": includes,
             "copts": SHARED_BAZEL_COPTS,
         },
@@ -277,7 +291,7 @@ def component_targets(
 
         attrs: dict[str, Any] = {
             "name": component.id,
-            "srcs": sources,
+            "srcs": sources + [APP_INCLUDE_TARGET],
             "deps": deps,
             "copts": SHARED_BAZEL_COPTS,
         }
@@ -315,7 +329,7 @@ def generate_project_targets(project: Project) -> Iterator[BazelTarget]:
     imports = import_targets(libraries)
 
     return chain(
-        [USER_CONFIG_TARGET, commons],
+        [USER_CONFIG_TARGET, APP_INCLUDE_TARGET, commons],
         imports,
         component_targets(components, imports, commons),
     )
@@ -337,6 +351,9 @@ def generate_bazel_files(
 
     module_file = output_path / "MODULE.bazel"
     module_file.touch()
+
+    empty_file = output_path / "empty.h"
+    empty_file.touch()
 
     build_file = output_path / "BUILD.bazel"
     with open(build_file, "w") as f:
