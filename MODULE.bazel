@@ -20,7 +20,10 @@ module(
 register_execution_platforms("@local_config_platform//:host")
 
 bazel_dep(name = "bazel_skylib", version = "1.7.1")
-bazel_dep(name = "boringssl", version = "0.20240913.0")
+# Ideally we should use boringssl from bazel registry
+# but it doesn't have proper configuration for building with arm gcc
+# so we just used git_repository with custom BUILD file
+#bazel_dep(name = "boringssl", version = "0.20240913.0")
 bazel_dep(name = "freertos", version = "10.5.1.bcr.2")
 bazel_dep(name = "gazelle", version = "0.36.0", repo_name = "bazel_gazelle")
 bazel_dep(name = "nanopb", version = "0.4.9.1", repo_name = "com_github_nanopb_nanopb")
@@ -394,3 +397,12 @@ doxygen_extension.configuration(
     platform = "windows",
 )
 use_repo(doxygen_extension, "doxygen")
+
+new_git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
+new_git_repository(
+    name = "boringssl",
+    commit = "74a51c6ab3c9c674a62bf02c904f12e5109761b8",
+    remote = "https://boringssl.googlesource.com/boringssl",
+    build_file = "@pigweed//third_party/boringssl:BUILD.bazel",
+)
