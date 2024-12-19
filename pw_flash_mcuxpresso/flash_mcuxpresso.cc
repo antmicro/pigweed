@@ -13,19 +13,29 @@ PW_EXTERN_C_START
 #include "mflash_drv.h"
 PW_EXTERN_C_END
 
-static constexpr const uint32_t kFlashBase = MFLASH_BASE_ADDRESS;
-static constexpr const uint32_t kFlashEnd = kFlashBase + FLASH_SIZE * 1024;
+static constexpr const size_t kFlashSize = FLASH_SIZE * 1024;
+static constexpr const uint8_t kEraseValue = 0xFF;
 
-static bool IsWithinFlash(pw::flash::Range const& range) {
-  return range.start >= kFlashBase && (range.start + range.size < kFlashEnd);
+static const pw::Vector<pw::flash::PageLayout, 1> kFlashLayout = {
+    pw::flash::PageLayout{
+        .page_count = kFlashSize / MFLASH_SECTOR_SIZE,
+        .page_size = MFLASH_SECTOR_SIZE,
+    }};
+
+static constexpr bool IsEraseValid(pw::flash::Range const& range) {
+  return (range.start % MFLASH_SECTOR_SIZE) == 0 &&
+         (range.size % MFLASH_SECTOR_SIZE) == 0 &&
+         range.start + range.size < kFlashSize;
 }
 
-static bool IsEraseAligned(pw::flash::Range const& range) {
-  return (range.start % MFLASH_SECTOR_SIZE) == 0;
+static constexpr bool IsWriteValid(pw::flash::Range const& range) {
+  return (range.start % MFLASH_PAGE_SIZE) == 0 && (range.size % 4) == 0 &&
+         range.start + range.size < kFlashSize;
 }
 
-static bool IsWriteAligned(pw::flash::Range const& range) {
-  return (range.start % MFLASH_PAGE_SIZE) == 0;
+static constexpr bool IsReadValid(pw::flash::Range const& range) {
+  return (range.start % 4) == 0 && (range.size % 4) == 0 &&
+         range.start + range.size < kFlashSize;
 }
 
 pw::Status pw::flash::McuxpressoFlash::Initialize() {
@@ -34,23 +44,18 @@ pw::Status pw::flash::McuxpressoFlash::Initialize() {
 }
 
 pw::Status pw::flash::McuxpressoFlash::Erase(pw::flash::Range range) {
-  if (!IsWithinFlash(range) || !IsEraseAligned(range)) {
+  if (!IsEraseValid(range)) {
     return Status::InvalidArgument();
   }
 
   const auto sectors =
       (range.size + MFLASH_SECTOR_SIZE - 1) / MFLASH_SECTOR_SIZE;
   for (size_t i = 0; i < sectors; ++i) {
-    const auto err = mflash_drv_sector_erase(range.start - kFlashBase +
-                                             i * MFLASH_SECTOR_SIZE);
+    const auto err =
+        mflash_drv_sector_erase(range.start + i * MFLASH_SECTOR_SIZE);
     if (err != kStatus_Success) {
       return Status::Internal();
     }
-  }
-  // If size of the erased range is not aligned to the sector size,
-  // indicate to the caller that more was erased than requested.
-  if ((range.size % MFLASH_SECTOR_SIZE) != 0) {
-    return Status::DataLoss();
   }
   return OkStatus();
 }
@@ -77,10 +82,9 @@ static int32_t ProgramPartialPage(uint32_t address,
                          reinterpret_cast<uint32_t const*>(buf.data()));
 }
 
-pw::Status pw::flash::McuxpressoFlash::Program(pw::flash::Range range,
-                                               pw::ConstByteSpan data) {
-  if (!IsWithinFlash(range) || !IsWriteAligned(range) ||
-      (range.size != data.size_bytes())) {
+pw::Status pw::flash::McuxpressoFlash::Write(pw::flash::Range range,
+                                             pw::ConstByteSpan data) {
+  if (!IsWriteValid(range) || (range.size != data.size_bytes())) {
     return Status::InvalidArgument();
   }
 
@@ -88,7 +92,7 @@ pw::Status pw::flash::McuxpressoFlash::Program(pw::flash::Range range,
       (data.size_bytes() + MFLASH_PAGE_SIZE - 1) / MFLASH_PAGE_SIZE;
   for (size_t i = 0; i < pages; ++i) {
     const auto offset = i * MFLASH_PAGE_SIZE;
-    const auto page_address = (range.start - kFlashBase) + offset;
+    const auto page_address = range.start + offset;
     void const* ptr = data.data() + offset;
 
     int32_t err;
@@ -107,4 +111,29 @@ pw::Status pw::flash::McuxpressoFlash::Program(pw::flash::Range range,
   }
 
   return OkStatus();
+}
+
+pw::Status pw::flash::McuxpressoFlash::Read(Range range, ByteSpan buffer) {
+  if (!IsReadValid(range) || range.size > buffer.size_bytes()) {
+    return Status::InvalidArgument();
+  }
+
+  auto* word_ptr = reinterpret_cast<uint32_t*>(buffer.data());
+  const auto err = mflash_drv_read(range.start, word_ptr, buffer.size_bytes());
+  if (err != kStatus_Success) {
+    return Status::Internal();
+  }
+  return OkStatus();
+}
+
+pw::flash::FlashParams pw::flash::McuxpressoFlash::GetFlashParameters() {
+  return {
+      .write_block_size = MFLASH_PAGE_SIZE,
+      .erase_value = kEraseValue,
+  };
+}
+
+pw::Vector<pw::flash::PageLayout> const&
+pw::flash::McuxpressoFlash::GetPageLayout() {
+  return kFlashLayout;
 }
