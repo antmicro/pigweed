@@ -318,15 +318,9 @@ http_archive(
     urls = ["https://github.com/STMicroelectronics/cmsis-core/archive/refs/tags/v5.4.0_cm4.tar.gz"],
 )
 
-git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
-git_repository(
-    name = "mcuxpresso",
-    commit = "998c100b661d602c68858e213952d8f5903454b5",
-    # temporary point to antmicro github fork until SDK generated files
-    # will be pushed to: https://pigweed.googlesource.com/pigweed/mcuxpresso-sdk
-    remote = "https://github.com/antmicro/mcuxpresso-sdk.git",
-)
+mcuxpresso = use_extension("@pigweed//third_party/mcuxpresso:extensions.bzl", "mcuxpresso")
+mcuxpresso.source_commit(sha = "059f4d87bc1a4beb3900bdc10b9ecbe0f3015081")
+use_repo(mcuxpresso, "mcuxpresso")
 
 # Other Pigweed-specific dependencies
 # ===================================
