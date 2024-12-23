@@ -408,6 +408,13 @@
       "C++17"
     ]
   },
+  "pw_flash": {
+    "tagline": "Cross-platform flash storage API",
+    "status": "experimental",
+    "languages": [
+      "C++17"
+    ]
+  },
   "pw_format": {
     "tagline": "String formatting",
     "status": "experimental",

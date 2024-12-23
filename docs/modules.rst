@@ -61,6 +61,7 @@ Modules
    pw_fastboot/docs
    pw_fastboot_usb/docs
    pw_file/docs
+   pw_flash/docs
    pw_format/docs
    pw_function/docs
    pw_fuzzer/docs
