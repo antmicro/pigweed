@@ -67,6 +67,7 @@ pw_elf
 pw_emu
 pw_env_setup
 pw_env_setup_zephyr
+pw_fastboot
 pw_file
 pw_format
 pw_function

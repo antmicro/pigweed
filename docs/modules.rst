@@ -58,6 +58,7 @@ Modules
    pw_emu/docs
    pw_env_setup/docs
    pw_env_setup_zephyr/docs
+   pw_fastboot/docs
    pw_file/docs
    pw_format/docs
    pw_function/docs

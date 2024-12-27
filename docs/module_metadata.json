@@ -394,6 +394,13 @@
   "pw_file": {
     "status": "unstable"
   },
+  "pw_fastboot": {
+    "tagline": "Fastboot protocol implementation",
+    "status": "experimental",
+    "languages": [
+      "C++17"
+    ]
+  },
   "pw_format": {
     "tagline": "String formatting",
     "status": "experimental",
