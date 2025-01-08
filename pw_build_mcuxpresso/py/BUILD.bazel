@@ -83,6 +83,7 @@ pw_py_binary(
         "middleware.wifi.fwdnld_intf_abs.MIMXRT595S",
         "middleware.edgefast_bluetooth.wifi_nxp.controller.base.MIMXRT595S",
         "middleware.edgefast_bluetooth.btble.ethermind.cm33.MIMXRT595S",
+        "middleware.edgefast_bluetooth.config.template.MIMXRT595S",
         "middleware.usb.device_controller_ip3511hs.MIMXRT595S",
         "middleware.usb.phy.MIMXRT595S",
         "middleware.usb.device.controller.driver.MIMXRT595S",

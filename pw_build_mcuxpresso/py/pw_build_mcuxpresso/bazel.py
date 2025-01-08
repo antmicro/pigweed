@@ -82,6 +82,24 @@ class BazelTarget:
                 for i, v in enumerate(value):
                     if isinstance(v, BazelTarget):
                         value[i] = v.label()
+            elif isinstance(value, dict):
+                original_dict = value
+                none_condition: list[str] | None = original_dict.pop("None", None)
+                original_dict_keys = list(original_dict.keys())
+                if none_condition is not None:
+                    value = str(none_condition)
+                    if len(original_dict) != 0:
+                        value += " + "
+                        for dict_key in original_dict_keys:
+                            original_dict[f":{dict_key}"] = original_dict.pop(dict_key)
+                        value += f"select({original_dict})"
+                else:
+                    if len(original_dict) != 0:
+                        for dict_key in original_dict_keys:
+                            original_dict[f":{dict_key}"] = original_dict.pop(dict_key)
+                        value = f"select({original_dict})"
+                    else:
+                        continue
             elif isinstance(value, BazelVariable):
                 # Print variable's name
                 value = value.name
@@ -121,8 +139,16 @@ SHARED_BAZEL_COPTS = BazelVariable("COPTS", SDK_DEFAULT_COPTS + [f"-include $(lo
 
 # pylint: disable=line-too-long
 BUILDFILE_HEADER = rf'''### This file was auto generated. Do not edit manually. ###
+load("@pigweed//pw_build:compatibility.bzl", "boolean_constraint_value")
 package(default_visibility = ["//visibility:public"])
 {SHARED_BAZEL_COPTS}
+
+boolean_constraint_value(
+    name = "middleware.baremetal.MIMXRT595S",
+)
+boolean_constraint_value(
+    name = "middleware.freertos-kernel.MIMXRT595S",
+)
 
 exports_files(["empty.h"])
 
@@ -136,6 +162,25 @@ USER_CONFIG_TARGET = BazelTarget(
         "build_setting_default": "@pigweed//pw_build:empty_cc_library",
     },
 )
+
+USER_DEFINES_TARGET = BazelTarget(
+    "label_flag",
+    {
+        "name": "user_defines",
+        "build_setting_default": "@pigweed//pw_build:empty_cc_library",
+    },
+)
+
+def _normalize_path_dict(targets: dict[str, list[Path]]) -> dict[str, list[str]]:
+    """Converts given paths to their string representation
+    using '/' as a path separator
+    """
+    targets_str = dict()
+    for condition in targets:
+        targets_str[condition] = _normalize_path_list(targets[condition])
+    if "None" not in targets_str:
+        targets_str["None"] = list()
+    return targets_str
 
 
 def _normalize_path_list(targets: list[Path]) -> list[str]:
@@ -255,7 +300,6 @@ def import_targets(libraries: Iterable[Path]) -> list[BazelTarget]:
 def component_targets(
     components: dict[str, Component],
     imports: list[BazelTarget],
-    commons: BazelTarget,
 ) -> list[BazelTarget]:
     """Returns Bazel cc_library targets representing SDK components
 
@@ -272,11 +316,15 @@ def component_targets(
         if component.id in parsed.keys():
             return parsed[component.id]
 
-        libs = [libraries[_path_to_component_id(lib)] for lib in component.libs]
+        libs = dict()
+        for condition in component.libs:
+            libs[condition] = list()
+            for lib in component.libs[condition]:
+                libs[condition].append(libraries[_path_to_component_id(lib)])
 
         deps = sorted(
             chain(
-                [commons],
+                [USER_DEFINES_TARGET],
                 libs,
                 map(
                     lambda dep_id: component_target(components[dep_id])
@@ -287,13 +335,20 @@ def component_targets(
             ),
         )
 
-        sources = _normalize_path_list(component.sources)
+        defines = component.defines
+        headers = _normalize_path_dict(component.headers)
+        includes = _normalize_path_dict(component.include_dirs)
+        sources = _normalize_path_dict(component.sources)
+        sources["None"].append(APP_INCLUDE_TARGET.label())
 
         attrs: dict[str, Any] = {
             "name": component.id,
-            "srcs": sources + [APP_INCLUDE_TARGET],
+            "srcs": sources,
             "deps": deps,
             "copts": SHARED_BAZEL_COPTS,
+            "defines": defines,
+            "hdrs": headers,
+            "includes": includes,
         }
 
         if component.private:
@@ -320,18 +375,21 @@ def generate_project_targets(project: Project) -> Iterator[BazelTarget]:
         project: MCUXpresso project to output
         output_path: Path to output directory
     """
+    components = {
+        c.id: Component(**asdict(c)) for c in project.components.values()
+    }
     components = _resolve_component_dep_cycles(project)
-    libraries = set(
-        chain.from_iterable(component.libs for component in components.values())
-    )
-
-    commons = headers_cc_library(project)
-    imports = import_targets(libraries)
+    imports = list()
+    for component in components.values():
+        for condition in component.libs:
+            if condition != "None":
+                raise ValueError(f"Component {component.id} has a library condition {condition}")
+            imports.extend(import_targets(component.libs["None"]))
 
     return chain(
-        [USER_CONFIG_TARGET, APP_INCLUDE_TARGET, commons],
+        [USER_CONFIG_TARGET, USER_DEFINES_TARGET, APP_INCLUDE_TARGET],
         imports,
-        component_targets(components, imports, commons),
+        component_targets(components, imports),
     )
 
 
