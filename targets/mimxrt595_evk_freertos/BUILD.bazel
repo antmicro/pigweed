@@ -42,10 +42,10 @@ platform(
         "@platforms//cpu:armv8-m",
         "@platforms//os:none",
         "@rust_crates//:no_std",
+        "@mcuxpresso//:middleware.freertos-kernel.MIMXRT595S",
     ],
     flags = flags_from_dict(FREERTOS_FLAGS | {
         "@freertos//:freertos_config": "//targets/mimxrt595_evk_freertos:freertos_config",
-        "@mcuxpresso//:user_config": "//targets/mimxrt595_evk_freertos:mcuxpresso_sdk_lib_config",
         "@pigweed//pw_assert:assert_backend": "//pw_assert_basic",
         "@pigweed//pw_assert:assert_backend_impl": "//pw_assert_basic:impl",
         "@pigweed//pw_assert:check_backend": "//pw_assert_basic",
@@ -57,12 +57,27 @@ platform(
         "@pigweed//pw_sys_io:backend": "//pw_sys_io_mcuxpresso",
         "@pigweed//pw_system:extra_platform_libs": "//targets/mimxrt595_evk_freertos:extra_platform_libs",
         "@pigweed//pw_unit_test:main": "//targets/mimxrt595_evk_freertos:unit_test_app",
-        "@pigweed//targets:mcuxpresso_sdk": "//targets/mimxrt595_evk_freertos:mcuxpresso_sdk",
     }),
 )
 
+
 cc_library(
     name = "mcuxpresso_sdk",
+    target_compatible_with = [
+        "//pw_build/constraints/board:mimxrt595_evk",
+        "//pw_build/constraints/rtos:freertos",
+        "@platforms//cpu:armv8-m",
+    ],
+    deps = [
+        ":mcuxpresso_sdk_components",
+        "//targets/mimxrt595_evk_freertos/config",
+        "@mcuxpresso//:user_config",
+    ],
+)
+
+
+cc_library(
+    name = "mcuxpresso_sdk_components",
     target_compatible_with = [
         "//pw_build/constraints/board:mimxrt595_evk",
         "//pw_build/constraints/rtos:freertos",
@@ -84,13 +99,12 @@ cc_library(
         "@mcuxpresso//:platform.drivers.pint.MIMXRT595S",
         "@mcuxpresso//:platform.drivers.power.MIMXRT595S",
         "@mcuxpresso//:platform.utilities.assert.MIMXRT595S",
-        "@mcuxpresso//:project_template.evkmimxrt595.MIMXRT595S",
         "@mcuxpresso//:utility.debug_console.MIMXRT595S",
     ],
 )
 
 cc_library(
-    name = "mcuxpresso_sdk_lib_config",
+    name = "mcuxpresso_sdk_componenets_defines",
     defines = [
         "BOOT_HEADER_ENABLE=1",
         "CPU_MIMXRT595SFFOC_cm33",
@@ -183,7 +197,6 @@ cc_library(
         "//pw_sys_io_mcuxpresso",
         "//pw_system:init",
         "//targets:mcuxpresso_sdk",
-        "//targets/mimxrt595_evk_freertos/config",
         "//third_party/freertos:support",
     ],
     alwayslink = 1,

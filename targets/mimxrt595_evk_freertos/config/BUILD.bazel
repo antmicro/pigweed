@@ -28,6 +28,9 @@ cc_library(
         "peripherals.h",
         "pin_mux.h",
     ],
+    includes = [
+        ".",
+    ],
     target_compatible_with = [
         "//pw_build/constraints/board:mimxrt595_evk",
         "//pw_build/constraints/rtos:freertos",
@@ -35,7 +38,11 @@ cc_library(
     ],
     deps = [
         "//pw_preprocessor",
-        "@pigweed//targets:mcuxpresso_sdk",
+        "@mcuxpresso//:platform.drivers.lpc_gpio.MIMXRT595S",
+        "@mcuxpresso//:component.rt_gpio_adapter.MIMXRT595S",
+        "@mcuxpresso//:utility.debug_console.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.power.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.lpc_iopctl.MIMXRT595S",
     ],
     alwayslink = 1,
 )
