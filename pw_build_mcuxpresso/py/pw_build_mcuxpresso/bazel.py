@@ -218,7 +218,7 @@ def _resolve_component_dep_cycles(project: Project) -> dict[str, Component]:
         "middleware.fatfs.MIMXRT595S": ["middleware.fatfs.usb.MIMXRT595S"],
         "middleware.wifi.common_files.MIMXRT595S": ["utility.debug_console.MIMXRT595S"],
         "middleware.wifi.fwdnld.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S"],
-        "middleware.wifi.fwdnld_intf_abs.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S"],
+        "middleware.wifi.fwdnld_intf_abs.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S", "middleware.wifi.mlan_sdio.MIMXRT595S"],
         "middleware.wifi.mlan_sdio.MIMXRT595S": ["middleware.wifi.fwdnld_intf_abs.MIMXRT595S", "middleware.wifi.fwdnld.MIMXRT595S"],
     }
 
@@ -338,11 +338,12 @@ def component_targets(
         if component.id in parsed.keys():
             return parsed[component.id]
 
-        libs = dict()
+        libs = []
         for condition in component.libs:
-            libs[condition] = list()
-            for lib in component.libs[condition]:
-                libs[condition].append(libraries[_path_to_component_id(lib)])
+            if condition != "None":
+                raise ValueError(f"Component {component.id} has a library condition {condition}")
+            for lib in component.libs["None"]:
+                libs.append(libraries[_path_to_component_id(lib)])
 
         deps = sorted(
             chain(
