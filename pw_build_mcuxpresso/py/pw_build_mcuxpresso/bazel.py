@@ -211,6 +211,21 @@ def _resolve_component_dep_cycles(project: Project) -> dict[str, Component]:
     }
     extracted_common_components = dict()
 
+    ADDITIONAL_DEPENDENCIES = {
+        "middleware.wifi.osa_free_rtos.MIMXRT595S": ["middleware.wifi.osa.MIMXRT595S"],
+        "middleware.sdmmc.common.MIMXRT595S": ["platform.drivers.common.MIMXRT595S", "middleware.sdmmc.host.usdhc.freertos.MIMXRT595S"],
+        "middleware.wifi.osa.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S"],
+        "middleware.fatfs.MIMXRT595S": ["middleware.fatfs.usb.MIMXRT595S"],
+        "middleware.wifi.common_files.MIMXRT595S": ["utility.debug_console.MIMXRT595S"],
+        "middleware.wifi.fwdnld.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S"],
+        "middleware.wifi.fwdnld_intf_abs.MIMXRT595S": ["middleware.wifi.common_files.MIMXRT595S"],
+        "middleware.wifi.mlan_sdio.MIMXRT595S": ["middleware.wifi.fwdnld_intf_abs.MIMXRT595S", "middleware.wifi.fwdnld.MIMXRT595S"],
+    }
+
+    for component in ADDITIONAL_DEPENDENCIES:
+        if component in components:
+            components[component].dependencies.update(ADDITIONAL_DEPENDENCIES[component])
+
     dependencies: collections.deque[str] = collections.deque()
     for component in components.values():
         checked = {component.id}
@@ -313,6 +328,13 @@ def component_targets(
     parsed: dict[str, BazelTarget] = dict()
 
     def component_target(component: Component) -> BazelTarget:
+        USER_CONFIG_REQUIRED_COMPONENTS = [
+            "middleware.fatfs.MIMXRT595S",
+            "middleware.usb.host_controller_ip3516hs.MIMXRT595S",
+            "component.mflash.rt595.MIMXRT595S",
+            "middleware.wifi.fwdnld.MIMXRT595S",
+            "middleware.wifi.mlan_sdio.MIMXRT595S"
+        ]
         if component.id in parsed.keys():
             return parsed[component.id]
 
@@ -332,6 +354,7 @@ def component_targets(
                     else parsed[dep_id],
                     component.dependencies,
                 ),
+                [USER_CONFIG_TARGET] if component.id in USER_CONFIG_REQUIRED_COMPONENTS else list(),
             ),
         )
 
