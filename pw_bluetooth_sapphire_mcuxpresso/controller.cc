@@ -24,23 +24,22 @@ static pw::Vector<std::byte, 2048> EventPacketFromBytes(std::byte* data) {
   bt::hci_spec::EventHeader* eventHeader =
       reinterpret_cast<bt::hci_spec::EventHeader*>(data);
   // PW_CHECK_NULL(eventHeader);
-  return std::move(
-      pw::Vector<std::byte, 2048>(data,
-                                  data + sizeof(bt::hci_spec::EventHeader) +
-                                      eventHeader->parameter_total_size));
+  return pw::Vector<std::byte, 2048>(data,
+                                     data + sizeof(bt::hci_spec::EventHeader) +
+                                         eventHeader->parameter_total_size);
 }
 
 static pw::Vector<std::byte, 2048> ACLPacketFromBytes(std::byte* data) {
   bt::hci_spec::ACLDataHeader* eventHeader =
       reinterpret_cast<bt::hci_spec::ACLDataHeader*>(data);
   // PW_CHECK_NULL(eventHeader);
-  return std::move(
-      pw::Vector<std::byte, 2048>(data,
-                                  data + sizeof(bt::hci_spec::ACLDataHeader) +
-                                      eventHeader->data_total_length));
+  return pw::Vector<std::byte, 2048>(data,
+                                     data +
+                                         sizeof(bt::hci_spec::ACLDataHeader) +
+                                         eventHeader->data_total_length);
 }
 
-static void Mimxrt595Controller::hci_uart_transmit_cb(hal_uart_handle_t handle,
+void Mimxrt595Controller::hci_uart_transmit_cb(hal_uart_handle_t handle,
                                                       hal_uart_status_t status,
                                                       void* userData) {
   // TODO: make sure if this function doesn't need synchronization with
@@ -118,8 +117,6 @@ void Mimxrt595Controller::hci_uart_send_data(PacketType type,
 
 pw::Status Mimxrt595Controller::hci_uart_init() {
   hal_uart_config_t config;
-  hal_uart_status_t ret;
-  hal_uart_status_t status;
 
   controller_hci_uart_config_t getConfig;
 
@@ -235,12 +232,12 @@ void Mimxrt595Controller::Close(Callback<void(Status)> callback) {
 
 void Mimxrt595Controller::SendCommand(span<const std::byte> command) {
   auto command_buffer = bt::DynamicByteBuffer(bt::BufferView(command));
-  hci_uart_send_data(kHciCommand, command_buffer.data(), command_buffer.size());
+  hci_uart_send_data(kHciCommand, const_cast<uint8_t*>(command_buffer.data()), command_buffer.size());
 }
 
 void Mimxrt595Controller::SendAclData(span<const std::byte> data) {
   auto data_buffer = bt::DynamicByteBuffer(bt::BufferView(data));
-  hci_uart_send_data(kHciAclData, data_buffer.data(), data_buffer.size());
+  hci_uart_send_data(kHciAclData, const_cast<uint8_t*>(data_buffer.data()), data_buffer.size());
 }
 
 void Mimxrt595Controller::SendScoData(span<const std::byte> data) {
