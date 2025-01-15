@@ -32,6 +32,9 @@ cc_library(
         "//pw_bluetooth_sapphire/host/sm:definitions",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-return-type",
+    ],
 )
 
 cc_library(
@@ -54,6 +57,12 @@ cc_library(
         "//pw_bluetooth_sapphire/lib/cpp-string",
         "//pw_bytes",
         "//pw_string:utf_codecs",
+    ],
+    copts = [
+        "-Wno-return-type",
+        "-Wno-shadow",
+        "-Wno-changes-meaning",
+        "-Wno-error",
     ],
 )
 
@@ -133,6 +142,10 @@ cc_library(
         "//pw_bluetooth_sapphire/host/sm",
         "//pw_bluetooth_sapphire/host/transport",
         "//third_party/fuchsia:fit",
+    ],
+    copts = [
+        "-Wno-shadow",
+        "-Wno-error",
     ],
 )
 

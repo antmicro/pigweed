@@ -82,6 +82,9 @@ cc_library(
         "@fuchsia_sdk//pkg/trace",
         "@fuchsia_sdk//pkg/zx",
     ],
+    copts = [
+        "-Wno-shadow",
+    ],
 )
 
 fuchsia_cc_binary(

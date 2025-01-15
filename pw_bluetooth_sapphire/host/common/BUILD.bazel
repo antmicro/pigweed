@@ -104,6 +104,11 @@ cc_library(
         ],
         "//conditions:default": [],
     }),
+    copts = [
+        "-Wno-shadow",
+        "-Wno-return-type",
+        "-Wno-format",
+    ],
 )
 
 cc_library(

@@ -119,6 +119,11 @@ cc_library(
         "//pw_string",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-changes-meaning",
+        "-Wno-error",
+        "-Wno-shadow",
+    ],
 )
 
 # Separate from :testing to avoid a dependency cycle.

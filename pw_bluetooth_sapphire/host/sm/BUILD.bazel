@@ -42,6 +42,9 @@ cc_library(
         "//pw_chrono:system_clock",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-error",
+    ]
 )
 
 cc_library(
@@ -87,6 +90,9 @@ cc_library(
         "//pw_bluetooth_sapphire/lib/cpp-string",
         "//third_party/fuchsia:fit",
         "@boringssl",
+    ],
+    copts = [
+        "-Wno-error",
     ],
 )
 

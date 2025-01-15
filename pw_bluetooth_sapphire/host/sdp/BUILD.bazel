@@ -34,6 +34,9 @@ cc_library(
     deps = [
         "//pw_bluetooth_sapphire/host/common",
     ],
+    copts = [
+        "-Wno-return-type",
+    ],
 )
 
 cc_library(
@@ -55,6 +58,12 @@ cc_library(
         ":definitions",
         "//pw_bluetooth_sapphire/host/l2cap",
         "//third_party/fuchsia:fit",
+    ],
+    copts = [
+        "-Wno-format",
+        "-Wno-shadow",
+        "-Wno-changes-meaning",
+        "-Wno-error",
     ],
 )
 

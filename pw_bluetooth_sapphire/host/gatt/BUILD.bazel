@@ -32,6 +32,9 @@ cc_library(
         "//pw_bluetooth_sapphire/host/common",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-shadow",
+    ],
 )
 
 cc_library(
@@ -43,6 +46,9 @@ cc_library(
     deps = [
         ":definitions",
         "//third_party/fuchsia:fit",
+    ],
+    copts = [
+        "-Wno-shadow",
     ],
 )
 
@@ -78,6 +84,11 @@ cc_library(
         ":definitions",
         "//pw_bluetooth_sapphire/host/att",
         "//third_party/fuchsia:fit",
+    ],
+    copts = [
+        "-Wno-shadow",
+        "-Wno-error",
+        "-Wno-sign-compare",
     ],
 )
 

@@ -36,6 +36,10 @@ cc_library(
         "//pw_bluetooth_sapphire/host/transport",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-changes-meaning",
+        "-Wno-shadow",
+    ],
 )
 
 pw_cc_test(

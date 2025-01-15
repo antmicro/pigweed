@@ -56,6 +56,11 @@ cc_library(
         "//pw_bluetooth_sapphire/host/hci-spec",
         "//third_party/fuchsia:fit",
     ],
+    copts = [
+        "-Wno-changes-meaning",
+        "-Wno-shadow",
+        "-Wno-format",
+    ],
 )
 
 cc_library(

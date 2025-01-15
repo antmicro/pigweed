@@ -39,6 +39,9 @@ cc_library(
         "//pw_bluetooth_sapphire/lib/cpp-string",
         "//pw_chrono:system_clock",
     ],
+    copts = [
+        "-Wno-shadow",
+    ],
 )
 
 pw_cc_test(

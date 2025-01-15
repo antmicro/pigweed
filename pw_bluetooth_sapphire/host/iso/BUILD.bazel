@@ -42,6 +42,10 @@ cc_library(
         "//pw_function",
         "//pw_span",
     ],
+    copts = [
+        "-Wno-changes-meaning",
+        "-Wno-shadow",
+    ],
 )
 
 cc_library(
