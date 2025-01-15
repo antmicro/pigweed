@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstring>
+#include <cstdint>
 #include <type_traits>
 
 #include "pw_result/result.h"
