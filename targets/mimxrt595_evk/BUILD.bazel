@@ -72,7 +72,6 @@ cc_library(
         "@mcuxpresso//:platform.drivers.mu.MIMXRT595S",
         "@mcuxpresso//:platform.drivers.pint.MIMXRT595S",
         "@mcuxpresso//:platform.drivers.power.MIMXRT595S",
-        "@mcuxpresso//:platform.utilities.assert.MIMXRT595S",
         "@mcuxpresso//:utility.debug_console.MIMXRT595S",
     ],
 )
