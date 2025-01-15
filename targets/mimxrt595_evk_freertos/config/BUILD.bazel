@@ -14,6 +14,8 @@
 
 package(default_visibility = ["//visibility:public"])
 
+exports_files(["wifi_config.h"])
+
 cc_library(
     name = "config",
     srcs = [
@@ -21,12 +23,24 @@ cc_library(
         "clock_config.c",
         "peripherals.c",
         "pin_mux.c",
+        "wifi_bt_config.c",
+        "app_bluetooth_config.h",
     ],
     hdrs = [
+        "wifi_bt_config.h",
+        "wifi_bt_module_config.h",
+        "wifi_config.h",
+        "ffconf.h",
+        "usb_host_config.h",
+        "sdmmc_config.h",
         "board.h",
         "clock_config.h",
         "peripherals.h",
         "pin_mux.h",
+    ],
+    copts = [
+        "-include", "$(location app_bluetooth_config.h)",
+        "-Wno-cast-qual",
     ],
     includes = [
         ".",
@@ -43,6 +57,15 @@ cc_library(
         "@mcuxpresso//:utility.debug_console.MIMXRT595S",
         "@mcuxpresso//:platform.drivers.power.MIMXRT595S",
         "@mcuxpresso//:platform.drivers.lpc_iopctl.MIMXRT595S",
+        "@mcuxpresso//:middleware.sdmmc.host.usdhc.MIMXRT595S",
+        "@mcuxpresso//:middleware.sdmmc.osa.freertos.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.usdhc.MIMXRT595S",
+        "@mcuxpresso//:middleware.sdmmc.common.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.flexspi.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.cache_cache64.MIMXRT595S",
+        "@mcuxpresso//:middleware.sdmmc.sdio.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.flexcomm_i2c.MIMXRT595S",
+        "@mcuxpresso//:platform.drivers.i3c.MIMXRT595S",
     ],
     alwayslink = 1,
 )
