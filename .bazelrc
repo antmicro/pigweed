@@ -189,9 +189,6 @@ build:microbit --platforms=//targets/microbit
 
 # Config for the mimxrt595_evk_freertos freertos platform.
 build:mimxrt595_evk_freertos --platforms=//targets/mimxrt595_evk_freertos:platform
-build:mimxrt595_evk_freertos --//targets:mcuxpresso_sdk=//targets/mimxrt595_evk_freertos:mcuxpresso_sdk
-build:mimxrt595_evk_freertos --@mcuxpresso//:user_config=//targets/mimxrt595_evk_freertos/config
-build:mimxrt595_evk_freertos --@mcuxpresso//:user_defines=//targets/mimxrt595_evk_freertos:mcuxpresso_sdk_componenets_defines
 
 # GoogleTest config
 # =================
