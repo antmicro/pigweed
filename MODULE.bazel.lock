@@ -387,17 +387,16 @@
     },
     "//third_party/mcuxpresso:extensions.bzl%mcuxpresso": {
       "general": {
-        "bzlTransitiveDigest": "+jWkjiPKOu+FT87EP75wxCA6xjaTZFNQ2n/S0VLeIUk=",
-        "usagesDigest": "BoAf99Kpd6XicpK7d91DB8xYup1PrvI8qboyZmrduvs=",
+        "bzlTransitiveDigest": "DNwqGbMIEHDkfPLRI2vupb2D7xQsZtx0aBpWuxLzfvA=",
+        "usagesDigest": "Z6bs1g74vZpAOnWFHx+RoHml+9bfPk5tKTKejckXQEc=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "mcuxpresso": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:git.bzl",
-            "ruleClassName": "git_repository",
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:git.bzl%git_repository",
             "attributes": {
-              "commit": "29753f0970a5ccf5078b2459fd041f6e286370cd",
+              "commit": "059f4d87bc1a4beb3900bdc10b9ecbe0f3015081",
               "remote": "https://github.com/antmicro/mcuxpresso-sdk.git"
             }
           }
@@ -425,11 +424,6 @@
           },
           "local_config_apple_cc": {
             "repoRuleId": "@@apple_support+//crosstool:setup.bzl%_apple_cc_autoconf",
-            "attributes": {}
-          },
-          "local_config_apple_cc_toolchains": {
-            "bzlFile": "@@apple_support+//crosstool:setup.bzl",
-            "ruleClassName": "_apple_cc_autoconf_toolchains",
             "attributes": {}
           }
         },
