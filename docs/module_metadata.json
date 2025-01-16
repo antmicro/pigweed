@@ -415,6 +415,13 @@
       "C++17"
     ]
   },
+  "pw_flash_mcuxpresso": {
+    "tagline": "NXP MCUXpresso SDK implementation for pw_flash",
+    "status": "experimental",
+    "languages": [
+      "C++17"
+    ]
+  },
   "pw_format": {
     "tagline": "String formatting",
     "status": "experimental",

@@ -71,6 +71,7 @@ pw_fastboot
 pw_fastboot_usb
 pw_file
 pw_flash
+pw_flash_mcuxpresso
 pw_format
 pw_function
 pw_fuzzer
