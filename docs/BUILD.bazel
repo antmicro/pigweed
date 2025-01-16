@@ -416,6 +416,7 @@ sphinx_docs(
         "//pw_env_setup:docs",
         "//pw_env_setup_zephyr:docs",
         "//pw_fastboot:docs",
+        "//pw_fastboot_usb:docs",
         "//pw_file:docs",
         "//pw_format:docs",
         "//pw_function:docs",

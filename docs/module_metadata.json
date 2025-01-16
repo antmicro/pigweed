@@ -401,6 +401,13 @@
       "C++17"
     ]
   },
+  "pw_fastboot_usb": {
+    "tagline": "Pluggable implementation of pw_fastboot transport over USB",
+    "status": "experimental",
+    "languages": [
+      "C++17"
+    ]
+  },
   "pw_format": {
     "tagline": "String formatting",
     "status": "experimental",
