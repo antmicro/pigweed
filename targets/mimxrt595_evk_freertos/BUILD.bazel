@@ -40,7 +40,7 @@ platform(
         "@freertos//:malloc_heap_4",
         "@freertos//:disable_task_statics",
         "@platforms//cpu:armv8-m",
-        "@platforms//os:linux",
+        "@platforms//os:none",
         "@rust_crates//:no_std",
         "@mcuxpresso//:middleware.freertos-kernel.MIMXRT595S",
     ],
@@ -57,6 +57,7 @@ platform(
         "@pigweed//pw_sys_io:backend": "//pw_sys_io_mcuxpresso",
         "@pigweed//pw_system:extra_platform_libs": "//targets/mimxrt595_evk_freertos:extra_platform_libs",
         "@pigweed//pw_unit_test:main": "//targets/mimxrt595_evk_freertos:unit_test_app",
+        "@pigweed//pw_function:config_override": ":pw_function_config_override",
         "//targets:mcuxpresso_sdk": "//targets/mimxrt595_evk_freertos:mcuxpresso_sdk",
         "@mcuxpresso//:user_config": "//targets/mimxrt595_evk_freertos/config",
         "@mcuxpresso//:user_defines": "//targets/mimxrt595_evk_freertos:mcuxpresso_sdk_componenets_defines",
@@ -64,6 +65,12 @@ platform(
     }),
 )
 
+cc_library(
+  name = "pw_function_config_override",
+  defines = [
+    "PW_FUNCTION_ENABLE_DYNAMIC_ALLOCATION=1",
+  ],
+)
 
 cc_library(
     name = "mcuxpresso_sdk",
