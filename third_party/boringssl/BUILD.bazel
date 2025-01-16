@@ -33,7 +33,6 @@ cc_library(
     hdrs = ["sysdeps/sys/socket.h"],
     copts = ["-Wno-unused-parameter"],
     includes = ["sysdeps"],
-    target_compatible_with = incompatible_with_mcu(),
     deps = [
         "@pigweed//pw_assert",
     ],

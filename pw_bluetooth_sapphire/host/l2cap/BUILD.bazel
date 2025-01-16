@@ -106,6 +106,7 @@ cc_library(
         "@platforms//os:fuchsia": [],
         "@platforms//os:linux": [],
         "@platforms//os:macos": [],
+        "//pw_build/constraints/board:mimxrt595_evk": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
