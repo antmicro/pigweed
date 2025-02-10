@@ -20,9 +20,18 @@ config("public_includes") {
   include_dirs = [ "public" ]
 }
 
-pw_source_set("pw_dma_mcuxpresso") {
+pw_source_set("pw_dma_mcuxpresso_lpc_dma") {
   public_configs = [ ":public_includes" ]
   public = [ "public/pw_dma_mcuxpresso/dma.h" ]
+  public_deps = [
+    "$dir_pw_assert",
+    "$dir_pw_status",
+  ]
+}
+
+pw_source_set("pw_dma_mcuxpresso_edma") {
+  public_configs = [ ":public_includes" ]
+  public = [ "public/pw_dma_mcuxpresso/edma.h" ]
   public_deps = [
     "$dir_pw_assert",
     "$dir_pw_status",
