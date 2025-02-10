@@ -14,61 +14,28 @@
 #pragma once
 
 #include "fsl_clock.h"
-#include "fsl_power.h"
+#include "fsl_device_registers.h"
 #include "pw_clock_tree/clock_tree.h"
+
+#if defined(MIMXRT798S_cm33_core0_SERIES) || \
+    defined(MIMXRT798S_cm33_core1_SERIES)
+
+#include "pw_clock_tree_mcuxpresso/internal/clock_tree_rt798.h"
+
+#elif defined(MIMXRT595S_cm33_SERIES) || defined(MIMXRT595S_dsp_SERIES)
+
+#include "pw_clock_tree_mcuxpresso/internal/clock_tree_rt595.h"
+
+#else
+
+#error "Unsupported MCUXpresso chipset"
+
+#endif  // defined(MIMXRT798S_cm33_core0_SERIES) ||
+        // defined(MIMXRT798S_cm33_core1_SERIES)
 
 namespace pw::clock_tree {
 
 /// @module{pw_clock_tree_mcuxpresso}
-
-/// Class implementing an FRO clock source.
-class ClockMcuxpressoFro final
-    : public ClockSource<ElementNonBlockingCannotFail> {
- public:
-  /// Constructor specifying the FRO divider output to manage.
-  constexpr ClockMcuxpressoFro(clock_fro_output_en_t fro_output)
-      : fro_output_(fro_output) {}
-
- private:
-  /// Enable this FRO divider.
-  Status DoEnable() final {
-    CLOCK_EnableFroClk(CLKCTL0->FRODIVOEN | fro_output_);
-    return OkStatus();
-  }
-
-  /// Disable this FRO divider.
-  Status DoDisable() final {
-    CLOCK_EnableFroClk(CLKCTL0->FRODIVOEN & ~fro_output_);
-    return OkStatus();
-  }
-
-  /// FRO divider.
-  const uint32_t fro_output_;
-};
-
-/// Class implementing the low power oscillator clock source.
-class ClockMcuxpressoLpOsc final
-    : public ClockSource<ElementNonBlockingCannotFail> {
- private:
-  /// Enable low power oscillator.
-  Status DoEnable() final {
-    // Power up the 1MHz low power oscillator power domain.
-    POWER_DisablePD(kPDRUNCFG_PD_LPOSC);
-    // POWER_ApplyPD() is not necessary for LPOSC_PD.
-
-    // Wait for the low power oscillator to stabilize.
-    CLOCK_EnableLpOscClk();
-    return OkStatus();
-  }
-
-  /// Disable low power oscillator.
-  Status DoDisable() final {
-    // Power down the 1MHz low power oscillator power domain.
-    POWER_EnablePD(kPDRUNCFG_PD_LPOSC);
-    // POWER_ApplyPD() is not necessary for LPOSC_PD.
-    return OkStatus();
-  }
-};
 
 /// Class template implementing the MCLK IN clock source.
 ///
@@ -110,99 +77,6 @@ using ClockMcuxpressoMclkBlocking = ClockMcuxpressoMclk<ElementBlocking>;
 /// fail.
 using ClockMcuxpressoMclkNonBlocking =
     ClockMcuxpressoMclk<ElementNonBlockingCannotFail>;
-
-/// Class template implementing the CLK IN pin clock source and selecting
-/// it as an input source for OSC Clock source.
-///
-/// Template argument `ElementType` can be of class `ElementBlocking` or
-/// `ElementNonBlockingCannotFail`.
-template <typename ElementType>
-class ClockMcuxpressoClkIn final : public DependentElement<ElementType> {
- public:
-  /// Constructor specifying the CLK IN pin clock frequency in Hz and
-  /// the dependent clock tree element to enable the CLK IN pin clock source.
-  constexpr ClockMcuxpressoClkIn(ElementType& source, uint32_t frequency)
-      : DependentElement<ElementType>(source), frequency_(frequency) {}
-
- private:
-  /// Set CLK IN clock frequency.
-  Status DoEnable() final {
-    // Set global that stores external CLK IN pin clock frequency.
-    CLOCK_SetClkinFreq(frequency_);
-
-    // OSC clock source selector ClkIn.
-    const uint8_t kCLOCK_OscClkIn = CLKCTL0_SYSOSCBYPASS_SEL(1);
-    CLKCTL0->SYSOSCBYPASS = kCLOCK_OscClkIn;
-    return OkStatus();
-  }
-
-  /// Set CLK IN clock frequency to 0 Hz.
-  Status DoDisable() final {
-    // Set global that stores external CLK IN pin clock frequency to zero.
-    CLOCK_SetClkinFreq(0);
-
-    // Set OSC clock source selector None, which gates output to reduce power.
-    const uint8_t kCLOCK_OscNone = CLKCTL0_SYSOSCBYPASS_SEL(7);
-    CLKCTL0->SYSOSCBYPASS = kCLOCK_OscNone;
-    return OkStatus();
-  }
-
-  /// CLK IN frequency in Hz.
-  uint32_t frequency_;
-};
-
-/// Alias for a blocking CLK IN pin clock tree element.
-/// This class should be used if the CLK IN pin clock source depends on
-/// another blocking clock tree element to enable the CLK IN pin clock source.
-using ClockMcuxpressoClkInBlocking = ClockMcuxpressoClkIn<ElementBlocking>;
-
-/// Alias for a non-blocking CLK IN pin clock tree element where updates cannot
-/// fail.
-using ClockMcuxpressoClkInNonBlocking =
-    ClockMcuxpressoClkIn<ElementNonBlockingCannotFail>;
-
-/// Class template implementing the FRG clock tree element.
-///
-/// Template argument `ElementType` can be of class `ElementBlocking` or
-/// `ElementNonBlockingCannotFail`.
-template <typename ElementType>
-class ClockMcuxpressoFrg final : public DependentElement<ElementType> {
- public:
-  /// Constructor specifying the source clock and FRG configuration.
-  constexpr ClockMcuxpressoFrg(ElementType& source,
-                               const clock_frg_clk_config_t& config)
-      : DependentElement<ElementType>(source), config_(config) {}
-
- private:
-  // FRG clock source selector None, which gates output to reduce power.
-  // The None source selector is not defined in the SDK.
-  const uint8_t kCLOCK_FrgNone = 7;
-
-  /// Enable FRG configuration.
-  Status DoEnable() final {
-    CLOCK_SetFRGClock(&config_);
-    return OkStatus();
-  }
-
-  /// Disable FRG configuration.
-  Status DoDisable() final {
-    clock_frg_clk_config_t disable_config = config_;
-    disable_config.sfg_clock_src =
-        static_cast<decltype(disable_config.sfg_clock_src)>(kCLOCK_FrgNone);
-    CLOCK_SetFRGClock(&disable_config);
-    return OkStatus();
-  }
-
-  /// FRG clock configuration to enable FRG component.
-  const clock_frg_clk_config_t config_;
-};
-
-/// Alias for a blocking FRG clock tree element.
-using ClockMcuxpressoFrgBlocking = ClockMcuxpressoFrg<ElementBlocking>;
-
-/// Alias for a non-blocking FRG clock tree element where updates cannot fail.
-using ClockMcuxpressoFrgNonBlocking =
-    ClockMcuxpressoFrg<ElementNonBlockingCannotFail>;
 
 /// Class template implementing the clock selector element.
 ///
@@ -282,221 +156,6 @@ using ClockMcuxpressoDividerBlocking = ClockMcuxpressoDivider<ElementBlocking>;
 /// cannot fail.
 using ClockMcuxpressoDividerNonBlocking =
     ClockMcuxpressoDivider<ElementNonBlockingCannotFail>;
-
-/// Class template implementing the audio pll clock element.
-///
-/// The Audio PLL can either operate in the enabled mode where the PLL
-/// and the phase fractional divider are enabled, or it can operate in
-/// bypass mode, where both PLL and phase fractional divider are
-/// clock gated.
-/// When the Audio PLL clock tree gets disabled, both PLL and phase fractional
-/// divider will be clock gated.
-///
-/// Template argument `ElementType` can be of class `ElementBlocking` or
-/// `ElementNonBlockingCannotFail`.
-template <typename ElementType>
-class ClockMcuxpressoAudioPll : public DependentElement<ElementType> {
- public:
-  /// Constructor specifying the configuration for the enabled Audio PLL.
-  constexpr ClockMcuxpressoAudioPll(ElementType& source,
-                                    const clock_audio_pll_config_t& config,
-                                    uint8_t audio_pfd_divider)
-      : DependentElement<ElementType>(source),
-        config_(&config),
-        audio_pfd_divider_(audio_pfd_divider) {}
-
-  /// Constructor to place the Audio PLL into bypass mode.
-  constexpr ClockMcuxpressoAudioPll(ElementType& source,
-                                    audio_pll_src_t bypass_source)
-      : DependentElement<ElementType>(source), bypass_source_(bypass_source) {}
-
- private:
-  /// Configures and enables the audio PLL if `config_` is set, otherwise places
-  /// the audio PLL in bypass mode.
-  Status DoEnable() override {
-    // If `config_` is specified, the PLL should be enabled and the phase
-    // fractional divider PFD0 needs to get configured, otherwise the PLL
-    // operates in bypass mode.
-    if (config_ != nullptr) {
-      // Configure Audio PLL clock source.
-      CLOCK_InitAudioPll(config_);
-      CLOCK_InitAudioPfd(kCLOCK_Pfd0, audio_pfd_divider_);
-    } else {
-      // PLL operates in bypass mode.
-      CLKCTL1->AUDIOPLL0CLKSEL = bypass_source_;
-      CLKCTL1->AUDIOPLL0CTL0 |= CLKCTL1_AUDIOPLL0CTL0_BYPASS_MASK;
-    }
-    return OkStatus();
-  }
-
-  /// Disables the audio PLL logic.
-  Status DoDisable() override {
-    if (config_ != nullptr) {
-      // Clock gate the phase fractional divider PFD0.
-      CLOCK_DeinitAudioPfd(kCLOCK_Pfd0);
-    }
-
-    // Power down Audio PLL
-    CLOCK_DeinitAudioPll();
-    return OkStatus();
-  }
-
-  /// Optional audio PLL configuration.
-  const clock_audio_pll_config_t* config_ = nullptr;
-
-  /// Optional audio kCLOCK_Pfd0 clock divider value.
-  const uint8_t audio_pfd_divider_ = 0;
-
-  /// Optional audio PLL bypass clock source.
-  const audio_pll_src_t bypass_source_ = kCLOCK_AudioPllNone;
-};
-
-/// Class template implementing the sys pll clock element.
-///
-/// The Sys PLL can either operate in the enabled mode where the PLL
-/// and the phase fractional divider are enabled, or it can operate in
-/// bypass mode, where both PLL and phase fractional divider are
-/// clock gated.
-/// When the Sys PLL clock tree gets disabled, both PLL and phase fractional
-/// divider will be clock gated.
-///
-/// Template argument `ElementType` can be of class `ElementBlocking` or
-/// `ElementNonBlockingCannotFail`.
-template <typename ElementType>
-class ClockMcuxpressoSysPll : public DependentElement<ElementType> {
- public:
-  /// Constructor specifying the configuration for the enabled Sys PLL.
-  constexpr ClockMcuxpressoSysPll(ElementType& source,
-                                  const clock_sys_pll_config_t& config,
-                                  uint8_t sys_pfd0_divider,
-                                  uint8_t sys_pfd1_divider,
-                                  uint8_t sys_pfd2_divider,
-                                  uint8_t sys_pfd3_divider)
-      : DependentElement<ElementType>(source),
-        config_(&config),
-        sys_pfd0_divider_(sys_pfd0_divider),
-        sys_pfd1_divider_(sys_pfd1_divider),
-        sys_pfd2_divider_(sys_pfd2_divider),
-        sys_pfd3_divider_(sys_pfd3_divider) {}
-
-  /// Constructor to place the Sys PLL into bypass mode.
-  constexpr ClockMcuxpressoSysPll(ElementType& source,
-                                  sys_pll_src_t bypass_source)
-      : DependentElement<ElementType>(source), bypass_source_(bypass_source) {}
-
- private:
-  /// Configures and enables the audio PLL if `config_` is set, otherwise places
-  /// the sys PLL in bypass mode.
-  Status DoEnable() override {
-    // If `config_` is specified, the PLL should be enabled and the phase
-    // fractional divider PFD0 needs to get configured, otherwise the PLL
-    // operates in bypass mode.
-    if (config_ != nullptr) {
-      // Configure Sys PLL clock source.
-      CLOCK_InitSysPll(config_);
-
-      if (sys_pfd0_divider_ != 0) {
-        CLOCK_InitSysPfd(kCLOCK_Pfd0, sys_pfd0_divider_);
-      }
-      if (sys_pfd1_divider_ != 0) {
-        CLOCK_InitSysPfd(kCLOCK_Pfd1, sys_pfd1_divider_);
-      }
-      if (sys_pfd2_divider_ != 0) {
-        CLOCK_InitSysPfd(kCLOCK_Pfd2, sys_pfd2_divider_);
-      }
-      if (sys_pfd3_divider_ != 0) {
-        CLOCK_InitSysPfd(kCLOCK_Pfd3, sys_pfd3_divider_);
-      }
-    } else {
-      // PLL operates in bypass mode.
-      CLKCTL0->SYSPLL0CLKSEL = bypass_source_;
-      CLKCTL0->SYSPLL0CTL0 |= CLKCTL0_SYSPLL0CTL0_BYPASS_MASK;
-    }
-    return OkStatus();
-  }
-
-  /// Disables the Sys PLL logic.
-  Status DoDisable() override {
-    if (config_ != nullptr) {
-      // Clock gate all the phase fractional divider PFD.
-      CLOCK_DeinitSysPfd(kCLOCK_Pfd0);
-      CLOCK_DeinitSysPfd(kCLOCK_Pfd1);
-      CLOCK_DeinitSysPfd(kCLOCK_Pfd2);
-      CLOCK_DeinitSysPfd(kCLOCK_Pfd3);
-    }
-
-    // Power down Sys PLL
-    CLOCK_DeinitSysPll();
-    return OkStatus();
-  }
-
-  /// Optional Sys PLL configuration.
-  const clock_sys_pll_config_t* config_ = nullptr;
-
-  /// Optional Sys kCLOCK_Pfd clock divider value.
-  const uint8_t sys_pfd0_divider_ = 0;
-  const uint8_t sys_pfd1_divider_ = 0;
-  const uint8_t sys_pfd2_divider_ = 0;
-  const uint8_t sys_pfd3_divider_ = 0;
-
-  /// Optional Sys PLL bypass clock source.
-  const sys_pll_src_t bypass_source_ = kCLOCK_SysPllNone;
-};
-
-/// Alias for a blocking audio PLL clock tree element.
-using ClockMcuxpressoAudioPllBlocking =
-    ClockMcuxpressoAudioPll<ElementBlocking>;
-
-/// Alias for a non-blocking audio PLL clock tree element where updates
-/// cannot fail.
-using ClockMcuxpressoAudioPllNonBlocking =
-    ClockMcuxpressoAudioPll<ElementNonBlockingCannotFail>;
-
-/// Alias for a blocking sys PLL clock tree element.
-using ClockMcuxpressoSysPllBlocking = ClockMcuxpressoSysPll<ElementBlocking>;
-
-/// Alias for a non-blocking sys PLL clock tree element where updates
-/// cannot fail.
-using ClockMcuxpressoSysPllNonBlocking =
-    ClockMcuxpressoSysPll<ElementNonBlockingCannotFail>;
-
-/// Class template implementing the Rtc clock tree element.
-///
-/// Template argument `ElementType` can be of class `ElementBlocking` or
-/// `ElementNonBlockingCannotFail`.
-template <typename ElementType>
-class ClockMcuxpressoRtc final : public DependentElement<ElementType> {
- public:
-  /// Constructor specifying the dependent clock tree element to enable the
-  /// Rtc clock source.
-  constexpr ClockMcuxpressoRtc(ElementType& source)
-      : DependentElement<ElementType>(source) {}
-
- private:
-  /// Enable 32 kHz RTC oscillator
-  Status DoEnable() final {
-    // Enable 32kHZ output of RTC oscillator.
-    CLOCK_EnableOsc32K(true);
-    return OkStatus();
-  }
-
-  /// Disable 32 kHz RTS oscillator.
-  Status DoDisable() final {
-    // Disable 32KHz output of RTC oscillator.
-    CLOCK_EnableOsc32K(false);
-    return OkStatus();
-  }
-};
-
-/// Alias for a blocking Rtc clock tree element.
-/// This class should be used if the Rtc clock source depends on
-/// another blocking clock tree element to enable the Rtc clock source.
-using ClockMcuxpressoRtcBlocking = ClockMcuxpressoRtc<ElementBlocking>;
-
-/// Alias for a non-blocking Rtc clock tree element where updates
-/// cannot fail.
-using ClockMcuxpressoRtcNonBlocking =
-    ClockMcuxpressoRtc<ElementNonBlockingCannotFail>;
 
 /// Class template implementing the `clock_ip_name_t` clocks.
 /// Managing `clock_ip_name_t` clocks with the clock tree allows to

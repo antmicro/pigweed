@@ -23,11 +23,17 @@ licenses(["notice"])
 
 cc_library(
     name = "pw_clock_tree_mcuxpresso",
-    hdrs = ["public/pw_clock_tree_mcuxpresso/clock_tree.h"],
-    strip_include_prefix = "public",
-    target_compatible_with = [
-        "//pw_build/constraints/board:mimxrt595_evk",
+    hdrs = [
+        "public/pw_clock_tree_mcuxpresso/clock_tree.h",
+        "public/pw_clock_tree_mcuxpresso/internal/clock_tree_rt595.h",
+        "public/pw_clock_tree_mcuxpresso/internal/clock_tree_rt798.h",
     ],
+    strip_include_prefix = "public",
+    target_compatible_with = select({
+        "//pw_build/constraints/chipset:imxrt500": [],
+        "//pw_build/constraints/chipset:imxrt700": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
     deps = [
         "//pw_clock_tree",
         "//pw_preprocessor",
