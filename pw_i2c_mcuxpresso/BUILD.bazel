@@ -22,11 +22,46 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 cc_library(
-    name = "pw_i2c_mcuxpresso",
-    srcs = ["initiator.cc"],
-    hdrs = ["public/pw_i2c_mcuxpresso/initiator.h"],
+    name = "pw_i2c_mcuxpresso_flexcomm_i2c",
+    srcs = [
+        "initiator.cc",
+    ],
+    hdrs = [
+        "public/pw_i2c_mcuxpresso/initiator.h",
+    ],
     implementation_deps = ["//pw_assert:check"],
     strip_include_prefix = "public",
+    target_compatible_with = [
+        "//pw_build/constraints/chipset:imxrt500",
+    ],
+    deps = [
+        "//pw_chrono:system_clock",
+        "//pw_clock_tree",
+        "//pw_i2c:address",
+        "//pw_i2c:initiator",
+        "//pw_log",
+        "//pw_status",
+        "//pw_sync:interrupt_spin_lock",
+        "//pw_sync:lock_annotations",
+        "//pw_sync:mutex",
+        "//pw_sync:timed_thread_notification",
+        "//targets:mcuxpresso_sdk",
+    ],
+)
+
+cc_library(
+    name = "pw_i2c_mcuxpresso_lpflexcomm_lpi2c",
+    srcs = [
+        "lpi2c_initiator.cc",
+    ],
+    hdrs = [
+        "public/pw_i2c_mcuxpresso/lpi2c_initiator.h",
+    ],
+    implementation_deps = ["//pw_assert:check"],
+    strip_include_prefix = "public",
+    target_compatible_with = [
+        "//pw_build/constraints/chipset:imxrt700",
+    ],
     deps = [
         "//pw_chrono:system_clock",
         "//pw_clock_tree",
@@ -45,7 +80,7 @@ cc_library(
 pw_cc_test(
     name = "initiator_test",
     srcs = ["initiator_test.cc"],
-    deps = [":pw_i2c_mcuxpresso"],
+    deps = [":pw_i2c_mcuxpresso_flexcomm_i2c"],
 )
 
 cc_library(

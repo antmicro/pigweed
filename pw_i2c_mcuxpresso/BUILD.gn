@@ -17,14 +17,19 @@ import("$dir_pw_build/target_types.gni")
 import("$dir_pw_unit_test/test.gni")
 import("$pw_external_mcuxpresso/mcuxpresso.gni")
 
+declare_args() {
+  pw_digital_io_mcuxpresso_I2C_DRIVER = ""
+}
+
 config("default_config") {
   include_dirs = [ "public" ]
 }
 
 if (pw_third_party_mcuxpresso_SDK != "") {
-  pw_source_set("pw_i2c_mcuxpresso") {
+  pw_source_set("pw_i2c_mcuxpresso_flexcomm_i2c") {
     public_configs = [ ":default_config" ]
     public = [ "public/pw_i2c_mcuxpresso/initiator.h" ]
+    sources = [ "initiator.cc" ]
     public_deps = [
       "$dir_pw_chrono:system_clock",
       "$dir_pw_clock_tree",
@@ -36,7 +41,24 @@ if (pw_third_party_mcuxpresso_SDK != "") {
       "$dir_pw_sync:timed_thread_notification",
       "$pw_third_party_mcuxpresso_SDK",
     ]
-    sources = [ "initiator.cc" ]
+    deps = [ "$dir_pw_log" ]
+  }
+
+  pw_source_set("pw_i2c_mcuxpresso_lpflexcomm_lpi2c") {
+    public_configs = [ ":default_config" ]
+    public = [ "public/pw_i2c_mcuxpresso/lpi2c_initiator.h" ]
+    sources = [ "lpi2c_initiator.cc" ]
+    public_deps = [
+      "$dir_pw_chrono:system_clock",
+      "$dir_pw_clock_tree",
+      "$dir_pw_i2c:initiator",
+      "$dir_pw_status",
+      "$dir_pw_sync:interrupt_spin_lock",
+      "$dir_pw_sync:lock_annotations",
+      "$dir_pw_sync:mutex",
+      "$dir_pw_sync:timed_thread_notification",
+      "$pw_third_party_mcuxpresso_SDK",
+    ]
     deps = [ "$dir_pw_log" ]
   }
 
@@ -70,7 +92,7 @@ pw_test("initiator_test") {
        pw_toolchain_SCOPE.name == "mimxrt595_evk_freertos_speed_optimized")
   sources = [ "initiator_test.cc" ]
   deps = [
-    ":pw_i2c_mcuxpresso",
+    ":pw_i2c_mcuxpresso_flexcomm_i2c",
     "//targets/mimxrt595_evk_freertos:sdk",
   ]
 }
