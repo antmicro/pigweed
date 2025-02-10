@@ -15,22 +15,34 @@
 import("//build_overrides/pigweed.gni")
 
 import("$dir_pw_build/target_types.gni")
+import("$dir_pw_docgen/docs.gni")
+import("$dir_pw_third_party/mcuxpresso/mcuxpresso.gni")
 import("$dir_pw_toolchain/generate_toolchain.gni")
 import("$dir_pw_unit_test/test.gni")
-import("$pw_external_mcuxpresso/mcuxpresso.gni")
 
 config("default_config") {
   include_dirs = [ "public" ]
 }
 
 if (pw_third_party_mcuxpresso_SDK != "") {
-  pw_source_set("pw_digital_io_mcuxpresso") {
+  pw_source_set("pint") {
     public_configs = [ ":default_config" ]
-    public = [
-      "public/pw_digital_io_mcuxpresso/digital_io.h",
-      "public/pw_digital_io_mcuxpresso/pint.h",
-    ]
+    public = [ "public/pw_digital_io_mcuxpresso/pint.h" ]
     public_deps = [
+      "$dir_pw_digital_io",
+      "$dir_pw_sync:borrow",
+      "$pw_third_party_mcuxpresso_SDK",
+    ]
+    deps = [ "$dir_pw_assert" ]
+    sources = [ "pint.cc" ]
+    visibility = [ ":*" ]
+  }
+
+  pw_source_set("pw_digital_io_mcuxpresso_lpc_gpio") {
+    public_configs = [ ":default_config" ]
+    public = [ "public/pw_digital_io_mcuxpresso/digital_io_lpc_gpio.h" ]
+    public_deps = [
+      ":pint",
       "$dir_pw_containers:intrusive_forward_list",
       "$dir_pw_digital_io",
       "$dir_pw_result",
@@ -40,10 +52,24 @@ if (pw_third_party_mcuxpresso_SDK != "") {
       "$pw_third_party_mcuxpresso_SDK",
     ]
     deps = [ "$dir_pw_assert" ]
-    sources = [
-      "digital_io.cc",
-      "pint.cc",
+    sources = [ "digital_io_lpc_gpio.cc" ]
+  }
+
+  pw_source_set("pw_digital_io_mcuxpresso_gpio") {
+    public_configs = [ ":default_config" ]
+    public = [ "public/pw_digital_io_mcuxpresso/digital_io_gpio.h" ]
+    public_deps = [
+      ":pint",
+      "$dir_pw_containers:intrusive_forward_list",
+      "$dir_pw_digital_io",
+      "$dir_pw_result",
+      "$dir_pw_status",
+      "$dir_pw_sync:borrow",
+      "$dir_pw_sync:interrupt_spin_lock",
+      "$pw_third_party_mcuxpresso_SDK",
     ]
+    deps = [ "$dir_pw_assert" ]
+    sources = [ "digital_io_gpio.cc" ]
   }
 }
 

@@ -12,7 +12,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "pw_digital_io/digital_io.h"
+#include "pw_digital_io_mcuxpresso/digital_io_lpc_gpio.h"
 
 #include <array>
 #include <mutex>
@@ -22,7 +22,7 @@
 #include "fsl_reset.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
-#include "pw_digital_io_mcuxpresso/digital_io.h"
+#include "pw_digital_io/digital_io.h"
 #include "pw_status/status.h"
 #include "pw_sync/interrupt_spin_lock.h"
 

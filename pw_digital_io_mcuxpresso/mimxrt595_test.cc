@@ -15,7 +15,7 @@
 #include <cstdint>
 
 #include "pw_digital_io/digital_io.h"
-#include "pw_digital_io_mcuxpresso/digital_io.h"
+#include "pw_digital_io_mcuxpresso/digital_io_lpc_gpio.h"
 #include "pw_status/status.h"
 #include "pw_unit_test/framework.h"
 

@@ -43,3 +43,8 @@ constraint_value(
     name = "imxrt500",
     constraint_setting = ":chipset",
 )
+
+constraint_value(
+    name = "imxrt700",
+    constraint_setting = ":chipset",
+)
