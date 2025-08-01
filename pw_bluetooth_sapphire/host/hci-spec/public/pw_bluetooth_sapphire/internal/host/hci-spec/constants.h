@@ -898,7 +898,7 @@ inline constexpr float kFlushTimeoutMsToCommandParameterConversionFactor = 1.0f 
 
 // See Core Spec v5.2, Vol 4, Part E, Sec 7.3.30
 inline constexpr uint16_t kMaxAutomaticFlushTimeoutCommandParameterValue = 0x07FF;
-inline constexpr pw::chrono::SystemClock::duration kMaxAutomaticFlushTimeoutDuration = std::chrono::milliseconds(static_cast<int64_t>(kMaxAutomaticFlushTimeoutCommandParameterValue * kFlushTimeoutCommandParameterToMillisecondsConversionFactor));
+inline constexpr pw::chrono::SystemClock::duration kMaxAutomaticFlushTimeoutDuration = std::chrono::duration_cast<pw::chrono::SystemClock::duration>(std::chrono::milliseconds(static_cast<int64_t>(kMaxAutomaticFlushTimeoutCommandParameterValue * kFlushTimeoutCommandParameterToMillisecondsConversionFactor)));
 
 // Page Timeout = N * 0.625 ms (Core Spec v5.2, Vol 4, Part E, Sec 7.3.16).
 // The default is 5.12 sec.
