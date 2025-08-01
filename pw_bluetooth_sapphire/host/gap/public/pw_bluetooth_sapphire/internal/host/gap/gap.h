@@ -92,11 +92,15 @@ inline constexpr uint16_t kInquiryScanWindow = 0x0012;    // 11.25 ms
 // Constants used in Low Energy (see Core Spec v5.0, Vol 3, Part C, Appendix A).
 
 inline constexpr pw::chrono::SystemClock::duration kLEGeneralDiscoveryScanMin =
-    std::chrono::milliseconds(10240);
+    std::chrono::duration_cast<pw::chrono::SystemClock::duration>(
+        std::chrono::milliseconds(10240));
 inline constexpr pw::chrono::SystemClock::duration
-    kLEGeneralDiscoveryScanMinCoded = std::chrono::milliseconds(30720);
+    kLEGeneralDiscoveryScanMinCoded =
+        std::chrono::duration_cast<pw::chrono::SystemClock::duration>(
+            std::chrono::milliseconds(30720));
 inline constexpr pw::chrono::SystemClock::duration kLEScanFastPeriod =
-    std::chrono::milliseconds(30720);
+    std::chrono::duration_cast<pw::chrono::SystemClock::duration>(
+        std::chrono::milliseconds(30720));
 
 // The HCI spec defines the time conversion as follows: Time =  N * 0.625 ms,
 // where N is the value of the constant.
