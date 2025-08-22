@@ -130,6 +130,11 @@ void __wrap_free(void* ptr) {
   system.Deallocate(ptr);
 }
 
+void* __wrap_aligned_alloc(size_t alignment, size_t size) {
+  pw::Allocator& system = pw::malloc::SystemAllocator();
+  return system.Allocate(pw::allocator::Layout(size, alignment));
+}
+
 void* __wrap_realloc(void* ptr, size_t size) {
   pw::Allocator& system = pw::malloc::SystemAllocator();
   return system.Reallocate(ptr, pw::allocator::Layout(size));

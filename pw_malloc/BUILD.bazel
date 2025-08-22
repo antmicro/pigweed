@@ -47,6 +47,7 @@ cc_library(
         "-Wl,--wrap=free",
         "-Wl,--wrap=realloc",
         "-Wl,--wrap=calloc",
+        "-Wl,--wrap=aligned_alloc",
         "-Wl,--wrap=_malloc_r",
         "-Wl,--wrap=_realloc_r",
         "-Wl,--wrap=_free_r",
