@@ -42,6 +42,12 @@ pw_facade(
     ],
 )
 
+# Should point to the cc_library that builds mbedtls.
+label_flag(
+    name = "mbedtls_backend",
+    build_setting_default = "@mbedtls",
+)
+
 label_flag(
     name = "sha256_backend",
     build_setting_default = ":unspecified_sha256_backend",
@@ -64,8 +70,8 @@ cc_library(
         "public_overrides/mbedtls",
     ],
     deps = [
+        ":mbedtls_backend",
         ":sha256.facade",
-        "@mbedtls",
     ],
 )
 
@@ -123,10 +129,10 @@ cc_library(
     srcs = ["ecdsa_mbedtls.cc"],
     deps = [
         ":ecdsa.facade",
+        ":mbedtls_backend",
         "//pw_function",
         "//pw_log",
         "//pw_span:cast",
-        "@mbedtls",
     ],
 )
 
@@ -202,7 +208,7 @@ cc_library(
     includes = ["public_overrides/mbedtls"],
     deps = [
         ":aes.facade",
-        "@mbedtls",
+        ":mbedtls_backend",
     ],
 )
 
@@ -277,7 +283,7 @@ cc_library(
     strip_include_prefix = "public_overrides/mbedtls",
     deps = [
         ":ecdh.facade",
-        "@mbedtls",
+        ":mbedtls_backend",
     ],
 )
 
