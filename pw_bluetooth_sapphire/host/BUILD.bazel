@@ -14,6 +14,7 @@
 
 # Note, this file is not copybara'd from upstream Fuchsia.
 
+load("@pigweed//pw_build:compatibility.bzl", "boolean_constraint_value")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 
 package(
@@ -38,4 +39,10 @@ cc_library(
         "//pw_bluetooth_sapphire/host/sm",
         "//pw_bluetooth_sapphire/host/transport",
     ],
+)
+
+# Compatibility flag to allow building the host stack when explicitly enabled on
+# MCU.
+boolean_constraint_value(
+    name = "sapphire_host_compatible",
 )

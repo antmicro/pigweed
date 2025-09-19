@@ -117,12 +117,8 @@ cc_library(
     ],
     strip_include_prefix = "public",
     tags = ["noclangtidy"],
-    target_compatible_with = select({
-        "@platforms//os:fuchsia": [],
-        "@platforms//os:linux": [],
-        "@platforms//os:macos": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+    # Allow building on host or when explicitly enabled using :bluetooth_sapphire_compatible on MCU.
+    target_compatible_with = incompatible_with_mcu(unless_platform_has = "//pw_bluetooth_sapphire/host:sapphire_host_compatible"),
     deps = [
         ":definitions",
         "//pw_bluetooth",
