@@ -25,6 +25,10 @@ boolean_constraint_value(
     name = "compatible",
 )
 
+boolean_constraint_value(
+    name = "lp_compatible",
+)
+
 cc_library(
     name = "spi",
     srcs = [
@@ -91,6 +95,28 @@ cc_library(
         "//pw_status",
         "//targets:mcuxpresso_sdk",
         "//third_party/fuchsia:stdcompat",
+    ],
+)
+
+cc_library(
+    name = "lp_responder",
+    srcs = ["lp_responder.cc"],
+    hdrs = [
+        "public/pw_spi_mcuxpresso/lp_responder.h",
+    ],
+    strip_include_prefix = "public",
+    target_compatible_with = [":lp_compatible"],
+    deps = [
+        "@pigweed//pw_assert:check",
+        "@pigweed//pw_dma_mcuxpresso:pw_dma_mcuxpresso_edma",
+        "@pigweed//pw_function",
+        "@pigweed//pw_log",
+        "@pigweed//pw_span:cast",
+        "@pigweed//pw_spi:initiator",
+        "@pigweed//pw_spi:responder",
+        "@pigweed//pw_status",
+        "@pigweed//targets:mcuxpresso_sdk",
+        "@pigweed//third_party/fuchsia:stdcompat",
     ],
 )
 

@@ -116,3 +116,51 @@ Example use of SPI responder:
      // Start listen for read
      PW_TRY(spi_.WriteReadAsync(kTxData, rx_buf));
    }
+
+Example use of LPSPI responder:
+
+.. code-block:: cpp
+
+   #include "pw_dma_mcuxpresso/edma.h"
+   #include "pw_spi_mcuxpresso/lp_responder.h"
+
+   constinit pw::dma::McuxpressoDmaController dma(DMA0_BASE);
+
+   pw::dma::McuxpressoDmaChannel tx_dma = dma.GetChannel(kTxDmaChannel);
+   pw::dma::McuxpressoDmaChannel rx_dma = dma.GetChannel(kRxDmaChannel);
+
+   pw::spi::McuxpressoLpResponder spi_responder(
+      {
+         // SPI mode 3 (CPOL = 1, CPHA = 1)
+         .polarity = pw::spi::ClockPolarity::kActiveLow,  // CPOL = 1
+         .phase = pw::spi::ClockPhase::kFallingEdge,      // CPHA = 1
+         .bits_per_word = 8,
+         .bit_order = pw::spi::BitOrder::kMsbFirst,
+         .base_address = LPSPI14_BASE,
+      },
+      tx_dma,
+      rx_dma);
+
+   pw::Status Init() {
+     // Initialize the DMA controller
+     PW_TRY(dma.Init());
+
+     tx_dma.Init();
+     tx_dma.SetPriority(kTxDmaChannelPriority);
+     tx_dma.Enable();
+     tx_dma.EnableInterrupts();
+
+     rx_dma.Init();
+     rx_dma.SetPriority(kRxDmaChannelPriority);
+     rx_dma.Enable();
+     tx_dma.EnableInterrupts();
+
+     PW_TRY(spi_responder.Initialize());
+
+     spi_responder.SetCompletionHandler([this](pw::ByteSpan rx_data, pw::Status status) {
+      // Signal we got some data
+     });
+
+     // Start listen for read
+     PW_TRY(spi_responder.WriteReadAsync(kTxData, rx_buf));
+   }
